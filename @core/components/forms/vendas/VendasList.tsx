@@ -1,6 +1,12 @@
-import { excluirVenda, listarVendas, listarProdutos, listarFazendas } from "@/@core/services/firebase/firebaseService";
 import { useEffect, useState } from "react";
 import VendaForm from "./VendasForm";
+import {
+  excluirVenda,
+  listarVendas,
+} from "@/@core/services/firebase/pages/vendasService";
+import { listarProdutos } from "@/@core/services/firebase/pages/produtosService";
+import { listarFazendas } from "@/@core/services/firebase/pages/fazendasService";
+import { registrarVendaEstoque } from "@/@core/services/firebase/pages/estoqueService";
 
 export default function VendaList() {
   const [vendas, setVendas] = useState<any[]>([]);
@@ -17,15 +23,34 @@ export default function VendaList() {
     setVendas(vendasData);
     setProdutos(produtosData);
     setFazendas(fazendasData);
+    console.log("vendas", vendasData);
+    console.log("produtos", produtosData);
+    console.log("fazendas", fazendasData);
   };
 
   useEffect(() => {
     carregar();
   }, []);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (
+    id: string,
+    produtoId: string,
+    quantidade: number
+  ) => {
     if (confirm("Deseja excluir esta venda?")) {
       await excluirVenda(id);
+
+      // Restaurar o estoque quando a venda for excluída
+      await registrarVendaEstoque({
+        id: id,
+        itens: [
+          {
+            produtoId: produtoId,
+            quantidade: quantidade, // quantidade da venda excluída
+          },
+        ],
+      });
+
       carregar();
     }
   };
@@ -37,8 +62,8 @@ export default function VendaList() {
     carregar();
   };
 
-  const getProdutoNome = (id: string) => produtos.find((p) => p.id === id)?.nome || "Produto não encontrado";
-  const getFazendaNome = (id: string) => fazendas.find((f) => f.id === id)?.nome || "Fazenda não encontrada";
+  const getProdutoNome = (id: string) =>
+    produtos.find((p) => p.id === id)?.nome || "Produto não encontrado";
 
   return (
     <div>
@@ -54,10 +79,11 @@ export default function VendaList() {
         {vendas.map((v) => (
           <li key={v.id}>
             {getProdutoNome(v.produto)} - {v.quantidade} un - R${v.valor} -{" "}
-            {new Date(v.data.seconds * 1000).toLocaleDateString()} -{" "}
-            {getFazendaNome(v.fazenda)}
+            {new Date(v.data.seconds * 1000).toLocaleDateString()} - {v.fazenda}
             <button onClick={() => handleEditar(v)}>Editar</button>
-            <button onClick={() => handleDelete(v.id)}>Excluir</button>
+            <button onClick={() => handleDelete(v.id, v.produto, v.quantidade)}>
+              Excluir
+            </button>
           </li>
         ))}
       </ul>

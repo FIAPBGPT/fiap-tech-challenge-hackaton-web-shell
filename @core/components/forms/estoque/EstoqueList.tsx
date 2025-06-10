@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { listarEstoque, excluirEstoque } from "@/@core/services/firebase/pages/estoqueService";
 import EstoqueForm from "./EstoqueForm";
-import { listarProdutos, listarSafras } from "@/@core/services/firebase/firebaseService";
+import { listarProdutos } from "@/@core/services/firebase/pages/produtosService";
+import { listarSafras } from "@/@core/services/firebase/pages/safraService";
 
-// Util para resolver nomes por ID
+// Função para encontrar o nome do produto ou safra dado um ID
 function getNomePorId(id: string, lista: any[]) {
   const item = lista.find((i) => i.id === id);
   return item ? item.nome : id;
@@ -17,16 +18,22 @@ export default function EstoqueList() {
   const [safras, setSafras] = useState<any[]>([]);
   const [estoqueEditando, setEstoqueEditando] = useState<any | null>(null);
 
+  // Carregar os dados de estoque, produtos e safras
   const carregar = async () => {
-    const [e, p, s] = await Promise.all([
-      listarEstoque(),
-      listarProdutos(),
-      listarSafras(),
-    ]);
+    try {
+      const [e, p, s] = await Promise.all([
+        listarEstoque(),
+        listarProdutos(),
+        listarSafras(),
+      ]);
 
-    setEstoques(e);
-    setProdutos(p);
-    setSafras(s);
+      setEstoques(e);
+      setProdutos(p);
+      setSafras(s);
+    } catch (error) {
+      console.error("Erro ao carregar os dados:", error);
+      alert("Erro ao carregar os dados.");
+    }
   };
 
   useEffect(() => {
@@ -35,8 +42,13 @@ export default function EstoqueList() {
 
   const handleDelete = async (id: string) => {
     if (confirm("Deseja excluir este registro de estoque?")) {
-      await excluirEstoque(id);
-      carregar();
+      try {
+        await excluirEstoque(id);
+        carregar();
+      } catch (error) {
+        console.error("Erro ao excluir estoque:", error);
+        alert("Erro ao excluir estoque.");
+      }
     }
   };
 
@@ -69,17 +81,35 @@ export default function EstoqueList() {
 
       <ul className="space-y-2 mt-4">
         {estoques.map((e) => (
-          <li key={e.id} className="border p-2 rounded-md bg-white flex justify-between items-center">
+          <li
+            key={e.id}
+            className="border p-2 rounded-md bg-white flex justify-between items-center"
+          >
             <div>
               <strong>{getNomePorId(e.produtoId, produtos)}</strong>
               {e.safraId && <> - Safra: {getNomePorId(e.safraId, safras)}</>}
               <br />
               Tipo: {e.tipo} | Quantidade: {e.quantidade}
-              {e.observacao && <><br />Obs: {e.observacao}</>}
+              {e.observacao && (
+                <>
+                  <br />
+                  Obs: {e.observacao}
+                </>
+              )}
             </div>
             <div className="flex gap-2">
-              <button onClick={() => handleEditar(e)} className="btn btn-sm btn-primary">Editar</button>
-              <button onClick={() => handleDelete(e.id)} className="btn btn-sm btn-danger">Excluir</button>
+              <button
+                onClick={() => handleEditar(e)}
+                className="btn btn-sm btn-primary"
+              >
+                Editar
+              </button>
+              <button
+                onClick={() => handleDelete(e.id)}
+                className="btn btn-sm btn-danger"
+              >
+                Excluir
+              </button>
             </div>
           </li>
         ))}

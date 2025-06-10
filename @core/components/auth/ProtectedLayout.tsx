@@ -1,5 +1,4 @@
-
-'use client';
+"use client";
 import { useAuthStore } from "@/@core/store/authStore";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -14,12 +13,13 @@ export default function ProtectedLayout({ children }: Props) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push("/");
+    // Redirecionar para a tela de login se o usuário não estiver autenticado
+    if (!loading && !user && router.pathname !== "/complete-cadastro") {
+      router.push("/"); // Redireciona para a tela de login se não houver usuário
     }
   }, [loading, user, router]);
 
-  if (loading || !user) return <p>Carregando autenticação...</p>;
+  if (loading) return <p>Carregando autenticação...</p>;
 
   return <>{children}</>;
 }

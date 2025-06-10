@@ -16,19 +16,12 @@ export default function App({ Component, pageProps }: AppProps) {
   const isLoginPage = router.pathname === "/";
   return (
     <Container fluid style={{ overflow: "hidden" }}>
-      {/* <AppRouterCacheProvider> */}
       {!isLoginPage ? (
         <ProtectedLayout>
           <StyledComponentsRegistry>
             <StyledRoot>
               <Suspense fallback={<Loading />}>
-                {/* <SessionProvider session={pageProps.session}> */}
-                {/* <QueryClientProvider client={queryClient}> */}
-                {/* <HydrationBoundary state={pageProps.dehydratedState}> */}
                 <Component {...pageProps} />
-                {/* </HydrationBoundary> */}
-                {/* </QueryClientProvider> */}
-                {/* </SessionProvider> */}
               </Suspense>
             </StyledRoot>
           </StyledComponentsRegistry>
@@ -37,18 +30,11 @@ export default function App({ Component, pageProps }: AppProps) {
         <StyledComponentsRegistry>
           <StyledRoot>
             <Suspense fallback={<Loading />}>
-              {/* <SessionProvider session={pageProps.session}> */}
-              {/* <QueryClientProvider client={queryClient}> */}
-              {/* <HydrationBoundary state={pageProps.dehydratedState}> */}
               <Component {...pageProps} />
-              {/* </HydrationBoundary> */}
-              {/* </QueryClientProvider> */}
-              {/* </SessionProvider> */}
             </Suspense>
           </StyledRoot>
         </StyledComponentsRegistry>
       )}
-      {/* </AppRouterCacheProvider> */}
     </Container>
   );
 }

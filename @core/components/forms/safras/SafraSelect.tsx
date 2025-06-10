@@ -1,6 +1,7 @@
 'use client';
+
+import { listarSafras } from "@/@core/services/firebase/pages/safraService";
 import { useEffect, useState } from "react";
-import { listarSafras } from "@/@core/services/firebase/firebaseService";
 
 interface SafraSelectProps {
   value: string;
@@ -9,16 +10,38 @@ interface SafraSelectProps {
   name?: string;
 }
 
-export default function SafraSelect({ value, onChange, required, name }: SafraSelectProps) {
+export default function SafraSelect({
+  value,
+  onChange,
+  required,
+  name,
+}: SafraSelectProps) {
   const [safras, setSafras] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true); // Estado de carregamento
+  const [error, setError] = useState<string | null>(null); // Estado de erro
 
   useEffect(() => {
     async function fetchSafras() {
-      const lista = await listarSafras();
-      setSafras(lista);
+      try {
+        const lista = await listarSafras();
+        setSafras(lista);
+      } catch (err) {
+        console.error("Erro ao carregar as safra:", err);
+        setError("Erro ao carregar as safra. Tente novamente.");
+      } finally {
+        setLoading(false);
+      }
     }
     fetchSafras();
   }, []);
+
+  if (loading) {
+    return <p>Carregando safra...</p>; // Mensagem enquanto carrega
+  }
+
+  if (error) {
+    return <p>{error}</p>; // Exibe o erro, se houver
+  }
 
   return (
     <select
@@ -28,9 +51,9 @@ export default function SafraSelect({ value, onChange, required, name }: SafraSe
       required={required}
     >
       <option value="">Selecione uma safra</option>
-      {safras.map(s => (
-        <option key={s.id} value={s.valor}>
-          {s.nome}
+      {safras.map((s) => (
+        <option key={s.id} value={s.id}>
+          {s.nome} {/* Exibe o nome e o valor da safra */}
         </option>
       ))}
     </select>

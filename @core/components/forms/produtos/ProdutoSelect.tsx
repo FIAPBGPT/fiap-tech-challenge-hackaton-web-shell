@@ -1,6 +1,6 @@
 'use client';
+import { listarProdutos } from "@/@core/services/firebase/pages/produtosService";
 import { useEffect, useState } from "react";
-import { listarProdutos } from "@/@core/services/firebase/firebaseService";
 
 interface ProdutoSelectProps {
   value: string;
