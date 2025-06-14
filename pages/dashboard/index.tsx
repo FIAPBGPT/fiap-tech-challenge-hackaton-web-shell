@@ -47,7 +47,7 @@
 'use client';
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { listarMetas, listarProducoes, listarProdutos } from "@/@core/services/firebase/firebaseService";
+import { listarFazendas, listarMetas, listarProducoes, listarProdutos } from "@/@core/services/firebase/firebaseService";
 
 type ChartViewProps = {
   data?: any;
@@ -78,23 +78,28 @@ interface Producao {
   quantidade: number;
 }
 
+
 export default function DashboardPage() {
   const [metas, setMetas] = useState<Meta[]>([]);
   const [producoes, setProducoes] = useState<Producao[]>([]);
   const [produtos, setProdutos] = useState<any[]>([]);
   const [metaSelecionada, setMetaSelecionada] = useState<Meta | null>(null);
   const [atingido, setAtingido] = useState(0);
+  const [fazendas, setFazendas] = useState<any[]>([]);
+
 
   useEffect(() => {
     async function carregarDados() {
-      const [metas, producoesRaw, produtosRaw] = await Promise.all([
+      const [metas, producoesRaw, produtosRaw, fazendas] = await Promise.all([
         listarMetas(),
         listarProducoes(),
         listarProdutos(),
+        listarFazendas(),
       ]);
 
       setMetas(metas);
       setProdutos(produtosRaw);
+      setFazendas(fazendas);
 
       const producoes: Producao[] = producoesRaw.map((p: any) => ({
         id: p.id,
@@ -139,10 +144,12 @@ export default function DashboardPage() {
     return safra;
   };
 
+
   return (
     <div>
       <h2>Dashboard</h2>
-
+      {/* <DashboardRemote tipo="lucro" data={metas.map(m => ({ produto: getProdutoNome(m.produto), lucro: m.valor }))} />
+      <DashboardRemote tipo="producao" data={producoes} /> */}
       {metaSelecionada && (
         <>
           <h3>Meta selecionada:</h3>
@@ -159,6 +166,30 @@ export default function DashboardPage() {
           />
         </>
       )}
+
+      <DashboardRemote
+        tipo="mapa"
+        data={(() => {
+          const mapaEstados = new Map<string, number[]>();
+
+          metas.forEach((meta) => {
+            const fazendaInfo = fazendas.find((f) => f.nome === meta.fazenda);
+            if (!fazendaInfo || !fazendaInfo.estado) return;
+
+            const estado = fazendaInfo.estado;
+            const lista = mapaEstados.get(estado) || [];
+            lista.push(meta.valor);
+            mapaEstados.set(estado, lista);
+          });
+
+          const resultado = Array.from(mapaEstados.entries()).map(([estado, valores]) => {
+            const media = valores.reduce((acc, v) => acc + v, 0) / valores.length;
+            return { estado: `BR-${estado}`, meta: parseFloat(media.toFixed(1)) };
+          });
+
+          return resultado;
+        })()}
+      />
     </div>
   );
 }
