@@ -47,7 +47,7 @@
 'use client';
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { listarFazendas, listarMetas, listarProducoes, listarProdutos } from "@/@core/services/firebase/firebaseService";
+import { listarFazendas, listarMetas, listarProducoes, listarProdutos, listarVendas } from "@/@core/services/firebase/firebaseService";
 
 type ChartViewProps = {
   data?: any;
@@ -86,17 +86,18 @@ export default function DashboardPage() {
   const [metaSelecionada, setMetaSelecionada] = useState<Meta | null>(null);
   const [atingido, setAtingido] = useState(0);
   const [fazendas, setFazendas] = useState<any[]>([]);
-
+   const [vendas, setVendas] = useState<any[]>([]);
 
   useEffect(() => {
     async function carregarDados() {
-      const [metas, producoesRaw, produtosRaw, fazendas] = await Promise.all([
+      const [metas, producoesRaw, produtosRaw, fazendas, vendasData] = await Promise.all([
         listarMetas(),
         listarProducoes(),
         listarProdutos(),
         listarFazendas(),
+        listarVendas(),
       ]);
-
+      setVendas(vendasData);
       setMetas(metas);
       setProdutos(produtosRaw);
       setFazendas(fazendas);
@@ -163,7 +164,11 @@ export default function DashboardPage() {
   };
 
 
-
+  console.log("Metas:", metas);
+  console.log("Produções:", producoes); 
+  console.log("Produtos:", produtos);
+  console.log("Fazendas:", fazendas); 
+  console.log("Vendas:", vendas);
   return (
     <div>
       <h2>Dashboard</h2>
