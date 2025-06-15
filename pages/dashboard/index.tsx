@@ -89,6 +89,8 @@ const CardHeader = styled.div`
   color: white;
   padding: 0.75rem 1rem;
   font-family: 'Jura', sans-serif;
+  text-align: center;
+  font-weight: 700;
 `;
 
 const CardContent = styled.div`
