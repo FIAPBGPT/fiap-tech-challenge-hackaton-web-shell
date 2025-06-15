@@ -86,7 +86,7 @@ export default function DashboardPage() {
   const [metaSelecionada, setMetaSelecionada] = useState<Meta | null>(null);
   const [atingido, setAtingido] = useState(0);
   const [fazendas, setFazendas] = useState<any[]>([]);
-   const [vendas, setVendas] = useState<any[]>([]);
+  const [vendas, setVendas] = useState<any[]>([]);
 
   useEffect(() => {
     async function carregarDados() {
@@ -165,15 +165,36 @@ export default function DashboardPage() {
 
 
   console.log("Metas:", metas);
-  console.log("Produções:", producoes); 
+  console.log("Produções:", producoes);
   console.log("Produtos:", produtos);
-  console.log("Fazendas:", fazendas); 
+  console.log("Fazendas:", fazendas);
   console.log("Vendas:", vendas);
   return (
     <div>
+
+      <header>
+        <h1>Dashboard de Produção e Vendas</h1>
+        <p>Selecione uma meta para visualizar os dados correspondentes.</p>
+
+
+      </header>
       <h2>Dashboard</h2>
       {/* <DashboardRemote tipo="lucro" data={metas.map(m => ({ produto: getProdutoNome(m.produto), lucro: m.valor }))} />
       <DashboardRemote tipo="producao" data={producoes} /> */}
+      <select
+        value={metaSelecionada?.id || ""}
+        onChange={(e) => {
+          const meta = metas.find(m => m.id === e.target.value);
+          setMetaSelecionada(meta || null);
+        }}
+      >
+        <option value="">Selecione uma meta</option>
+        {metas.map(meta => (
+          <option key={meta.id} value={meta.id}>
+            {getProdutoNome(meta.produto)}
+          </option>
+        ))}
+      </select>
       {metaSelecionada && (
         <>
           <h3>Meta selecionada:</h3>
@@ -192,10 +213,6 @@ export default function DashboardPage() {
       )}
 
       <DashboardRemote tipo="mapa" data={calcularSomaMetaPorEstado()} />
-
-
-
-
     </div>
   );
 }
