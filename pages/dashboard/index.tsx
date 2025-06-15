@@ -144,6 +144,25 @@ export default function DashboardPage() {
     return safra;
   };
 
+  const calcularSomaMetaPorEstado = () => {
+    const estadoMap = new Map<string, number>();
+
+    metas.forEach(meta => {
+      const fazenda = fazendas.find(f => f.nome === meta.fazenda);
+      if (!fazenda?.estado) return;
+
+      const estado = fazenda.estado;
+      const valorAtual = estadoMap.get(estado) || 0;
+      estadoMap.set(estado, valorAtual + meta.valor);
+    });
+
+    return Array.from(estadoMap.entries()).map(([estado, soma]) => ({
+      estado: `BR-${estado}`,
+      meta: soma,
+    }));
+  };
+
+
 
   return (
     <div>
@@ -167,29 +186,11 @@ export default function DashboardPage() {
         </>
       )}
 
-      <DashboardRemote
-        tipo="mapa"
-        data={(() => {
-          const mapaEstados = new Map<string, number[]>();
+      <DashboardRemote tipo="mapa" data={calcularSomaMetaPorEstado()} />
 
-          metas.forEach((meta) => {
-            const fazendaInfo = fazendas.find((f) => f.nome === meta.fazenda);
-            if (!fazendaInfo || !fazendaInfo.estado) return;
 
-            const estado = fazendaInfo.estado;
-            const lista = mapaEstados.get(estado) || [];
-            lista.push(meta.valor);
-            mapaEstados.set(estado, lista);
-          });
 
-          const resultado = Array.from(mapaEstados.entries()).map(([estado, valores]) => {
-            const media = valores.reduce((acc, v) => acc + v, 0) / valores.length;
-            return { estado: `BR-${estado}`, meta: parseFloat(media.toFixed(1)) };
-          });
 
-          return resultado;
-        })()}
-      />
     </div>
   );
 }
