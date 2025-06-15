@@ -145,23 +145,27 @@ export default function DashboardPage() {
     return safra;
   };
 
-  const calcularSomaMetaPorEstado = () => {
-    const estadoMap = new Map<string, number>();
+const calcularSomaMetaPorEstado = (produtoIdFiltrado?: string) => {
+  const estadoMap = new Map<string, number>();
 
-    metas.forEach(meta => {
-      const fazenda = fazendas.find(f => f.nome === meta.fazenda);
-      if (!fazenda?.estado) return;
+  metas.forEach(meta => {
+    // Aplica filtro apenas se um produto for selecionado
+    if (produtoIdFiltrado && meta.produto !== produtoIdFiltrado) return;
 
-      const estado = fazenda.estado;
-      const valorAtual = estadoMap.get(estado) || 0;
-      estadoMap.set(estado, valorAtual + meta.valor);
-    });
+    const fazenda = fazendas.find(f => f.nome === meta.fazenda);
+    if (!fazenda?.estado) return;
 
-    return Array.from(estadoMap.entries()).map(([estado, soma]) => ({
-      estado: `BR-${estado}`,
-      meta: soma,
-    }));
-  };
+    const estado = fazenda.estado;
+    const valorAtual = estadoMap.get(estado) || 0;
+    estadoMap.set(estado, valorAtual + meta.valor);
+  });
+
+  return Array.from(estadoMap.entries()).map(([estado, soma]) => ({
+    estado: `BR-${estado}`,
+    meta: soma,
+  }));
+};
+
 
 
   console.log("Metas:", metas);
@@ -212,7 +216,7 @@ export default function DashboardPage() {
         </>
       )}
 
-      <DashboardRemote tipo="mapa" data={calcularSomaMetaPorEstado()} />
+      <DashboardRemote tipo="mapa" data={calcularSomaMetaPorEstado(metaSelecionada?.produto)} />
     </div>
   );
 }
