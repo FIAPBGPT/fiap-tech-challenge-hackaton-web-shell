@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { listarFazendas, listarMetas, listarProducoes, listarProdutos, listarVendas } from "@/@core/services/firebase/firebaseService";
 import styled from "styled-components";
+import { Card, CardContent, CardHeader, CardsGrid, Select, Title } from "@/@theme/custom/DashboardStyle";
 
 // Tipos
 interface Meta {
@@ -37,9 +38,9 @@ const Header = styled.header`
 `;
 
 const Main = styled.main`
-  min-height: calc(100vh - 80px);
-  background: linear-gradient(to bottom, #F2EDDD, #E2C772);
-  padding: 2rem 0;
+  // min-height: calc(100vh - 80px);
+  // background: linear-gradient(to bottom, #F2EDDD, #E2C772);
+  // padding: 2rem 0;
 `;
 
 const Container = styled.div`
@@ -48,60 +49,12 @@ const Container = styled.div`
   padding: 0 1rem;
 `;
 
-const Title = styled.h1`
-  font-family: 'Jura', sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  color: #97133E;
-  margin-bottom: 1.5rem;
-`;
 
-const Select = styled.select`
-  width: 100%;
-  max-width: 400px;
-  padding: 0.75rem;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  margin-bottom: 2rem;
-  font-size: 1rem;
-`;
-
-const CardsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const Card = styled.div`
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-`;
-
-const CardHeader = styled.div`
-  background-color: #97133E;
-  color: white;
-  padding: 0.75rem 1rem;
-  font-family: 'Jura', sans-serif;
-  text-align: center;
-  font-weight: 700;
-`;
-
-const CardContent = styled.div`
-  padding: 1rem;
-  min-height: 300px;
-`;
 
 type DashboardRemoteProps =
   | { tipo: "mapa"; data: { estado: string; meta: number }[] }
   | { tipo: "lucro"; data: { produto: string; valor: number }[] }
-  | { tipo: "metas"; meta: number; atingido: number }
+  | { tipo: "metas"; data: { produto: string; meta: number; producao: number }[] }
   | { tipo: "producao"; data: Producao[] };
 
 
@@ -220,6 +173,29 @@ export default function DashboardPage() {
     }));
   };
 
+const getMetaPorProduto = () => {
+  // Retorna todas as metas se nenhuma estiver selecionada
+  const metasParaExibir = metaSelecionada
+    ? metas.filter(meta => 
+        meta.produto === metaSelecionada.produto &&
+        meta.safra === metaSelecionada.safra &&
+        (!metaSelecionada.fazenda || meta.fazenda === metaSelecionada.fazenda)
+      )
+    : metas;
+
+  return metasParaExibir.map(meta => ({
+    produto: getProdutoNome(meta.produto),
+    meta: meta.valor,
+    producao: producoes
+      .filter(p =>
+        p.produto === meta.produto &&
+        p.safra === meta.safra &&
+        (!meta.fazenda || p.fazenda === meta.fazenda)
+      )
+      .reduce((acc, p) => acc + p.quantidade, 0),
+  }));
+};
+
   if (loading) {
     return (
       <div style={{
@@ -234,6 +210,12 @@ export default function DashboardPage() {
     );
   }
 
+  console.log("Metas:", metas);
+  console.log("Produções:", producoes);
+  console.log("Produtos:", produtos);
+  console.log("Fazendas:", fazendas);
+  console.log("Vendas:", vendas);
+  console.log("Meta selecionada:", metaSelecionada);
   return (
     <>
       <Header>
@@ -293,8 +275,7 @@ export default function DashboardPage() {
                 {metaSelecionada ? (
                   <DashboardRemote
                     tipo="metas"
-                    meta={metaSelecionada.valor}
-                    atingido={atingido}
+                    data={getMetaPorProduto()}
                   />
                 ) : (
                   <p>Selecione uma meta para visualizar</p>
