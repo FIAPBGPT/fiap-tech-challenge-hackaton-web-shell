@@ -1,7 +1,7 @@
 'use client';
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { listarFazendas, listarMetas, listarProducoes, listarProdutos, listarVendas } from "@/@core/services/firebase/firebaseService";
+import { listarFazendas, listarMetas, listarProducoes, listarProdutos, listarSafras, listarVendas } from "@/@core/services/firebase/firebaseService";
 import styled from "styled-components";
 import { Card, CardContent, CardHeader, CardsGrid, Select, Title } from "@/@theme/custom/DashboardStyle";
 
@@ -55,7 +55,7 @@ type DashboardRemoteProps =
   | { tipo: "mapa"; data: { estado: string; meta: number }[] }
   | { tipo: "lucro"; data: { produto: string; valor: number }[] }
   | { tipo: "metas"; data: { produto: string; meta: number; producao: number }[] }
-  | { tipo: "producao"; data: Producao[] };
+  | { tipo: "producao"; data: { safra: string; produto: string, producao: number }[] };
 
 
 //@ts-ignore
@@ -74,16 +74,20 @@ export default function DashboardPage() {
   const [vendas, setVendas] = useState<Venda[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [safras, setSafras] = useState<any[]>([]);
+  
+
   useEffect(() => {
     async function carregarDados() {
       try {
         setLoading(true);
-        const [metas, producoesRaw, produtosRaw, fazendas, vendasData] = await Promise.all([
+        const [metas, producoesRaw, produtosRaw, fazendas, vendasData, safra] = await Promise.all([
           listarMetas(),
           listarProducoes(),
           listarProdutos(),
           listarFazendas(),
           listarVendas(),
+          listarSafras(),
         ]);
 
         setVendas(
@@ -97,6 +101,7 @@ export default function DashboardPage() {
         setMetas(metas);
         setProdutos(produtosRaw);
         setFazendas(fazendas);
+        setSafras(safra);
 
         const producoes: Producao[] = producoesRaw.map((p: any) => ({
           id: p.id,
@@ -196,6 +201,40 @@ const getMetaPorProduto = () => {
   }));
 };
 
+const getSafraNome = () => {
+  // Primeiro, criamos um mapa para agrupar por safra e produto
+  const producaoAgrupada = new Map<string, Map<string, number>>();
+
+  // Preenchemos o mapa com os dados de produção
+  producoes.forEach(p => {
+    const nomeSafra = safras.find(s => s.id === p.safra)?.nome || p.safra;
+    const nomeProduto = produtos.find(prod => prod.id === p.produto)?.nome || p.produto;
+
+    if (!producaoAgrupada.has(nomeSafra)) {
+      producaoAgrupada.set(nomeSafra, new Map());
+    }
+
+    const produtosDaSafra = producaoAgrupada.get(nomeSafra)!;
+    const producaoAtual = produtosDaSafra.get(nomeProduto) || 0;
+    produtosDaSafra.set(nomeProduto, producaoAtual + p.quantidade);
+  });
+
+  // Convertemos o mapa para o formato esperado pelo gráfico
+  const result: { safra: string; produto: string; producao: number }[] = [];
+
+  producaoAgrupada.forEach((produtos, safra) => {
+    produtos.forEach((producao, produto) => {
+      result.push({
+        safra,
+        produto,
+        producao
+      });
+    });
+  });
+
+  return result;
+};
+
   if (loading) {
     return (
       <div style={{
@@ -216,6 +255,8 @@ const getMetaPorProduto = () => {
   console.log("Fazendas:", fazendas);
   console.log("Vendas:", vendas);
   console.log("Meta selecionada:", metaSelecionada);
+  console.log("Atingido:", atingido);
+  console.log("Safra:", safras);
   return (
     <>
       <Header>
@@ -289,7 +330,7 @@ const getMetaPorProduto = () => {
               <CardContent>
                 <DashboardRemote
                   tipo="producao"
-                  data={producoes}
+                  data={getSafraNome()}
                 />
               </CardContent>
             </Card>
