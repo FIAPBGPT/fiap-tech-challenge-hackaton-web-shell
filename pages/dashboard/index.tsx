@@ -171,12 +171,27 @@ export default function DashboardPage() {
     }));
   };
 
-  const getVendasPorProduto = () => {
-    return vendas.map(venda => ({
-      produto: getProdutoNome(venda.produto),
-      valor: venda.valor,
-    }));
-  };
+
+
+const getVendasPorProduto = () => {
+  // Verifica se há vendas
+  if (!vendas || vendas.length === 0) {
+    return [];
+  }
+
+  // Agrupa vendas por produto (soma os valores)
+  const vendasAgrupadas = vendas.reduce((acc, venda) => {
+    const nomeProduto = getProdutoNome(venda.produto);
+    acc[nomeProduto] = (acc[nomeProduto] || 0) + venda.valor;
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Converte para o formato esperado pelo gráfico
+  return Object.entries(vendasAgrupadas).map(([produto, valor]) => ({
+    produto,
+    valor
+  }));
+};
 
 const getMetaPorProduto = () => {
   // Retorna todas as metas se nenhuma estiver selecionada
