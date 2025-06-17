@@ -1,24 +1,25 @@
-import {
-  listar,
-  adicionar,
-  atualizar,
-  excluir,
-} from '../firebaseService';
+// services/firestore/safras.ts
+import { adicionar, listar, atualizar, excluir } from "../firebaseService";
 
-const COLLECTION = 'safras';
-
-export async function listarSafra() {
-  return await listar(COLLECTION);
+// Adiciona uma nova safra
+export async function adicionarSafra(dados: { nome: string; valor: string }) {
+  return adicionar("safras", dados);
 }
 
-export async function adicionarSafra(dado: any) {
-  return await adicionar(COLLECTION, dado);
+// Lista safras
+export async function listarSafras() {
+  return listar("safras");
 }
 
-export async function atualizarSafra(id: string, dado: any) {
-  return await atualizar(COLLECTION, id, dado);
+// Atualiza uma safra
+export async function atualizarSafra(
+  id: string,
+  dados: { nome: string; valor: string }
+) {
+  return atualizar("safras", id, dados);
 }
 
+// Exclui uma safra
 export async function excluirSafra(id: string) {
-  return await excluir(COLLECTION, id);
+  return excluir("safras", id);
 }

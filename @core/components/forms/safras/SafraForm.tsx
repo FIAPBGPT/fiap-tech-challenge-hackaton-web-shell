@@ -1,6 +1,10 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { adicionarSafra, atualizarSafra } from '@/@core/services/firebase/firebaseService';
+
+import {
+  adicionarSafra,
+  atualizarSafra,
+} from "@/@core/services/firebase/pages/safraService";
+import { useEffect, useState } from "react";
 
 interface SafraFormProps {
   onSuccess: () => void;
@@ -8,57 +12,80 @@ interface SafraFormProps {
   onCancelEdit?: () => void;
 }
 
-export default function SafraForm({ onSuccess, editarSafra, onCancelEdit }: SafraFormProps) {
-  const [nome, setNome] = useState('');
-  const [valor, setValor] = useState('');
+export default function SafraForm({
+  onSuccess,
+  editarSafra,
+  onCancelEdit,
+}: SafraFormProps) {
+  const [nome, setNome] = useState("");
+  const [valor, setValor] = useState("");
 
   useEffect(() => {
     if (editarSafra) {
       setNome(editarSafra.nome);
       setValor(editarSafra.valor);
     } else {
-      setNome('');
-      setValor('');
+      setNome("");
+      setValor("");
     }
   }, [editarSafra]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nome.trim() || !valor.trim()) return alert('Preencha todos os campos');
+
+    // Verifica se o nome e valor são válidos
+    if (!nome.trim() || !valor.trim()) {
+      return alert("Preencha todos os campos corretamente");
+    }
 
     const dados = { nome, valor };
 
-    if (editarSafra) {
-      await atualizarSafra(editarSafra.id, dados);
-    } else {
-      await adicionarSafra(dados);
-    }
+    try {
+      if (editarSafra) {
+        await atualizarSafra(editarSafra.id, dados);
+      } else {
+        await adicionarSafra(dados);
+      }
 
-    setNome('');
-    setValor('');
-    onSuccess();
+      setNome("");
+      setValor("");
+      onSuccess();
+    } catch (error) {
+      console.error("Erro ao salvar a safra:", error);
+      alert("Ocorreu um erro ao salvar a safra. Tente novamente.");
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        value={nome}
-        onChange={(e) => setNome(e.target.value)}
-        placeholder='Ex: SAF23/24'
-        required
-      />
-      <input
-        value={valor}
-        onChange={(e) => setValor(e.target.value)}
-        placeholder='Ex: SAF2324'
-        required
-      />
-      <button type='submit'>{editarSafra ? 'Salvar' : 'Cadastrar'}</button>
-      {editarSafra && (
-        <button type='button' onClick={onCancelEdit}>
-          Cancelar
-        </button>
-      )}
+      <fieldset>
+        <legend>{editarSafra ? "Editar Safra" : "Cadastrar Safra"}</legend>
+
+        <label htmlFor="nome">Nome da Safra:</label>
+        <input
+          id="nome"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          placeholder="Ex: SAF23/24"
+          required
+        />
+
+        <label htmlFor="valor">Valor:</label>
+        <input
+          id="valor"
+          value={valor}
+          onChange={(e) => setValor(e.target.value)}
+          placeholder="Ex: SAF2324"
+          required
+        />
+
+        <button type="submit">{editarSafra ? "Salvar" : "Cadastrar"}</button>
+        {editarSafra && (
+          <button type="button" onClick={onCancelEdit}>
+            Cancelar
+          </button>
+        )}
+      </fieldset>
     </form>
   );
 }

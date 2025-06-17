@@ -1,10 +1,12 @@
-'use client';
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/@core/store/authStore";
 import FazendaSelect from "../fazendas/FazendaSelect";
 import SafraSelect from "../safras/SafraSelect";
 import ProdutoSelect from "../produtos/ProdutoSelect";
-import { adicionarMeta, atualizarMeta } from "@/@core/services/firebase/firebaseService";
+import {
+  adicionarMeta,
+  atualizarMeta,
+} from "@/@core/services/firebase/pages/metasService";
 
 interface MetaFormProps {
   onSuccess: () => void;
@@ -14,11 +16,16 @@ interface MetaFormProps {
     valor: number;
     safra: string;
     fazenda: string;
+    tipo?: string;
   };
   onCancelEdit?: () => void;
 }
 
-export default function MetaForm({ onSuccess, editarMeta, onCancelEdit }: MetaFormProps) {
+export default function MetaForm({
+  onSuccess,
+  editarMeta,
+  onCancelEdit,
+}: MetaFormProps) {
   const user = useAuthStore((state) => state.user);
 
   const [form, setForm] = useState({
@@ -26,6 +33,7 @@ export default function MetaForm({ onSuccess, editarMeta, onCancelEdit }: MetaFo
     valor: "",
     safra: "",
     fazenda: "",
+    tipo: "producao", // valor padrão
   });
 
   useEffect(() => {
@@ -35,6 +43,7 @@ export default function MetaForm({ onSuccess, editarMeta, onCancelEdit }: MetaFo
         valor: String(editarMeta.valor),
         safra: editarMeta.safra,
         fazenda: editarMeta.fazenda,
+        tipo: editarMeta.tipo ?? "producao",
       });
     } else {
       setForm({
@@ -42,13 +51,16 @@ export default function MetaForm({ onSuccess, editarMeta, onCancelEdit }: MetaFo
         valor: "",
         safra: "",
         fazenda: "",
+        tipo: "producao",
       });
     }
   }, [editarMeta]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,6 +75,7 @@ export default function MetaForm({ onSuccess, editarMeta, onCancelEdit }: MetaFo
       valor: Number(form.valor),
       safra: form.safra,
       fazenda: form.fazenda,
+      tipo: form.tipo,
       uid: user.uid,
     };
 
@@ -73,7 +86,13 @@ export default function MetaForm({ onSuccess, editarMeta, onCancelEdit }: MetaFo
         await adicionarMeta(novaMeta);
       }
 
-      setForm({ produto: "", valor: "", safra: "", fazenda: "" });
+      setForm({
+        produto: "",
+        valor: "",
+        safra: "",
+        fazenda: "",
+        tipo: "producao",
+      });
       onSuccess();
     } catch (error) {
       console.error("Erro ao salvar meta:", error);
@@ -113,9 +132,17 @@ export default function MetaForm({ onSuccess, editarMeta, onCancelEdit }: MetaFo
         onChange={handleChange}
       />
 
+      <select name="tipo" value={form.tipo} onChange={handleChange} required>
+        <option value="producao">Meta de Produção</option>
+        <option value="vendas">Meta de Vendas</option>
+      </select>
+
       <button type="submit">{editarMeta ? "Salvar" : "Cadastrar"}</button>
+
       {editarMeta && (
-        <button type="button" onClick={onCancelEdit}>Cancelar</button>
+        <button type="button" onClick={onCancelEdit}>
+          Cancelar
+        </button>
       )}
     </form>
   );
