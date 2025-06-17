@@ -29,9 +29,11 @@ declare module "styled-components" {
 const GlobalStyles = createGlobalStyle`
 
   body {
-    background: ${(props) => props.theme.themeColor.backgroundBase};
-    font-family: ${(props) => props.theme.themeFonts.helvetica};
-    color: ${(props) => props.theme.themeColor.dark};
+    // background: ${(props) => props.theme.themeColor.backgroundBase};
+    // font-family: ${(props) => props.theme.themeFonts.helvetica};
+    // color: ${(props) => props.theme.themeColor.dark};
+      min-height: calc(100vh - 80px);
+      background:  ${(props) => props.theme.themeColor.backgroundBase};
   }
 
   //** BUTTON GLOBAL STYLES */ 
