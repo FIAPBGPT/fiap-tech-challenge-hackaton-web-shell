@@ -251,39 +251,49 @@ const getMetaPorProduto = () => {
   }));
 };
 
-  const getSafraNome = () => {
-    const producaoAgrupada = new Map<string, Map<string, number>>();
+const getSafraNome = () => {
 
-    producoes.forEach(p => {
-      // Filtrar por fazenda se houver seleção
-      if (fazendaSelecionada && p.fazenda !== fazendaSelecionada.nome) return;
+  const defaultData = [{ safra: "Nenhuma produção", produto: "N/A", producao: 0 }];
 
-      const nomeSafra = safras.find(s => s.id === p.safra)?.nome || p.safra;
-      const nomeProduto = produtos.find(prod => prod.id === p.produto)?.nome || p.produto;
 
-      if (!producaoAgrupada.has(nomeSafra)) {
-        producaoAgrupada.set(nomeSafra, new Map());
-      }
+  const producoesFiltradas = fazendaSelecionada
+    ? producoes.filter(p => p.fazenda === fazendaSelecionada.nome)
+    : producoes;
 
-      const produtosDaSafra = producaoAgrupada.get(nomeSafra)!;
-      const producaoAtual = produtosDaSafra.get(nomeProduto) || 0;
-      produtosDaSafra.set(nomeProduto, producaoAtual + p.quantidade);
-    });
+  if (producoesFiltradas.length === 0) {
+    return defaultData;
+  }
 
-    const result: { safra: string; produto: string; producao: number }[] = [];
+  const producaoAgrupada = new Map<string, Map<string, number>>();
 
-    producaoAgrupada.forEach((produtos, safra) => {
-      produtos.forEach((producao, produto) => {
-        result.push({
-          safra,
-          produto,
-          producao
-        });
+  producoesFiltradas.forEach(p => {
+    const nomeSafra = safras.find(s => s.id === p.safra)?.nome || p.safra;
+    const nomeProduto = produtos.find(prod => prod.id === p.produto)?.nome || p.produto;
+
+    if (!producaoAgrupada.has(nomeSafra)) {
+      producaoAgrupada.set(nomeSafra, new Map());
+    }
+
+    const produtosDaSafra = producaoAgrupada.get(nomeSafra)!;
+    const producaoAtual = produtosDaSafra.get(nomeProduto) || 0;
+    produtosDaSafra.set(nomeProduto, producaoAtual + p.quantidade);
+  });
+
+  const result: { safra: string; produto: string; producao: number }[] = [];
+
+  producaoAgrupada.forEach((produtos, safra) => {
+    produtos.forEach((producao, produto) => {
+      result.push({
+        safra,
+        produto,
+        producao
       });
     });
+  });
 
-    return result;
-  };
+  // Garante que sempre retorne dados válidos
+  return result.length > 0 ? result : defaultData;
+};
 
   if (loading) {
     return (
