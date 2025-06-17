@@ -8,6 +8,16 @@ export const Title = styled.h1`
   margin-bottom: 1.5rem;
 `;
 
+export const Subtitle = styled.div`
+  font-family: Jura;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: #765B04;
+  margin-bottom: 1rem;
+`;
+
 export const Select = styled.select`
   width: 100%;
   max-width: 400px;
