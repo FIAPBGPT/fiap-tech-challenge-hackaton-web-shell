@@ -201,22 +201,55 @@ export default function DashboardPage() {
     }));
   };
 
-  const getMetaPorProduto = () => {
-    const metasParaExibir = fazendaSelecionada
-      ? metas.filter(meta => meta.fazenda === fazendaSelecionada.nome) : metas;
+const getMetaPorProduto = () => {
+  // Se uma fazenda específica está selecionada
+  if (fazendaSelecionada) {
+    return metas
+      .filter(meta => meta.fazenda === fazendaSelecionada.nome)
+      .map(meta => ({
+        produto: getProdutoNome(meta.produto),
+        meta: meta.valor,
+        producao: producoes
+          .filter(p => 
+            p.produto === meta.produto &&
+            p.safra === meta.safra &&
+            p.fazenda === fazendaSelecionada.nome
+          )
+          .reduce((acc, p) => acc + p.quantidade, 0),
+      }));
+  }
 
-    return metasParaExibir.map(meta => ({
-      produto: getProdutoNome(meta.produto),
-      meta: meta.valor,
-      producao: producoes
-        .filter(p =>
-          p.produto === meta.produto &&
-          p.safra === meta.safra &&
-          (!fazendaSelecionada || p.fazenda === fazendaSelecionada.nome)
-        )
-        .reduce((acc, p) => acc + p.quantidade, 0),
-    }));
-  };
+  const produtosAgrupados = new Map<string, { meta: number, producao: number }>();
+
+  metas.forEach(meta => {
+    const produtoKey = getProdutoNome(meta.produto);
+    const producaoTotal = producoes
+      .filter(p => 
+        p.produto === meta.produto &&
+        p.safra === meta.safra
+      )
+      .reduce((acc, p) => acc + p.quantidade, 0);
+
+    if (produtosAgrupados.has(produtoKey)) {
+      const atual = produtosAgrupados.get(produtoKey)!;
+      produtosAgrupados.set(produtoKey, {
+        meta: atual.meta + meta.valor,
+        producao: atual.producao + producaoTotal
+      });
+    } else {
+      produtosAgrupados.set(produtoKey, {
+        meta: meta.valor,
+        producao: producaoTotal
+      });
+    }
+  });
+
+  return Array.from(produtosAgrupados.entries()).map(([produto, valores]) => ({
+    produto,
+    meta: valores.meta,
+    producao: valores.producao
+  }));
+};
 
   const getSafraNome = () => {
     const producaoAgrupada = new Map<string, Map<string, number>>();
