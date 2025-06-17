@@ -363,7 +363,7 @@ const getMetaPorProduto = () => {
 
             {/* Card Produção */}
             <Card>
-              <CardHeader>Produção</CardHeader>
+              <CardHeader>Produção/Safra Ano</CardHeader>
               <CardContent>
                 <DashboardRemote
                   tipo="producao"
