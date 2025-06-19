@@ -4,6 +4,7 @@ export const themed = {
   themeColor: {
     primary: "#97133E",
     secondary: "#59734A",
+    backgroundBase: "linear-gradient(to bottom, #F2EDDD, #E2C772)",
     backgroundLightBase: "#F1EBD9",
     backgroundDarkBase: "#E2C772",
     ochreFontsButton: "#A67F00",
