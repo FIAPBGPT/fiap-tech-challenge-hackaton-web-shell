@@ -2,25 +2,28 @@
 
 export const themed = {
   themeColor: {
+    primary: "#97133E",
+    secondary: "#59734A",
+    backgroundLightBase: "#F1EBD9",
+    backgroundDarkBase: "#E2C772",
+    ochreFontsButton: "#A67F00",
+    logotypeRed: "#BE164D",
+    tableGreen: "#9FCA86",
+    success: "#29B21E", //verde do logotipo
+    error: "#BD0000",
     dark: "#000000",
-    success: "#47A138",
     white: "#FFFFFF",
     grey: "#767676",
     lightGrey: "#DEE2E6",
     disabledGrey: "#E9ECEF",
-    darkGrey: "#CBCBCB",
-    primary: "#004D61",
-    secondary: "#FF5031",
-    backgroundBase: "#E4EDE3",
     disabled: "#8B8B8B",
-    error: "#BD0000",
-    lightBlue: "#BDDCE3",
+    darkGrey: "#CBCBCB",
     yellow: "#fff700",
   },
   themeFonts: {
-    helvetica: "Helvetica, Inter, sans-serif",
+    jura: "Jura, sans-serif",
     headerSemibold: {
-      fontFamily: "Helvetica, Inter, sans-serif",
+      fontFamily: "Jura, sans-serif",
       fontSize: "18px",
       fontWeight: "600",
       lineHeight: "21.78px",
@@ -32,7 +35,7 @@ export const themed = {
       textAlign: "center",
     },
     textHomeMain: {
-      fontFamily: "Helvetica, Inter, sans-serif",
+      fontFamily: "Jura, sans-serif",
       fontSize: "28px",
       fontWeight: "600",
       lineHeight: "33.89px",

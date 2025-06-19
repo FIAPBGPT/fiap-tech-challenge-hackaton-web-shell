@@ -1,12 +1,10 @@
 import { createGlobalStyle } from "styled-components";
+import "typeface-jura";
 
 const FontStyles = createGlobalStyle`
-    @font-face {
-        font-family: 'Helvetica';
-        src: url('/fonts/Helvetica.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-}
+  body {
+    font-family: 'Jura', sans-serif;
+  }
 `;
 
 export default FontStyles;
