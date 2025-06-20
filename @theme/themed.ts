@@ -19,15 +19,20 @@ export const themed = {
     disabledGrey: "#E9ECEF",
     disabled: "#8B8B8B",
     darkGrey: "#CBCBCB",
-    yellow: "#fff700",
   },
   themeFonts: {
     jura: "Jura, sans-serif",
-    headerSemibold: {
+    subTitleHeader: {
       fontFamily: "Jura, sans-serif",
-      fontSize: "18px",
-      fontWeight: "600",
+      fontSize: "24px",
+      fontWeight: "700",
       lineHeight: "21.78px",
+    },
+    titleHeader: {
+      fontFamily: "Jura, sans-serif",
+      fontSize: "28px",
+      fontWeight: "900",
+      lineHeight: "33.89px",
     },
     btn: {
       fontSize: "16px",
@@ -35,18 +40,13 @@ export const themed = {
       lineHeight: "19.36px",
       textAlign: "center",
     },
-    textHomeMain: {
-      fontFamily: "Jura, sans-serif",
-      fontSize: "28px",
-      fontWeight: "600",
-      lineHeight: "33.89px",
-    },
+
   },
   font_size: {
     fontsizesmall: "14px",
     fontsizemedium: "16px",
     fontsizelarge: "18px",
-    fontsizemdlarge: "25px",
+    fontsizemdlarge: "24px",
     fontsizexlarge: "28px",
   },
 };
