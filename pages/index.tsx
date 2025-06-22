@@ -1,4 +1,5 @@
 "use client";
+import ButtonComponent from "@/@core/components/ui/Button";
 import { auth } from "@/@core/services/firebase/firebase";
 import { useAuthStore } from "@/@core/store/authStore";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -80,6 +81,12 @@ export default function Home() {
         >
           {loading ? <Spinner animation="border" size="sm" /> : "Entrar"}
         </button>
+
+        <ButtonComponent
+          variant="success"
+          label="Salvar"
+          onClick={() => alert('Botão clicado!')}
+        />
       </div>
     </div>
   );
