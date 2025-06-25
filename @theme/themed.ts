@@ -11,7 +11,6 @@ export const themed = {
     darkGrey: "#CBCBCB",
     primary: "#004D61",
     secondary: "#FF5031",
-    // backgroundBase: "#E4EDE3",
     backgroundBase: "linear-gradient(to bottom, #F2EDDD, #E2C772)",
     disabled: "#8B8B8B",
     error: "#BD0000",
