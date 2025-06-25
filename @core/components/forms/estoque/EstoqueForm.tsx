@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { adicionarEstoque, atualizarEstoque } from "@/@core/services/firebase/pages/estoqueService";
 import ProdutoSelect from "../produtos/ProdutoSelect";
 import SafraSelect from "../safras/SafraSelect";
+import { doc, getDoc } from "firebase/firestore";
+import { firestore } from "@/@core/services/firebase/firebase";
 
 interface EstoqueFormProps {
   onSuccess: () => void;
@@ -12,42 +14,49 @@ interface EstoqueFormProps {
     produtoId: string;
     safraId?: string | null;
     quantidade: number;
-    tipo: 'entrada' | 'saida';
+    tipo: "entrada" | "saida";
     observacao?: string;
   };
   onCancelEdit?: () => void;
 }
 
-export default function EstoqueForm({ onSuccess, editarEstoque, onCancelEdit }: EstoqueFormProps) {
+export default function EstoqueForm({
+  onSuccess,
+  editarEstoque,
+  onCancelEdit,
+}: EstoqueFormProps) {
   const [form, setForm] = useState({
-    produto: '',
-    safra: '',
-    quantidade: '',
-    tipo: 'entrada',
-    observacao: '',
+    produto: "",
+    safra: "",
+    quantidade: "",
+    tipo: "entrada",
+    observacao: "",
   });
 
+  // Carrega os dados ao editar um estoque existente
   useEffect(() => {
     if (editarEstoque) {
       setForm({
         produto: editarEstoque.produtoId,
-        safra: editarEstoque.safraId || '',
+        safra: editarEstoque.safraId || "",
         quantidade: editarEstoque.quantidade.toString(),
         tipo: editarEstoque.tipo,
-        observacao: editarEstoque.observacao || '',
+        observacao: editarEstoque.observacao || "",
       });
     } else {
       setForm({
-        produto: '',
-        safra: '',
-        quantidade: '',
-        tipo: 'entrada',
-        observacao: '',
+        produto: "",
+        safra: "",
+        quantidade: "",
+        tipo: "entrada",
+        observacao: "",
       });
     }
   }, [editarEstoque]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -58,37 +67,67 @@ export default function EstoqueForm({ onSuccess, editarEstoque, onCancelEdit }: 
       return alert("Preencha todos os campos obrigatórios.");
     }
 
+    // Dados da movimentação de estoque
     const estoqueData = {
       produtoId: form.produto,
       safraId: form.safra || null,
       quantidade: Number(form.quantidade),
-      tipo: form.tipo as 'entrada' | 'saida',
+      tipo: form.tipo as "entrada" | "saida",
       observacao: form.observacao,
       data: new Date(),
     };
 
-    if (editarEstoque) {
-      await atualizarEstoque(editarEstoque.id, estoqueData);
-    } else {
-      await adicionarEstoque(estoqueData);
+    try {
+      // Valida a quantidade disponível caso seja uma saída
+      if (form.tipo === "saida") {
+        const saldoRef = doc(
+          firestore,
+          "estoque_saldos",
+          `${form.produto}_${form.safra || ""}`
+        );
+        const saldoSnap = await getDoc(saldoRef);
+        const saldoAtual = saldoSnap.exists()
+          ? saldoSnap.data()?.quantidade || 0
+          : 0;
+
+        if (saldoAtual < estoqueData.quantidade) {
+          return alert("Estoque insuficiente para a saída.");
+        }
+      }
+
+      // Se editando, chamamos a função de atualização
+      if (editarEstoque) {
+        await atualizarEstoque(editarEstoque.id, estoqueData);
+      } else {
+        await adicionarEstoque(estoqueData);
+      }
+
+      // Limpa o formulário após sucesso
+      setForm({
+        produto: "",
+        safra: "",
+        quantidade: "",
+        tipo: "entrada",
+        observacao: "",
+      });
+
+      onSuccess();
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Ocorreu um erro desconhecido.");
+      }
     }
-
-    // Limpa o form
-    setForm({
-      produto: '',
-      safra: '',
-      quantidade: '',
-      tipo: 'entrada',
-      observacao: '',
-    });
-
-    onSuccess();
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-md bg-white">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 p-4 border rounded-md bg-white"
+    >
       <h2 className="text-lg font-bold">
-        {editarEstoque ? 'Editar Estoque' : 'Registrar Estoque'}
+        {editarEstoque ? "Editar Estoque" : "Registrar Estoque"}
       </h2>
 
       <ProdutoSelect
@@ -98,11 +137,7 @@ export default function EstoqueForm({ onSuccess, editarEstoque, onCancelEdit }: 
         required
       />
 
-      <SafraSelect
-        value={form.safra}
-        onChange={handleChange}
-        name="safra"
-      />
+      <SafraSelect value={form.safra} onChange={handleChange} name="safra" />
 
       <div>
         <label>Quantidade:</label>
@@ -138,7 +173,11 @@ export default function EstoqueForm({ onSuccess, editarEstoque, onCancelEdit }: 
           {editarEstoque ? "Salvar" : "Cadastrar"}
         </button>
         {editarEstoque && (
-          <button type="button" className="btn btn-secondary" onClick={onCancelEdit}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={onCancelEdit}
+          >
             Cancelar
           </button>
         )}

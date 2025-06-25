@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
-import { listarProdutos, excluirProduto } from "@/@core/services/firebase/firebaseService";
 import ProdutoForm from "./ProdutoForm";
+import { useProdutoStore } from "@/@core/store/produtoStore";
+import {
+  excluirProduto,
+  listarProdutos,
+} from "@/@core/services/firebase/pages/produtosService";
 
 const categorias = [
   { code: "SG", label: "Semente Genética" },
@@ -11,20 +15,30 @@ const categorias = [
   { code: "S2", label: "Semente 2ª Geração da Certificada (S2)" },
 ];
 
-// Função para buscar label pelo código da categoria
-function getCategoriaLabel(code: string | undefined) {
-  if (!code) return "";
-  const categoria = categorias.find(c => c.code === code);
-  return categoria ? categoria.label : code; // Se não encontrar, mostra o código mesmo
-}
-
 export default function ProdutoList() {
-  const [produtos, setProdutos] = useState<any[]>([]);
+  const { produtos, setProdutos, loading, setLoading, removeProduto } =
+    useProdutoStore();
   const [produtoEditando, setProdutoEditando] = useState<any | null>(null);
 
+  // Função utilitária para exibir o nome da categoria
+  function getCategoriaLabel(code: string | undefined) {
+    if (!code) return "";
+    const categoria = categorias.find((c) => c.code === code);
+    return categoria ? categoria.label : code; // Se não encontrar, retorna o próprio código
+  }
+
   const carregar = async () => {
+    setLoading(true);
     const lista = await listarProdutos();
-    setProdutos(lista);
+    // Garantir que cada produto tenha as propriedades obrigatórias
+    const produtosCompletos = lista.map((p: any) => ({
+      id: p.id,
+      nome: p.nome ?? "",
+      categoria: p.categoria,
+      preco: p.preco,
+    }));
+    setProdutos(produtosCompletos);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -34,7 +48,7 @@ export default function ProdutoList() {
   const handleDelete = async (id: string) => {
     if (confirm("Deseja excluir este produto?")) {
       await excluirProduto(id);
-      carregar();
+      setProdutos(produtos.filter((p) => p.id !== id));
     }
   };
 
@@ -55,21 +69,16 @@ export default function ProdutoList() {
     <div>
       <h3>Produtos</h3>
 
-      {produtoEditando ? (
-        <ProdutoForm
-          editarProduto={produtoEditando}
-          onSuccess={handleSucesso}
-          onCancelEdit={handleCancelEdit}
-        />
-      ) : (
-        <ProdutoForm onSuccess={handleSucesso} />
-      )}
+      <ProdutoForm
+        editarProduto={produtoEditando ?? undefined}
+        onSuccess={handleSucesso}
+        onCancelEdit={handleCancelEdit}
+      />
 
       <ul>
-        {produtos.map(p => (
+        {produtos.map((p) => (
           <li key={p.id}>
-            {p.nome}{" "}
-            {p.categoria && `- ${getCategoriaLabel(p.categoria)}`}{" "}
+            {p.nome} {p.categoria && `- ${getCategoriaLabel(p.categoria)}`}{" "}
             <button onClick={() => handleEditar(p)}>Editar</button>
             <button onClick={() => handleDelete(p.id)}>Excluir</button>
           </li>
