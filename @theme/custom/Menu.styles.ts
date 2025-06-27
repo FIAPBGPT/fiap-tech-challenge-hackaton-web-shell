@@ -25,6 +25,7 @@ export const Container = styled.div`
       ${({ theme }) => theme.themeColor.backgroundLightBase};
     background-color: ${({ theme }) => theme.themeColor.secondary};
   }
+
   #menu-data-user {
     display: flex;
     flex-direction: column;
@@ -58,16 +59,15 @@ export const Container = styled.div`
     align-items: flex-start;
     justify-content: flex-start;
     width: 100%;
-    height: 40px;
     background-color: ${({ theme }) => theme.themeColor.backgroundLightBase};
     color: ${({ theme }) => theme.themeColor.ochreFontsButton};
-    border-bottom: 1px solid ${({ theme }) => theme.themeColor.ochreFontsButton};
-    padding: 0px;
   }
   .menu-navigation-item {
     width: 100%;
-    height: 100px;
+    height: 50px;
+    border-bottom: 1px solid ${({ theme }) => theme.themeColor.ochreFontsButton};
   }
+
   #menu-navigation a {
     background-color: ${({ theme }) => theme.themeColor.backgroundLightBase};
     padding: 5px 10px;
@@ -79,17 +79,67 @@ export const Container = styled.div`
     gap: 8px;
     width: 100%;
     height: 100%;
-    border: 1px solid ${({ theme }) => theme.themeColor.ochreFontsButton};
 
     &:hover {
       background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
-      text-decoration: unde line;
+      text-decoration: underline;
+    }
+
+    &:active {
+      background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+      color: ${({ theme }) => theme.themeColor.secondary};
+      font-weight: 700;
+      text-decoration: underline;
+    }
+    &:focus {
+      background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+      color: ${({ theme }) => theme.themeColor.secondary};
+      font-weight: 700;
+      text-decoration: underline;
     }
   }
 
-  #menu-navigation svg {
+  .menu-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+    padding: 5px 10px;
+    color: ${({ theme }) => theme.themeColor.ochreFontsButton};
+
+    &:hover {
+      background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+      color: ${({ theme }) => theme.themeColor.secondary};
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
+    &:active {
+      background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+      color: ${({ theme }) => theme.themeColor.secondary};
+      font-weight: 700;
+      text-decoration: underline;
+      border-bottom: 1px solid
+        ${({ theme }) => theme.themeColor.ochreFontsButton};
+    }
+
+    &:focus {
+      background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+      color: ${({ theme }) => theme.themeColor.secondary};
+      font-weight: 700;
+      text-decoration: underline;
+    }
+  }
+
+  #menu-navigation svg,
+  .menu-button svg {
     margin: 0px;
     padding: 0px;
     width: 16px;
@@ -98,17 +148,33 @@ export const Container = styled.div`
   }
 
   #menu-links-cadastro {
-    display: flex;
+    display: none;
     flex-direction: column;
     width: 100%;
     cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.show {
+      display: flex;
+    }
   }
 
   #menu-links-cadastro a {
-    background-color: ${({ theme }) => theme.themeColor.backgroundLightBase};
-    padding: 5px 25px;
+    background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+    padding: 5px 35px;
+    color: ${({ theme }) => theme.themeColor.ochreFontsButton};
+
     &:hover {
-      background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+      color: ${({ theme }) => theme.themeColor.secondary};
+      font-weight: 700;
+      text-decoration: underline;
+    }
+    &:active {
+      color: ${({ theme }) => theme.themeColor.secondary};
+      font-weight: 700;
+      text-decoration: underline;
+    }
+    &:focus {
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
       text-decoration: underline;

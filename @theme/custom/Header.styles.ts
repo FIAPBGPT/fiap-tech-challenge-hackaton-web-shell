@@ -4,7 +4,6 @@ export const Container = styled.div`
   width: 100%;
   height: 150px;
   background-color: ${({ theme }) => theme.themeColor.primary};
-  padding: 40px 25px 0 25px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,7 +21,18 @@ export const Container = styled.div`
     color: ${({ theme }) => theme.themeColor.backgroundLightBase};
   }
 
-  #main-container {
+  #container-header {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background-color: ${({ theme }) => theme.themeColor.primary};
+    padding: 40px 25px 0 250px;
+  }
+
+  #main-container-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -99,12 +109,8 @@ export const Container = styled.div`
   }
 
   @media (max-width: 720px) {
-    #main-container {
-      padding-left: 70px;
-    }
-
-    #div-section-text {
-      flex: 1;
+    #container-header {
+      padding: 40px 25px 0 25px;
     }
   }
 `;

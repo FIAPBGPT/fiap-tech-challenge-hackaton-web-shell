@@ -3,8 +3,15 @@ import UserIcon from "@/public/contact.svg";
 import HomeIcon from "@/public/home.svg";
 import RegisterIcon from "@/public/cadastro_check.svg";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function MenuComponent() {
+  const [isMenuLinksOpen, setIsMenuLinksOpen] = useState(false);
+
+  const toggleMenuLinks = () => {
+    setIsMenuLinksOpen(!isMenuLinksOpen);
+  };
+
   return (
     <Container>
       <div id="menu-header">
@@ -25,17 +32,17 @@ export default function MenuComponent() {
           </Link>
         </div>
         <div className="menu-navigation-item">
-          <Link href={"/"}>
+          <button onClick={toggleMenuLinks} className="menu-button">
             <RegisterIcon />
             Cadastrar
-          </Link>
+          </button>
         </div>
-        <div id="menu-links-cadastro">
-          <Link href={"/"}>Cadastrar</Link>
-          <Link href={"/"}>Cadastrar</Link>
-          <Link href={"/"}>Cadastrar</Link>
-          <Link href={"/"}>Cadastrar</Link>
-        </div>
+      </div>
+      <div id="menu-links-cadastro" className={isMenuLinksOpen ? "show" : ""}>
+        <Link href={"/"}>Fazenda</Link>
+        <Link href={"/"}>Produto</Link>
+        <Link href={"/"}>Meta</Link>
+        <Link href={"/"}>Fornecedor</Link>
       </div>
     </Container>
   );
