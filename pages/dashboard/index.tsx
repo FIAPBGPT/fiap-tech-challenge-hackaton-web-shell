@@ -38,12 +38,12 @@ interface Fazenda {
 }
 
 // Componentes estilizados
-const Header = styled.header`
-  background-color: #97133E;
-  padding: 1.5rem;
-  color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
+// const Header = styled.header`
+//   background-color: #97133E;
+//   padding: 1.5rem;
+//   color: white;
+//   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+// `;
 
 const Main = styled.main`
   // min-height: calc(100vh - 80px);
@@ -283,12 +283,12 @@ const getSafraNome = () => {
 
   return (
     <>
-      <Header>
+      {/* <Header>
         <Container>
           <h1>Home</h1>
           <p>Bem-vindo!</p>
         </Container>
-      </Header>
+      </Header> */}
 
       <Main>
         <Container>

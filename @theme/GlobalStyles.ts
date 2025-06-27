@@ -5,6 +5,11 @@ declare module "styled-components" {
   export interface DefaultTheme {
     themeColor: {
       backgroundBase: string;
+      backgroundLightBase: string;
+      backgroundDarkBase: string;
+      ochreFontsButton: string;
+      logotypeRed: string;
+      tableGreen: string;
       dark: string;
       white: string;
       success: string;
@@ -15,12 +20,24 @@ declare module "styled-components" {
       disabledGrey: string;
     };
     themeFonts: {
-      helvetica: string;
+      jura: string;
       btn: {
         fontSize: string;
         fontWeight?: string;
         lineHeight?: string;
         textAlign: string;
+      };
+      titleHeader:{
+      fontFamily: string;
+      fontSize: string;
+      fontWeight: string;
+      lineHeight: string;
+      };
+      subTitleHeader:{
+      fontFamily: string;
+      fontSize: string;
+      fontWeight: string;
+      lineHeight: string;
       };
     };
   }
@@ -29,11 +46,9 @@ declare module "styled-components" {
 const GlobalStyles = createGlobalStyle`
 
   body {
-    // background: ${(props) => props.theme.themeColor.backgroundBase};
-    // font-family: ${(props) => props.theme.themeFonts.helvetica};
-    // color: ${(props) => props.theme.themeColor.dark};
-      min-height: calc(100vh - 80px);
-      background:  ${(props) => props.theme.themeColor.backgroundBase};
+    background: ${(props) => props.theme.themeColor.backgroundBase};
+    font-family: ${(props) => props.theme.themeFonts.jura};
+    color: ${(props) => props.theme.themeColor.dark};
   }
 
   //** BUTTON GLOBAL STYLES */ 
