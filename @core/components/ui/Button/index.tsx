@@ -1,32 +1,21 @@
+import { StyledButton } from '@/@theme/custom/Button.style';
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 
 type ButtonComponentProps = {
-  variant?: string;
+  variant?: any;
   label: string;
   onClick: () => void;
-  [key: string]: any; // Para aceitar props adicionais
-};
-
-const variantMap: Record<string, string> = {
-  primary: 'primary',
-  secondary: 'secondary',
-  success: 'success',
-  danger: 'danger',
-  warning: 'warning',
-  info: 'info',
-  light: 'light',
-  dark: 'dark',
-  // Adicione mais variants customizados se necessário
+  [key: string]: any;
 };
 
 const Btn = Button as unknown as React.ComponentType<any>;
 
 const ButtonComponent: React.FC<ButtonComponentProps> = ({ variant = 'primary', label, onClick, ...props }) => {
   return (
-    <Btn variant={variantMap[variant] || 'primary'} onClick={onClick} {...props}>
+    <StyledButton variant={variant} onClick={onClick} {...props}>
       {label}
-    </Btn>
+    </StyledButton>
   );
 };
 
