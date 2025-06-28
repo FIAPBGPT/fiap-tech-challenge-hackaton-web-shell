@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { adicionarEstoque, atualizarEstoque } from "@/@core/services/firebase/pages/estoqueService";
 import ProdutoSelect from "../produtos/ProdutoSelect";
 import SafraSelect from "../safras/SafraSelect";
-import { doc, getDoc } from "firebase/firestore";
-import { firestore } from "@/@core/services/firebase/firebase";
 
 interface EstoqueFormProps {
   onSuccess: () => void;
@@ -33,7 +31,7 @@ export default function EstoqueForm({
     observacao: "",
   });
 
-  // Carrega os dados ao editar um estoque existente
+  // Preenche formulário ao editar
   useEffect(() => {
     if (editarEstoque) {
       setForm({
@@ -63,46 +61,29 @@ export default function EstoqueForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!form.produto || !form.quantidade || Number(form.quantidade) <= 0) {
-      return alert("Preencha todos os campos obrigatórios.");
+      alert("Preencha os campos obrigatórios corretamente.");
+      return;
     }
 
-    // Dados da movimentação de estoque
     const estoqueData = {
       produtoId: form.produto,
       safraId: form.safra || null,
       quantidade: Number(form.quantidade),
       tipo: form.tipo as "entrada" | "saida",
-      observacao: form.observacao,
+      observacao: form.observacao.trim() || undefined,
       data: new Date(),
     };
 
     try {
-      // Valida a quantidade disponível caso seja uma saída
-      if (form.tipo === "saida") {
-        const saldoRef = doc(
-          firestore,
-          "estoque_saldos",
-          `${form.produto}_${form.safra || ""}`
-        );
-        const saldoSnap = await getDoc(saldoRef);
-        const saldoAtual = saldoSnap.exists()
-          ? saldoSnap.data()?.quantidade || 0
-          : 0;
-
-        if (saldoAtual < estoqueData.quantidade) {
-          return alert("Estoque insuficiente para a saída.");
-        }
-      }
-
-      // Se editando, chamamos a função de atualização
+      // Não validar saldo aqui pois é movimentação manual (entrada ou saída arbitrária)
       if (editarEstoque) {
         await atualizarEstoque(editarEstoque.id, estoqueData);
       } else {
         await adicionarEstoque(estoqueData);
       }
 
-      // Limpa o formulário após sucesso
       setForm({
         produto: "",
         safra: "",
@@ -113,11 +94,8 @@ export default function EstoqueForm({
 
       onSuccess();
     } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        alert("Ocorreu um erro desconhecido.");
-      }
+      alert("Erro ao salvar movimentação de estoque.");
+      console.error(error);
     }
   };
 
@@ -127,7 +105,7 @@ export default function EstoqueForm({
       className="space-y-4 p-4 border rounded-md bg-white"
     >
       <h2 className="text-lg font-bold">
-        {editarEstoque ? "Editar Estoque" : "Registrar Estoque"}
+        {editarEstoque ? "Editar Movimentação" : "Nova Movimentação"}
       </h2>
 
       <ProdutoSelect
@@ -143,6 +121,7 @@ export default function EstoqueForm({
         <label>Quantidade:</label>
         <input
           type="number"
+          min={1}
           name="quantidade"
           value={form.quantidade}
           onChange={handleChange}
@@ -165,6 +144,7 @@ export default function EstoqueForm({
           name="observacao"
           value={form.observacao}
           onChange={handleChange}
+          placeholder="Opcional"
         />
       </div>
 
@@ -172,11 +152,12 @@ export default function EstoqueForm({
         <button type="submit" className="btn btn-primary">
           {editarEstoque ? "Salvar" : "Cadastrar"}
         </button>
+
         {editarEstoque && (
           <button
             type="button"
-            className="btn btn-secondary"
             onClick={onCancelEdit}
+            className="btn btn-secondary"
           >
             Cancelar
           </button>

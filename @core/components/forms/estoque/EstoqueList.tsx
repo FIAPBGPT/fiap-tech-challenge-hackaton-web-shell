@@ -1,24 +1,43 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { listarEstoque, excluirEstoque } from "@/@core/services/firebase/pages/estoqueService";
-import EstoqueForm from "./EstoqueForm";
+import { listarEstoque } from "@/@core/services/firebase/pages/estoqueService";
 import { listarProdutos } from "@/@core/services/firebase/pages/produtosService";
 import { listarSafras } from "@/@core/services/firebase/pages/safraService";
+import FazendaSelect from "../fazendas/FazendaSelect";
 
-// Função para encontrar o nome do produto ou safra dado um ID
-function getNomePorId(id: string, lista: any[]) {
+interface EstoqueItem {
+  id: string;
+  produtoId: string;
+  safraId?: string | null;
+  fazendaId?: string | null;
+  quantidade: number;
+  tipo: "entrada" | "saida";
+  observacao?: string;
+}
+
+interface ItemLista {
+  id: string;
+  nome: string;
+}
+
+function getNomePorId(id: string | null | undefined, lista: ItemLista[]) {
+  if (!id) return "";
   const item = lista.find((i) => i.id === id);
   return item ? item.nome : id;
 }
 
 export default function EstoqueList() {
-  const [estoques, setEstoques] = useState<any[]>([]);
-  const [produtos, setProdutos] = useState<any[]>([]);
-  const [safras, setSafras] = useState<any[]>([]);
-  const [estoqueEditando, setEstoqueEditando] = useState<any | null>(null);
+  const [estoques, setEstoques] = useState<EstoqueItem[]>([]);
+  const [produtos, setProdutos] = useState<ItemLista[]>([]);
+  const [safras, setSafras] = useState<ItemLista[]>([]);
+  const [showSaldo, setShowSaldo] = useState(false);
 
-  // Carregar os dados de estoque, produtos e safras
+  // Estados dos filtros
+  const [filtroProduto, setFiltroProduto] = useState("");
+  const [filtroSafra, setFiltroSafra] = useState("");
+  const [filtroFazenda, setFiltroFazenda] = useState("");
+
   const carregar = async () => {
     try {
       const [e, p, s] = await Promise.all([
@@ -26,10 +45,29 @@ export default function EstoqueList() {
         listarProdutos(),
         listarSafras(),
       ]);
-
-      setEstoques(e);
-      setProdutos(p);
-      setSafras(s);
+      setEstoques(
+        e.map((item: any) => ({
+          id: item.id,
+          produtoId: item.produtoId ?? "",
+          safraId: item.safraId ?? null,
+          fazendaId: item.fazendaId ?? null,
+          quantidade: item.quantidade ?? 0,
+          tipo: item.tipo ?? "entrada",
+          observacao: item.observacao ?? "",
+        }))
+      );
+      setProdutos(
+        p.map((item: any) => ({
+          id: item.id,
+          nome: item.nome ?? "",
+        }))
+      );
+      setSafras(
+        s.map((item: any) => ({
+          id: item.id,
+          nome: item.nome ?? "",
+        }))
+      );
     } catch (error) {
       console.error("Erro ao carregar os dados:", error);
       alert("Erro ao carregar os dados.");
@@ -40,47 +78,94 @@ export default function EstoqueList() {
     carregar();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Deseja excluir este registro de estoque?")) {
-      try {
-        await excluirEstoque(id);
-        carregar();
-      } catch (error) {
-        console.error("Erro ao excluir estoque:", error);
-        alert("Erro ao excluir estoque.");
-      }
-    }
-  };
+  // Filtra os registros
+  const estoquesFiltrados = estoques.filter((e) => {
+    return (
+      (filtroProduto === "" || e.produtoId === filtroProduto) &&
+      (filtroSafra === "" || e.safraId === filtroSafra) &&
+      (filtroFazenda === "" || e.fazendaId === filtroFazenda)
+    );
+  });
 
-  const handleEditar = (registro: any) => {
-    setEstoqueEditando(registro);
-  };
+  // Calcula saldo apenas se algum filtro estiver ativo
+  const saldoFiltrado =
+    filtroProduto || filtroSafra || filtroFazenda
+      ? estoquesFiltrados.reduce((saldo, item) => {
+          const qtd = Number(item.quantidade) || 0;
+          return saldo + (item.tipo === "entrada" ? qtd : -qtd);
+        }, 0)
+      : 0;
 
-  const handleCancelEdit = () => {
-    setEstoqueEditando(null);
-  };
+  // Atualiza a exibição do saldo conforme filtros
+  useEffect(() => {
+    setShowSaldo(!!(filtroProduto || filtroSafra || filtroFazenda));
+  }, [filtroProduto, filtroSafra, filtroFazenda]);
 
-  const handleSucesso = () => {
-    setEstoqueEditando(null);
-    carregar();
+  const limparFiltros = () => {
+    setFiltroProduto("");
+    setFiltroSafra("");
+    setFiltroFazenda("");
   };
 
   return (
     <div>
       <h3>Controle de Estoque</h3>
 
-      {estoqueEditando ? (
-        <EstoqueForm
-          editarEstoque={estoqueEditando}
-          onSuccess={handleSucesso}
-          onCancelEdit={handleCancelEdit}
+      {/* Filtros */}
+      <div className="flex gap-4 mb-4">
+        <select
+          value={filtroProduto}
+          onChange={(e) => setFiltroProduto(e.target.value)}
+          aria-label="Filtrar por produto"
+        >
+          <option value="">Todos os produtos</option>
+          {produtos.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.nome}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={filtroSafra}
+          onChange={(e) => setFiltroSafra(e.target.value)}
+          aria-label="Filtrar por safra"
+        >
+          <option value="">Todas as safras</option>
+          {safras.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.nome}
+            </option>
+          ))}
+        </select>
+
+        <FazendaSelect
+          value={filtroFazenda}
+          onChange={(e) => setFiltroFazenda(e.target.value)}
+          name="fazenda"
         />
-      ) : (
-        <EstoqueForm onSuccess={handleSucesso} />
+
+        <button
+          onClick={limparFiltros}
+          className="btn btn-secondary"
+          type="button"
+          aria-label="Limpar filtros"
+        >
+          Limpar Filtros
+        </button>
+      </div>
+
+      {showSaldo && (
+        <p
+          style={{ fontWeight: "bold", fontSize: "1.1rem", marginBottom: 10 }}
+          aria-live="polite"
+        >
+          Saldo Atual (filtrado): {saldoFiltrado}
+        </p>
       )}
 
       <ul className="space-y-2 mt-4">
-        {estoques.map((e) => (
+        {estoquesFiltrados.map((e) => (
           <li
             key={e.id}
             className="border p-2 rounded-md bg-white flex justify-between items-center"
@@ -96,20 +181,6 @@ export default function EstoqueList() {
                   Obs: {e.observacao}
                 </>
               )}
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleEditar(e)}
-                className="btn btn-sm btn-primary"
-              >
-                Editar
-              </button>
-              <button
-                onClick={() => handleDelete(e.id)}
-                className="btn btn-sm btn-danger"
-              >
-                Excluir
-              </button>
             </div>
           </li>
         ))}
