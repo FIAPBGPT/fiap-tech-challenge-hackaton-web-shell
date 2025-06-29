@@ -16,15 +16,7 @@ import {
 
 interface VendaFormProps {
   onSuccess: () => void;
-  editarVenda?: {
-    id: string;
-    produto: string;
-    quantidade: number;
-    data: string | Date;
-    fazenda: string;
-    valor: string;
-    safra?: string;
-  };
+  editarVenda?: any;
   onCancelEdit?: () => void;
 }
 
@@ -34,7 +26,6 @@ export default function VendaForm({
   onCancelEdit,
 }: VendaFormProps) {
   const user = useAuthStore((s) => s.user);
-
   const [form, setForm] = useState({
     produto: "",
     quantidade: "",
@@ -43,37 +34,24 @@ export default function VendaForm({
     fazenda: "",
     safra: "",
   });
-
   const [saldoEstoque, setSaldoEstoque] = useState<number | null>(null);
 
   useEffect(() => {
     if (editarVenda) {
-      let dataFormatada = "";
-      if (
-        editarVenda.data &&
-        typeof editarVenda.data === "object" &&
-        "seconds" in editarVenda.data &&
-        typeof (editarVenda.data as { seconds?: unknown }).seconds === "number"
-      ) {
-        dataFormatada = new Date(
-          (editarVenda.data as { seconds: number }).seconds * 1000
-        )
-          .toISOString()
-          .split("T")[0];
-      } else if (
-        typeof editarVenda.data === "string" ||
-        editarVenda.data instanceof Date
-      ) {
-        dataFormatada = new Date(editarVenda.data).toISOString().split("T")[0];
-      }
+      console.log("Editando venda:", editarVenda);
+      const data = editarVenda.data?.seconds
+        ? new Date(editarVenda.data.seconds * 1000)
+        : new Date(editarVenda.data);
+
+      const itemVenda = editarVenda.itens?.[0] || {};
 
       setForm({
-        produto: editarVenda.produto,
-        quantidade: String(editarVenda.quantidade),
-        valor: String(editarVenda.valor),
-        data: dataFormatada,
-        fazenda: editarVenda.fazenda,
-        safra: editarVenda.safra || "",
+        produto: itemVenda.produtoId,
+        quantidade: String(itemVenda.quantidade),
+        valor: String(itemVenda.valor),
+        data: data.toISOString().split("T")[0],
+        fazenda: itemVenda.fazendaId,
+        safra: itemVenda.safraId || "",
       });
     } else {
       setForm({
@@ -87,23 +65,15 @@ export default function VendaForm({
     }
   }, [editarVenda]);
 
-  // Atualiza saldo do estoque ao selecionar produto, fazenda e safra
   useEffect(() => {
-    async function fetchSaldo() {
-      if (form.produto && form.fazenda && form.safra) {
-        const saldo = await consultarSaldoEstoque(
-          form.produto,
-          form.safra,
-          form.fazenda
-        );
-        setSaldoEstoque(saldo);
-      } else {
-        setSaldoEstoque(null);
-      }
+    if (form.produto && form.safra && form.fazenda) {
+      consultarSaldoEstoque(form.produto, form.safra, form.fazenda).then(
+        setSaldoEstoque
+      );
+    } else {
+      setSaldoEstoque(null);
     }
-
-    fetchSaldo();
-  }, [form.produto, form.fazenda, form.safra]);
+  }, [form.produto, form.safra, form.fazenda]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -112,42 +82,44 @@ export default function VendaForm({
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return alert("Usuário não autenticado");
 
-    if (!form.data || isNaN(new Date(form.data).getTime())) {
-      alert("Data inválida");
-      return;
+    const quantidade = Number(form.quantidade);
+    const valor = Number(form.valor);
+    if (
+      !form.produto ||
+      !form.safra ||
+      !form.fazenda ||
+      !form.data ||
+      quantidade <= 0 ||
+      valor < 0
+    ) {
+      return alert("Todos os campos devem ser preenchidos corretamente.");
     }
 
-    if (!form.produto || !form.fazenda || !form.safra) {
-      alert("Produto, safra e fazenda são obrigatórios.");
-      return;
-    }
-
-    const quantidadeVendida = Number(form.quantidade);
     const saldoAtual = await consultarSaldoEstoque(
       form.produto,
       form.safra,
       form.fazenda
     );
-
-    if (quantidadeVendida > saldoAtual) {
-      return alert(
-        `Quantidade indisponível em estoque da fazenda. Saldo atual: ${saldoAtual}`
-      );
+    if (quantidade > saldoAtual) {
+      return alert(`Estoque insuficiente. Saldo atual: ${saldoAtual}`);
     }
 
-    const dataBr = new Date(`${form.data}T00:00:00-03:00`);
     const novaVenda = {
-      produto: form.produto,
-      quantidade: quantidadeVendida,
-      valor: Number(form.valor),
-      uid: user.uid,
-      data: dataBr,
-      fazenda: form.fazenda,
-      safra: form.safra,
+      itens: [
+        {
+          produtoId: form.produto,
+          quantidade,
+          safraId: form.safra,
+          fazendaId: form.fazenda,
+          valor,
+          uid: user.uid,
+        },
+      ],
+      data: new Date(`${form.data}T00:00:00-03:00`),
     };
 
     try {
@@ -155,30 +127,16 @@ export default function VendaForm({
         await atualizarVenda(editarVenda.id, novaVenda);
         await registrarVendaEstoque({
           id: editarVenda.id,
-          itens: [
-            {
-              produtoId: form.produto,
-              quantidade: quantidadeVendida,
-              safraId: form.safra,
-              fazendaId: form.fazenda,
-            },
-          ],
+          itens: novaVenda.itens,
         });
       } else {
         const docRef = await adicionarVenda(novaVenda);
         await registrarVendaEstoque({
           id: docRef.id,
-          itens: [
-            {
-              produtoId: form.produto,
-              quantidade: quantidadeVendida,
-              safraId: form.safra,
-              fazendaId: form.fazenda,
-            },
-          ],
+          itens: novaVenda.itens,
         });
       }
-
+      onSuccess();
       setForm({
         produto: "",
         quantidade: "",
@@ -187,64 +145,49 @@ export default function VendaForm({
         fazenda: "",
         safra: "",
       });
-      onSuccess();
-    } catch (error) {
-      console.error("Erro ao salvar venda:", error);
+    } catch (err) {
+      console.error("Erro ao salvar venda:", err);
       alert("Erro ao salvar venda");
     }
   };
 
-  // Nova função para excluir venda e repor estoque
   const handleExcluirVenda = async () => {
     if (!editarVenda) return;
     const confirm = window.confirm(
-      "Tem certeza que deseja excluir esta venda? O estoque será reabastecido."
+      "Deseja excluir esta venda e reabastecer o estoque?"
     );
     if (!confirm) return;
 
     try {
-      // Construir objeto de venda para reabastecer estoque
-      const vendaParaRepor = {
+      await reabastecerEstoqueVenda({
         id: editarVenda.id,
-        itens: [
-          {
-            produtoId: editarVenda.produto,
-            quantidade: editarVenda.quantidade,
-            safraId: editarVenda.safra || null,
-            fazendaId: editarVenda.fazenda || null,
-          },
-        ],
-      };
-
-      // Reabastecer estoque
-      await reabastecerEstoqueVenda(vendaParaRepor);
-
-      // Excluir venda
+        itens: editarVenda.itens,
+      });
       await excluirVenda(editarVenda.id);
-
       onSuccess();
-    } catch (error) {
-      console.error("Erro ao excluir venda:", error);
+    } catch (err) {
+      console.error("Erro ao excluir venda:", err);
       alert("Erro ao excluir venda");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 p-4 border rounded-md bg-white"
+    >
       <ProdutoSelect
         value={form.produto}
         onChange={handleChange}
         name="produto"
         required
       />
-
       <SafraSelect
         value={form.safra}
         onChange={handleChange}
         name="safra"
         required
       />
-
       <FazendaSelect
         value={form.fazenda}
         onChange={handleChange}
@@ -253,12 +196,10 @@ export default function VendaForm({
 
       {saldoEstoque !== null && (
         <p
-          style={{
-            fontSize: "0.9rem",
-            color: saldoEstoque <= 0 ? "red" : "green",
-          }}
+          className="text-sm"
+          style={{ color: saldoEstoque <= 0 ? "red" : "green" }}
         >
-          Saldo em estoque da fazenda: {saldoEstoque}
+          Saldo atual: {saldoEstoque}
         </p>
       )}
 
@@ -286,21 +227,29 @@ export default function VendaForm({
         required
       />
 
-      <button type="submit">{editarVenda ? "Salvar" : "Cadastrar"}</button>
-      {editarVenda && (
-        <>
-          <button type="button" onClick={onCancelEdit}>
-            Cancelar
-          </button>
-          <button
-            type="button"
-            onClick={handleExcluirVenda}
-            style={{ marginLeft: 10, backgroundColor: "red", color: "white" }}
-          >
-            Excluir Venda
-          </button>
-        </>
-      )}
+      <div className="flex gap-2">
+        <button type="submit" className="btn btn-primary">
+          {editarVenda ? "Salvar" : "Cadastrar"}
+        </button>
+        {editarVenda && (
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={onCancelEdit}
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={handleExcluirVenda}
+              className="btn btn-danger"
+            >
+              Excluir
+            </button>
+          </>
+        )}
+      </div>
     </form>
   );
 }

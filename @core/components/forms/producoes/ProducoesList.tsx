@@ -1,7 +1,10 @@
 'use client';
 import { useEffect, useState } from "react";
 import ProducaoForm from "./ProducoesForm";
-import { adicionarEstoque } from "@/@core/services/firebase/pages/estoqueService";
+import {
+  removerProducaoEstoque,
+  registrarProducaoEstoque,
+} from "@/@core/services/firebase/pages/estoqueService";
 import {
   excluirProducao,
   listarProducoes,
@@ -19,7 +22,7 @@ export default function ProducoesList() {
 
   const nomeProdutoFormatado = (produtos: any[], id: string) => {
     const produto = produtos.find((item) => item.id === id);
-    if (!produto) return id; // Retorna o id se o produto não for encontrado
+    if (!produto) return id;
     return produto.categoria
       ? `${produto.nome} (${produto.categoria})`
       : produto.nome;
@@ -30,8 +33,7 @@ export default function ProducoesList() {
   };
 
   const formatarSafra = (safraValor: string) => {
-    if (!safraValor) return ""; // Retorna vazio se safraValor for nulo ou indefinido
-    // Exemplo: recebe "SAF2425" e retorna "SAF24/25"
+    if (!safraValor) return "";
     const safraResult =
       safras.find((s) => s.id === safraValor) ||
       console.warn(`Safra não encontrada: ${safraValor}`);
@@ -39,10 +41,13 @@ export default function ProducoesList() {
   };
 
   const carregar = async () => {
-    const listaProducoes = await listarProducoes();
-    const listaProdutos = await listarProdutos();
-    const listaFazendas = await listarFazendas();
-    const listaSafras = await listarSafras();
+    const [listaProducoes, listaProdutos, listaFazendas, listaSafras] =
+      await Promise.all([
+        listarProducoes(),
+        listarProdutos(),
+        listarFazendas(),
+        listarSafras(),
+      ]);
 
     setProducoes(listaProducoes);
     setProdutos(listaProdutos);
@@ -54,28 +59,7 @@ export default function ProducoesList() {
     carregar();
   }, []);
 
-  const handleEditar = async (producao: any) => {
-    setProducaoEditando(producao);
-    const quantidadeAnterior = producao.quantidade;
-    const novaQuantidade = producaoEditando?.quantidade;
-
-    if (novaQuantidade !== quantidadeAnterior) {
-      if (novaQuantidade > quantidadeAnterior) {
-        await adicionarEstoque({
-          produtoId: producao.produto,
-          safraId: producao.safra,
-          quantidade: novaQuantidade - quantidadeAnterior,
-          tipo: "entrada",
-        });
-      } else {
-        await adicionarEstoque({
-          produtoId: producao.produto,
-          safraId: producao.safra,
-          quantidade: quantidadeAnterior - novaQuantidade,
-          tipo: "saida",
-        });
-      }
-    }
+  const handleEditar = (producao: any) => {
     setProducaoEditando(producao);
   };
 
@@ -84,11 +68,16 @@ export default function ProducoesList() {
       const producaoExcluida = producoes.find((p) => p.id === id);
 
       if (producaoExcluida) {
-        await adicionarEstoque({
-          produtoId: producaoExcluida.produto,
-          safraId: producaoExcluida.safra,
-          quantidade: producaoExcluida.quantidade,
-          tipo: "saida", // Removendo a produção do estoque
+        await removerProducaoEstoque({
+          id,
+          itens: [
+            {
+              produtoId: producaoExcluida.produto,
+              safraId: producaoExcluida.safra,
+              fazendaId: producaoExcluida.fazenda,
+              quantidade: producaoExcluida.quantidade,
+            },
+          ],
         });
 
         await excluirProducao(id);
