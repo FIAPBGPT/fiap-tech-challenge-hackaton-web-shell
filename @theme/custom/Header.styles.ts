@@ -27,9 +27,8 @@ export const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px;
     background-color: ${({ theme }) => theme.themeColor.primary};
-    padding: 40px 25px 0 250px;
+    padding: 40px 25px 0 225px;
   }
 
   #main-container-header {
@@ -95,7 +94,6 @@ export const Container = styled.div`
       width: 50px;
       height: 50px;
       color: ${({ theme }) => theme.themeColor.backgroundLightBase};
-      transition: fill 0.2s ease;
     }
 
     &:hover {
@@ -106,27 +104,18 @@ export const Container = styled.div`
       }
     }
 
-    &:isActive {
+    &.isActive {
       fill: ${({ theme }) => theme.themeColor.secondary};
-    
-      svg {
-        color: ${({ theme }) => theme.themeColor.secondary};
-      }
-    }
 
-    &:focus {
-      fill: ${({ theme }) => theme.themeColor.secondary};
-    
       svg {
         color: ${({ theme }) => theme.themeColor.secondary};
       }
     }
   }
-  
 
   @media (max-width: 720px) {
     #container-header {
-      padding: 40px 25px 0 25px;
+      padding: 40px 20px 0 20px;
     }
   }
 `;

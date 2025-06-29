@@ -3,11 +3,13 @@ import Link, { LinkProps } from "next/link";
 
 export const Container = styled.div`
   width: 200px;
+  flex: 0 0 200px;
   height: 100vh;
   background-color: ${({ theme }) => theme.themeColor.backgroundLightBase};
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* border: 1px green solid; */
 
   * {
     padding: 0;
@@ -64,41 +66,40 @@ export const Container = styled.div`
     color: ${({ theme }) => theme.themeColor.ochreFontsButton};
   }
   .menu-navigation-item {
-    width: 100%;
-    height: 50px;
-    border-bottom: 1px solid ${({ theme }) => theme.themeColor.ochreFontsButton};
-  }
-
-  #menu-navigation a {
-    background-color: ${({ theme }) => theme.themeColor.backgroundLightBase};
-    padding: 5px 10px;
-    background-color: transparent;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    flex: 1;
+    width: 100%;
+    height: 50px;
+  }
+
+  #menu-navigation a {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
     gap: 8px;
     width: 100%;
     height: 100%;
+    padding: 5px 10px;
+    color: ${({ theme }) => theme.themeColor.ochreFontsButton};
 
     &:hover {
       background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
-      text-decoration: underline;
     }
 
     &.isActive {
       background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
-      text-decoration: underline;
-    }
-    &:focus {
-      background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
-      color: ${({ theme }) => theme.themeColor.secondary};
-      font-weight: 700;
-      text-decoration: underline;
+
+      svg {
+        fill: ${({ theme }) => theme.themeColor.secondary};
+      }
     }
   }
 
@@ -119,16 +120,12 @@ export const Container = styled.div`
       background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
-      text-decoration: underline;
     }
 
     &.isActive {
       background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
-      text-decoration: underline;
-      border-bottom: 1px solid
-        ${({ theme }) => theme.themeColor.ochreFontsButton};
     }
   }
 
@@ -147,6 +144,8 @@ export const Container = styled.div`
     width: 100%;
     cursor: pointer;
     transition: all 0.3s ease;
+    border-top: 1px solid ${({ theme }) => theme.themeColor.ochreFontsButton};
+    border-bottom: 1px solid ${({ theme }) => theme.themeColor.ochreFontsButton};
 
     &.show {
       display: flex;
@@ -172,11 +171,8 @@ export const Container = styled.div`
 `;
 
 export const LinkIsActive = styled(Link)`
-  &.isActive {
-    background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
-    color: ${({ theme }) => theme.themeColor.secondary};
-    font-weight: 700;
-    text-decoration: underline;
-    border-bottom: 1px solid ${({ theme }) => theme.themeColor.ochreFontsButton};
-  }
+  background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+  color: ${({ theme }) => theme.themeColor.secondary};
+  font-weight: 700;
+  text-decoration: underline;
 `;

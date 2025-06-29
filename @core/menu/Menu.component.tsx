@@ -3,32 +3,46 @@ import UserIcon from "@/public/contact.svg";
 import HomeIcon from "@/public/home.svg";
 import RegisterIcon from "@/public/cadastro_check.svg";
 import Link, { LinkProps } from "next/link";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import useWindowSize from "../hooks/useWindowSize";
 import { useSection } from "../hooks/useSection";
 import { usePathname } from "next/navigation";
 
 export default function MenuComponent({ isMenuOpen }: { isMenuOpen: boolean }) {
-  const [isMenuLinksOpen, setIsMenuLinksOpen] = useState(true);
+  const [isMenuLinksOpen, setIsMenuLinksOpen] = useState(false);
   const { width } = useWindowSize();
   const toggleMenuLinks = () => setIsMenuLinksOpen(!isMenuLinksOpen);
-  const isVisible = width > 720 || isMenuOpen;
-  const section = useSection();
   const pathname = usePathname();
 
+  useEffect(() => {
+    if (pathname !== "/") {
+      setIsMenuLinksOpen(true);
+    }
+  }, [pathname]);
+
+  const isVisible = width > 720 || isMenuOpen;
   if (!isVisible) return null;
 
-  const IsActive = (
-    { href, ...rest }: LinkProps,
-    { children }: { children: React.ReactNode }
+  const renderActiveLink = (
+    href: string,
+    label: string,
+    icon?: any,
+    customPathname?: string
   ) => {
-    console.log("Active link:", href);
-    console.log("Active link:", pathname);
-    if (pathname === href.toString()) {
+    const currentPath = customPathname ?? pathname;
+    if (currentPath === href) {
       return (
-        <LinkIsActive href={href.toString()} {...rest}>
-          {children}
-        </LinkIsActive>
+        <Link href={href} className={pathname === href ? "isActive" : ""}>
+          {icon}
+          {label}
+        </Link>
+      );
+    } else {
+      return (
+        <Link href={href}>
+          {icon}
+          {label}
+        </Link>
       );
     }
   };
@@ -45,16 +59,15 @@ export default function MenuComponent({ isMenuOpen }: { isMenuOpen: boolean }) {
           <p>Matrícula: 12345</p>
         </div>
       </div>
-
       <div id="menu-navigation">
         <div className="menu-navigation-item">
-          <Link href={"/"}>
-            <HomeIcon />
-            Home
-          </Link>
+          {renderActiveLink("/", "Home", <HomeIcon />)}
         </div>
         <div className="menu-navigation-item">
-          <button onClick={toggleMenuLinks} className="menu-button">
+          <button
+            onClick={toggleMenuLinks}
+            className={`menu-button ${isMenuLinksOpen ? "isActive" : ""}`}
+          >
             <RegisterIcon />
             Cadastrar
           </button>
@@ -62,10 +75,10 @@ export default function MenuComponent({ isMenuOpen }: { isMenuOpen: boolean }) {
       </div>
 
       <div id="menu-links-cadastro" className={isMenuLinksOpen ? "show" : ""}>
-        <Link href={"/complete-cadastro"}>Usuário</Link>
-        <Link href={"/fazendas"}>Fazenda</Link>
-        <Link href={"/produtos"}>Produto</Link>
-        <Link href={"/metas"}>Meta</Link>
+        {renderActiveLink("/complete-cadastro", "Usuário")}
+        {renderActiveLink("/fazendas", "Fazenda")}
+        {renderActiveLink("/produtos", "Produto")}
+        {renderActiveLink("/etas", "Meta")}
       </div>
     </Container>
   );

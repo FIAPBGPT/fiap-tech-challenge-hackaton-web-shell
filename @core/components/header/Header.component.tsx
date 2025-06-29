@@ -4,7 +4,12 @@ import useWindowSize from "@/@core/hooks/useWindowSize";
 import CardapioIcon from "@/public/icons8cardapio.svg";
 import { useState } from "react";
 
-export default function HeaderComponent({ toggleMenu }: { toggleMenu: () => void }){
+interface HeaderProps {
+  toggleMenu: () => void;
+  isActive: boolean;
+}
+
+export default function HeaderComponent({ toggleMenu, isActive }: HeaderProps) {
   const section = useSection();
   const { width } = useWindowSize();
 
@@ -20,15 +25,15 @@ export default function HeaderComponent({ toggleMenu }: { toggleMenu: () => void
     if (width <= 720) {
       return (
         <div id="div-icon-header">
-          <button onClick={toggleMenu}>
+          <button onClick={toggleMenu}
+          className={isActive ? "isActive" : ""} 
+          >
             <CardapioIcon />
           </button>
         </div>
       );
     }
   }
-
-
 
   return (
     <Container>
