@@ -99,14 +99,30 @@ export const Container = styled.div`
     }
 
     &:hover {
-      background-color: ${({ theme }) => theme.themeColor.secondary};
+      fill: ${({ theme }) => theme.themeColor.secondary};
       transform: scale(1.05);
+      svg {
+        color: ${({ theme }) => theme.themeColor.secondary};
+      }
+    }
 
+    &:isActive {
+      fill: ${({ theme }) => theme.themeColor.secondary};
+    
+      svg {
+        color: ${({ theme }) => theme.themeColor.secondary};
+      }
+    }
+
+    &:focus {
+      fill: ${({ theme }) => theme.themeColor.secondary};
+    
       svg {
         color: ${({ theme }) => theme.themeColor.secondary};
       }
     }
   }
+  
 
   @media (max-width: 720px) {
     #container-header {

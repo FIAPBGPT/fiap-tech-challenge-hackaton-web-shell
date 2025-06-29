@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Link, { LinkProps } from "next/link";
 
 export const Container = styled.div`
   width: 200px;
@@ -87,7 +88,7 @@ export const Container = styled.div`
       text-decoration: underline;
     }
 
-    &:active {
+    &.isActive {
       background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
@@ -121,20 +122,13 @@ export const Container = styled.div`
       text-decoration: underline;
     }
 
-    &:active {
+    &.isActive {
       background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
       text-decoration: underline;
       border-bottom: 1px solid
         ${({ theme }) => theme.themeColor.ochreFontsButton};
-    }
-
-    &:focus {
-      background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
-      color: ${({ theme }) => theme.themeColor.secondary};
-      font-weight: 700;
-      text-decoration: underline;
     }
   }
 
@@ -169,15 +163,20 @@ export const Container = styled.div`
       font-weight: 700;
       text-decoration: underline;
     }
-    &:active {
+    &.isActive {
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
       text-decoration: underline;
     }
-    &:focus {
-      color: ${({ theme }) => theme.themeColor.secondary};
-      font-weight: 700;
-      text-decoration: underline;
-    }
+  }
+`;
+
+export const LinkIsActive = styled(Link)`
+  &.isActive {
+    background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+    color: ${({ theme }) => theme.themeColor.secondary};
+    font-weight: 700;
+    text-decoration: underline;
+    border-bottom: 1px solid ${({ theme }) => theme.themeColor.ochreFontsButton};
   }
 `;

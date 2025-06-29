@@ -1,12 +1,11 @@
 import { Container } from "@/@theme/custom/Header.styles";
-import { useHeaderSection } from "@/@core/components/header/Header.service";
+import { useSection } from "@/@core/hooks/useSection";
 import useWindowSize from "@/@core/hooks/useWindowSize";
 import CardapioIcon from "@/public/icons8cardapio.svg";
 import { useState } from "react";
-import MenuComponent from "@/@core/menu/Menu.component";
 
-export default function HeaderComponent() {
-  const section = useHeaderSection();
+export default function HeaderComponent({ toggleMenu }: { toggleMenu: () => void }){
+  const section = useSection();
   const { width } = useWindowSize();
 
   function DataSection() {
@@ -21,22 +20,15 @@ export default function HeaderComponent() {
     if (width <= 720) {
       return (
         <div id="div-icon-header">
-          <button onClick={() => toggleMenuAside()}>
+          <button onClick={toggleMenu}>
             <CardapioIcon />
           </button>
         </div>
       );
     }
-    return null;
   }
 
-  const toggleMenuAside = () => {
-    if (HasMenuHamburguer()) {
-      return <MenuComponent />;
-    } else {
-      return null;
-    }
-  };
+
 
   return (
     <Container>

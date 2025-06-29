@@ -1,15 +1,36 @@
-import { Container } from "@/@theme/custom/Menu.styles";
+import { Container, LinkIsActive } from "@/@theme/custom/Menu.styles";
 import UserIcon from "@/public/contact.svg";
 import HomeIcon from "@/public/home.svg";
 import RegisterIcon from "@/public/cadastro_check.svg";
-import Link from "next/link";
-import { useState } from "react";
+import Link, { LinkProps } from "next/link";
+import { ReactElement, useState } from "react";
+import useWindowSize from "../hooks/useWindowSize";
+import { useSection } from "../hooks/useSection";
+import { usePathname } from "next/navigation";
 
-export default function MenuComponent() {
-  const [isMenuLinksOpen, setIsMenuLinksOpen] = useState(false);
+export default function MenuComponent({ isMenuOpen }: { isMenuOpen: boolean }) {
+  const [isMenuLinksOpen, setIsMenuLinksOpen] = useState(true);
+  const { width } = useWindowSize();
+  const toggleMenuLinks = () => setIsMenuLinksOpen(!isMenuLinksOpen);
+  const isVisible = width > 720 || isMenuOpen;
+  const section = useSection();
+  const pathname = usePathname();
 
-  const toggleMenuLinks = () => {
-    setIsMenuLinksOpen(!isMenuLinksOpen);
+  if (!isVisible) return null;
+
+  const IsActive = (
+    { href, ...rest }: LinkProps,
+    { children }: { children: React.ReactNode }
+  ) => {
+    console.log("Active link:", href);
+    console.log("Active link:", pathname);
+    if (pathname === href.toString()) {
+      return (
+        <LinkIsActive href={href.toString()} {...rest}>
+          {children}
+        </LinkIsActive>
+      );
+    }
   };
 
   return (
@@ -24,6 +45,7 @@ export default function MenuComponent() {
           <p>Matrícula: 12345</p>
         </div>
       </div>
+
       <div id="menu-navigation">
         <div className="menu-navigation-item">
           <Link href={"/"}>
@@ -38,11 +60,12 @@ export default function MenuComponent() {
           </button>
         </div>
       </div>
+
       <div id="menu-links-cadastro" className={isMenuLinksOpen ? "show" : ""}>
-        <Link href={"/"}>Fazenda</Link>
-        <Link href={"/"}>Produto</Link>
-        <Link href={"/"}>Meta</Link>
-        <Link href={"/"}>Fornecedor</Link>
+        <Link href={"/complete-cadastro"}>Usuário</Link>
+        <Link href={"/fazendas"}>Fazenda</Link>
+        <Link href={"/produtos"}>Produto</Link>
+        <Link href={"/metas"}>Meta</Link>
       </div>
     </Container>
   );
