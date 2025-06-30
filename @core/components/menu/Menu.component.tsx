@@ -2,26 +2,30 @@ import { Container, LinkIsActive } from "@/@theme/custom/Menu.styles";
 import UserIcon from "@/public/contact.svg";
 import HomeIcon from "@/public/home.svg";
 import RegisterIcon from "@/public/cadastro_check.svg";
-import Link, { LinkProps } from "next/link";
-import { ReactElement, useEffect, useState } from "react";
-import useWindowSize from "../hooks/useWindowSize";
-import { useSection } from "../hooks/useSection";
+import Link  from "next/link";
+import {  useEffect, useState } from "react";
+import useWindowSize from "../../hooks/useWindowSize";
 import { usePathname } from "next/navigation";
 
 export default function MenuComponent({ isMenuOpen }: { isMenuOpen: boolean }) {
   const [isMenuLinksOpen, setIsMenuLinksOpen] = useState(false);
   const { width } = useWindowSize();
-  const toggleMenuLinks = () => setIsMenuLinksOpen(!isMenuLinksOpen);
   const pathname = usePathname();
 
-  useEffect(() => {
-    if (pathname !== "/") {
-      setIsMenuLinksOpen(true);
-    }
+   useEffect(() => {
+    // Abre automaticamente se estiver em uma rota de cadastro
+    const cadastroRoutes = ["/complete-cadastro", "/fazendas", "/produtos", "/metas"];
+    const isInCadastroRoute = cadastroRoutes.includes(pathname);
+    
+    setIsMenuLinksOpen(isInCadastroRoute);
   }, [pathname]);
 
   const isVisible = width > 720 || isMenuOpen;
   if (!isVisible) return null;
+
+  function toggleMenuLinks() {
+  setIsMenuLinksOpen(isMenuLinksOpen => !isMenuLinksOpen);
+}
 
   const renderActiveLink = (
     href: string,
@@ -78,7 +82,7 @@ export default function MenuComponent({ isMenuOpen }: { isMenuOpen: boolean }) {
         {renderActiveLink("/complete-cadastro", "Usuário")}
         {renderActiveLink("/fazendas", "Fazenda")}
         {renderActiveLink("/produtos", "Produto")}
-        {renderActiveLink("/etas", "Meta")}
+        {renderActiveLink("/metas", "Meta")}
       </div>
     </Container>
   );

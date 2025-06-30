@@ -127,6 +127,9 @@ export const Container = styled.div`
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
     }
+    &.isActive svg{
+        fill: ${({ theme }) => theme.themeColor.secondary};
+      }
   }
 
   #menu-navigation svg,

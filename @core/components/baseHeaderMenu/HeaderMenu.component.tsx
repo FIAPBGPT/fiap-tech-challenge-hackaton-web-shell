@@ -1,5 +1,5 @@
 import HeaderComponent from "@/@core/components/header/Header.component";
-import MenuComponent from "@/@core/menu/Menu.component";
+import MenuComponent from "@/@core/components/menu/Menu.component";
 import { Container } from "@/@theme/custom/HeaderMenu.styles";
 import { useState } from "react";
 
