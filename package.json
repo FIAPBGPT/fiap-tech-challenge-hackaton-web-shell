@@ -10,12 +10,14 @@
   },
   "dependencies": {
     "@module-federation/nextjs-mf": "^8.8.27",
+    "@react-google-maps/api": "^2.20.6",
     "fiap-farms-mf-shell": "file:",
     "firebase": "^11.8.1",
     "next": "14.2.3",
     "react": "^18",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^18",
+    "react-google-charts": "^5.2.1",
     "styled-components": "^6.1.18",
     "typeface-jura": "^1.1.13",
     "zustand": "^5.0.5"
