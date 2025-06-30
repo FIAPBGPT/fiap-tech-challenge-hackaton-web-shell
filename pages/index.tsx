@@ -2,27 +2,19 @@
 
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
-import { useState } from "react";
 import { Spinner } from "react-bootstrap";
-import DashboardPage from "./home/index";
-
-// @ts-ignore
-const Mfe = dynamic(() => import("mfe/app"), {
-  ssr: false,
-  loading: () => <Spinner animation="border" variant="secondary" size="sm" />,
-});
+import LoginPage from "./login";
 
 export default function HomePage() {
-    return (
+  return (
     <>
       <Head>
-        <title>FarmFiap</title>
-        <meta name="description" content="Site Bytebank" />
+        <title>Fiap Farms</title>
+        <meta name="description" content="Site Fiap Farms" />
         <link rel="icon" href="/icon.svg" type="image/svg" />
       </Head>
       <div style={{ overflowX: "hidden" }}>
-        <DashboardPage />
+        <LoginPage />
       </div>
     </>
   );

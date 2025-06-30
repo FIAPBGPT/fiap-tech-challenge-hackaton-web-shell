@@ -6,7 +6,7 @@ import {
 } from "@/@core/services/firebase/pages/vendasService";
 import { listarProdutos } from "@/@core/services/firebase/pages/produtosService";
 import { listarFazendas } from "@/@core/services/firebase/pages/fazendasService";
-import { registrarVendaEstoque } from "@/@core/services/firebase/pages/estoqueService";
+import { reabastecerEstoqueVenda } from "@/@core/services/firebase/pages/estoqueService";
 
 export default function VendaList() {
   const [vendas, setVendas] = useState<any[]>([]);
@@ -23,36 +23,33 @@ export default function VendaList() {
     setVendas(vendasData);
     setProdutos(produtosData);
     setFazendas(fazendasData);
-    console.log("vendas", vendasData);
-    console.log("produtos", produtosData);
-    console.log("fazendas", fazendasData);
   };
 
   useEffect(() => {
     carregar();
   }, []);
 
-  const handleDelete = async (
-    id: string,
-    produtoId: string,
-    quantidade: number
-  ) => {
-    if (confirm("Deseja excluir esta venda?")) {
-      await excluirVenda(id);
+  const handleDelete = async (venda: any) => {
+    const confirmacao = confirm(
+      "Deseja excluir esta venda? O estoque será reabastecido."
+    );
+    if (!confirmacao) return;
 
-      // Restaurar o estoque quando a venda for excluída
-      await registrarVendaEstoque({
-        id: id,
-        itens: [
-          {
-            produtoId: produtoId,
-            quantidade: quantidade, // quantidade da venda excluída
-          },
-        ],
-      });
+    const vendaParaRepor = {
+      id: venda.id,
+      itens: [
+        {
+          produtoId: venda.produto,
+          quantidade: venda.quantidade,
+          safraId: venda.safra || null,
+          fazendaId: venda.fazenda || null,
+        },
+      ],
+    };
 
-      carregar();
-    }
+    await reabastecerEstoqueVenda(vendaParaRepor);
+    await excluirVenda(venda.id);
+    carregar();
   };
 
   const handleEditar = (venda: any) => setVendaEditando(venda);
@@ -62,8 +59,14 @@ export default function VendaList() {
     carregar();
   };
 
-  const getProdutoNome = (id: string) =>
-    produtos.find((p) => p.id === id)?.nome || "Produto não encontrado";
+  const getProdutoNome = (id: string) => {
+    if (!id || !Array.isArray(produtos)) return "Produto não encontrado";
+    const produto = produtos.find((p) => p.id === id);
+    return produto?.nome ?? "Produto não encontrado";
+  };
+
+  const getFazendaNome = (id: string) =>
+    fazendas.find((f) => f.id === id)?.nome || id;
 
   return (
     <div>
@@ -75,15 +78,32 @@ export default function VendaList() {
         onCancelEdit={handleCancelEdit}
       />
 
-      <ul>
+      <ul className="space-y-2 mt-4">
         {vendas.map((v) => (
-          <li key={v.id}>
-            {getProdutoNome(v.produto)} - {v.quantidade} un - R${v.valor} -{" "}
-            {new Date(v.data.seconds * 1000).toLocaleDateString()} - {v.fazenda}
-            <button onClick={() => handleEditar(v)}>Editar</button>
-            <button onClick={() => handleDelete(v.id, v.produto, v.quantidade)}>
-              Excluir
-            </button>
+          <li
+            key={v.id}
+            className="border p-2 rounded-md bg-white flex justify-between items-center"
+          >
+            <div>
+              <strong>{getProdutoNome(v.itens[0].produtoId)}</strong> -{" "}
+              {v.itens[0].quantidade} un - R${v.itens[0].valor} -{" "}
+              {new Date(v.data.seconds * 1000).toLocaleDateString()} -{" "}
+              {getFazendaNome(v.itens[0].fazendaId)}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleEditar(v)}
+                className="btn btn-sm btn-primary"
+              >
+                Editar
+              </button>
+              <button
+                onClick={() => handleDelete(v)}
+                className="btn btn-sm btn-danger"
+              >
+                Excluir
+              </button>
+            </div>
           </li>
         ))}
       </ul>

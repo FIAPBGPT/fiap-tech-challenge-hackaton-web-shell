@@ -1,14 +1,14 @@
 'use client';
 
-// import { MainContainer } from "@/@theme/custom/DashboradPage-styles";
+import { MainContainer } from "@/@theme/custom/DashboradPage-styles";
 
 
 export default function DashboardPage() {
   return (
-    // <MainContainer>
+   <MainContainer>
         <div>
             
         </div>
-    // </MainContainer>
+    </MainContainer>
   );
 }
