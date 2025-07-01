@@ -6,29 +6,32 @@ export enum CurrentSection {
   CAD_PRODUTOS = "Cadastro de Produtos",
   CAD_FAZENDAS = "Cadastro de Fazendas",
   COMPLETE_CADASTRO = "Complete seu cadastro",
-  DESCONHECIDA = ""
+  METAS = "Metas",
 }
 
-export function useHeaderSection(): CurrentSection {
+export function useSection(): CurrentSection {
   const pathname = usePathname();
-  const [section, setSection] = useState<CurrentSection>(CurrentSection.DESCONHECIDA);
+  const [section, setSection] = useState<CurrentSection>(CurrentSection.HOME);
 
   useEffect(() => {
     switch (pathname) {
       case "/":
         setSection(CurrentSection.HOME);
         break;
-      case "/cadastro-produtos":
+      case "/produtos":
         setSection(CurrentSection.CAD_PRODUTOS);
         break;
-      case "/cadastro-fazendas":
+      case "/fazendas":
         setSection(CurrentSection.CAD_FAZENDAS);
         break;
       case "/complete-cadastro":
         setSection(CurrentSection.COMPLETE_CADASTRO);
         break;
+      case "/metas":
+        setSection(CurrentSection.METAS);
+        break;
       default:
-        setSection(CurrentSection.DESCONHECIDA);
+        setSection(CurrentSection.HOME);
     }
   }, [pathname]);
 

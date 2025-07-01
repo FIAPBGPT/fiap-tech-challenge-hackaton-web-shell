@@ -1,38 +1,17 @@
-"use client";
+'use client';
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { listarMetas } from "@/@core/services/firebase/pages/metasService";
-import { listarProducoes } from "@/@core/services/firebase/pages/producoesService";
-import { listarProdutos } from "@/@core/services/firebase/pages/produtosService";
-import { listarSafras } from "@/@core/services/firebase/pages/safraService";
+import { listarFazendas, listarMetas, listarProducoes, listarProdutos, listarSafras, listarVendas } from "@/@core/services/firebase/firebaseService";
+import styled from "styled-components";
+import { Card, CardContent, CardHeader, CardsGrid, Select, Subtitle, Title } from "@/@theme/custom/DashboardStyle";
 
-import ProdutoSelect from "@/@core/components/forms/produtos/ProdutoSelect";
-import SafraSelect from "@/@core/components/forms/safras/SafraSelect";
-import FazendaSelect from "@/@core/components/forms/fazendas/FazendaSelect";
-import { listar } from "@/@core/services/firebase/firebaseService";
-import { listarVendas } from "@/@core/services/firebase/pages/vendasService";
-
-type ChartViewProps = {
-  data?: any;
-  tipo?: string;
-  tipoMeta?: string;
-  meta?: number;
-  atingido?: number;
-};
-
-// @ts-ignore
-const DashboardRemote = dynamic<ChartViewProps>(() => import("mfe/ChartView"), {
-  ssr: false,
-  loading: () => <p>Carregando gráfico...</p>,
-});
-
+// Tipos
 interface Meta {
   id: string;
   produto: string;
   safra: string;
   fazenda?: string;
   valor: number;
-  tipo: "producao" | "vendas";
 }
 
 interface Producao {
@@ -46,189 +25,337 @@ interface Producao {
 interface Venda {
   id: string;
   produto: string;
-  safra: string;
-  fazenda: string;
-  quantidade: number;
+  valor: number;
+  data: string;
 }
+
+interface Fazenda {
+  id: string;
+  nome: string;
+  estado: string;
+  latitude: number;
+  longitude: number;
+}
+
+// Componentes estilizados
+// const Header = styled.header`
+//   background-color: #97133E;
+//   padding: 1.5rem;
+//   color: white;
+//   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+// `;
+
+const Main = styled.main`
+  // min-height: calc(100vh - 80px);
+  // background: linear-gradient(to bottom, #F2EDDD, #E2C772);
+  // padding: 2rem 0;
+`;
+
+const Container = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+`;
+
+type DashboardRemoteProps =
+  | { tipo: "mapa"; data: { estado: string; meta: number }[] }
+  | { tipo: "lucro"; data: { produto: string; valor: number }[] }
+  | { tipo: "metas"; data: { produto: string; meta: number; producao: number }[] }
+  | { tipo: "producao"; data: { safra: string; produto: string, producao: number }[] };
+
+ // @ts-ignore 
+const DashboardRemote = dynamic<DashboardRemoteProps>(() => import("mfe/ChartView"), {
+  ssr: false,
+  loading: () => <p>Carregando gráfico...</p>,
+});
 
 export default function DashboardPage() {
   const [metas, setMetas] = useState<Meta[]>([]);
-  const [safras, setSafras] = useState<any[]>([]);
-  const [safraSelected, setSafraSelected] = useState<any>();
   const [producoes, setProducoes] = useState<Producao[]>([]);
-  const [vendas, setVendas] = useState<Venda[]>([]);
   const [produtos, setProdutos] = useState<any[]>([]);
-  const [metaSelecionada, setMetaSelecionada] = useState<Meta | null>(null);
-  const [atingido, setAtingido] = useState<number>(0);
-
-  const [filtros, setFiltros] = useState({
-    produto: "",
-    safra: "",
-    fazenda: "",
-    tipo: "producao",
-  });
+  const [fazendaSelecionada, setFazendaSelecionada] = useState<Fazenda | null>(null);
+  const [atingido, setAtingido] = useState(0);
+  const [fazendas, setFazendas] = useState<Fazenda[]>([]);
+  const [vendas, setVendas] = useState<Venda[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [safras, setSafras] = useState<any[]>([]);
 
   useEffect(() => {
     async function carregarDados() {
-      const [metasRaw, producoesRaw, produtosRaw, safrasRaw, vendasRaw] =
-        await Promise.all([
+      try {
+        setLoading(true);
+        const [metas, producoesRaw, produtosRaw, fazendasData, vendasData, safra] = await Promise.all([
           listarMetas(),
           listarProducoes(),
           listarProdutos(),
-          listarSafras(),
+          listarFazendas(),
           listarVendas(),
+          listarSafras(),
         ]);
 
-      const metasFormatadas: Meta[] = metasRaw.map((m: any) => ({
-        id: m.id,
-        produto: m.produto ?? "",
-        safra: m.safra ?? "",
-        fazenda: m.fazenda,
-        valor: m.valor ?? 0,
-        tipo: m.tipo ?? "producao",
-      }));
+        setVendas(
+          vendasData.map((v: any) => ({
+            id: v.id,
+            produto: v.produto ?? "",
+            valor: v.valor ?? 0,
+            data: v.data ?? "",
+          }))
+        );
+        setMetas(metas);
+        setProdutos(produtosRaw);
+        const fazendasMapped = fazendasData.map((f: any) => ({
+          id: f.id,
+          nome: f.nome ?? "",
+          estado: f.estado ?? "",
+          latitude: f.latitude ?? 0,
+          longitude: f.longitude ?? 0,
+        }));
+        setFazendas(fazendasMapped);
+        setSafras(safra);
 
-      const producoesFormatadas: Producao[] = producoesRaw.map((p: any) => ({
-        id: p.id,
-        produto: p.produto ?? "",
-        safra: p.safra ?? "",
-        fazenda: p.fazenda ?? "",
-        quantidade: p.quantidade ?? 0,
-      }));
-
-      const vendasFormatadas: Producao[] = vendasRaw.map((p: any) => ({
-        id: p.id,
-        produto: p.produto ?? "",
-        safra: p.safra ?? "",
-        fazenda: p.fazenda ?? "",
-        quantidade: p.quantidade ?? 0,
-      }));
-
-      setMetas(metasFormatadas);
-      setProducoes(producoesFormatadas);
-      setProdutos(produtosRaw);
-      setSafras(safrasRaw);
-      setVendas(vendasFormatadas);
+        const producoes: Producao[] = producoesRaw.map((p: any) => ({
+          id: p.id,
+          produto: p.produto ?? "",
+          safra: p.safra ?? "",
+          fazenda: p.fazenda ?? "",
+          quantidade: p.quantidade ?? 0,
+        }));
+        setProducoes(producoes);
+      } catch (error) {
+        console.error("Erro ao carregar dados:", error);
+      } finally {
+        setLoading(false);
+      }
     }
 
     carregarDados();
   }, []);
 
   useEffect(() => {
-    const { produto, safra, fazenda, tipo } = filtros;
+    if (!fazendaSelecionada) return;
 
-    const safraSelected: any = safras.find((s: any) => s.id === safra);
-    console.log("Safra selecionada:", safraSelected);
-    setSafraSelected(safraSelected);
+    const totalProduzido = producoes
+      .filter(p => p.fazenda === fazendaSelecionada.nome)
+      .reduce((acc, p) => acc + p.quantidade, 0);
 
-    if (!produto || !safra || !fazenda || !tipo) {
-      setMetaSelecionada(null);
-      setAtingido(0);
-      return;
-    }
-
-    const meta = metas.find(
-      (m) =>
-        m.produto === produto &&
-        m.safra === safra &&
-        (m.fazenda ?? "") === fazenda &&
-        m.tipo === tipo
-    );
-    console.log("Meta encontrada:", meta);
-    setMetaSelecionada(meta ?? null);
-
-    // Calcula o atingido de acordo com o tipo
-    if (tipo === "producao") {
-      console.log(producoes);
-      const total = producoes
-        .filter(
-          (p) =>
-            p.produto === produto && p.safra === safra && p.fazenda === fazenda
-        )
-        .reduce((acc, p) => acc + Number(p.quantidade || 0), 0);
-      console.log("Total atingido:", total);
-      console.log("Tipo:", meta && meta.tipo);
-
-      setAtingido(total);
-    } else if (tipo === "vendas") {
-      const total = vendas
-        .filter(
-          (p) =>
-            p.produto === produto && p.safra === safra && p.fazenda === fazenda
-        )
-        .reduce((acc, p) => acc + Number(p.quantidade || 0), 0);
-      setAtingido(total);
-    }
-  }, [filtros, metas, producoes, vendas]);
-
-  const handleFiltroChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFiltros((prev) => ({ ...prev, [name]: value }));
-  };
+    setAtingido(totalProduzido);
+  }, [fazendaSelecionada, producoes]);
 
   const getProdutoNome = (id: string) => {
-    const produto = produtos.find((p) => p.id === id);
-    return produto
-      ? `${produto.nome}${produto.categoria ? ` (${produto.categoria})` : ""}`
-      : id;
+    const produto = produtos.find(p => p.id === id);
+    return produto ? `${produto.nome}${produto.categoria ? ` (${produto.categoria})` : ""}` : id;
   };
 
-  const formatarSafra = (safra: string) => {
-    if (!safra) return "";
-    if (safraSelected && safra === safraSelected.id) {
-      return safraSelected.nome || safra;
-    }
-    const found = safras.find((s: any) => s.id === safra);
-    return found?.nome || safra;
+  // const formatarSafra = (safra: string) => {
+  //   if (safra?.startsWith("SAF") && safra.length === 8) {
+  //     return `SAF${safra.slice(3, 5)}/${safra.slice(5, 7)}`;
+  //   }
+  //   return safra;
+  // };
+
+  const calcularSomaMetaPorEstado = () => {
+    const estadoMap = new Map<string, number>();
+
+    metas.forEach(meta => {
+      if (fazendaSelecionada && meta.fazenda !== fazendaSelecionada.nome) return;
+
+      const fazenda = fazendas.find(f => f.nome === meta.fazenda);
+      if (!fazenda?.estado) return;
+
+      const estado = fazenda.estado;
+      const valorAtual = estadoMap.get(estado) || 0;
+      estadoMap.set(estado, valorAtual + meta.valor);
+    });
+
+    return Array.from(estadoMap.entries()).map(([estado, soma]) => ({
+      estado: `BR-${estado}`,
+      meta: soma,
+    }));
   };
+
+  const getVendasPorProduto = () => {
+    if (!vendas || vendas.length === 0) {
+      return [];
+    }
+
+    // Filtrar vendas pela fazenda selecionada (se houver)
+    const vendasFiltradas = fazendaSelecionada 
+      ? vendas.filter(v => {
+          const producao = producoes.find(p => 
+            p.produto === v.produto && 
+            p.fazenda === fazendaSelecionada.nome
+          );
+          return producao !== undefined;
+        })
+      : vendas;
+
+    const vendasAgrupadas = vendasFiltradas.reduce((acc, venda) => {
+      const nomeProduto = getProdutoNome(venda.produto);
+      acc[nomeProduto] = (acc[nomeProduto] || 0) + venda.valor;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return Object.entries(vendasAgrupadas).map(([produto, valor]) => ({
+      produto,
+      valor
+    }));
+  };
+
+const getMetaPorProduto = () => {
+  // Filtra metas e produções conforme seleção
+  const metasFiltradas = fazendaSelecionada
+    ? metas.filter(m => m.fazenda === fazendaSelecionada.nome)
+    : metas;
+
+  // Pré-filtra produções para melhor performance
+  const producoesFiltradas = fazendaSelecionada
+    ? producoes.filter(p => p.fazenda === fazendaSelecionada.nome)
+    : producoes;
+
+  // Agrupa usando reduce
+  const resultado = metasFiltradas.reduce((acc, meta) => {
+    const produto = getProdutoNome(meta.produto);
+    const producao = producoesFiltradas
+      .filter(p => p.produto === meta.produto && p.safra === meta.safra)
+      .reduce((sum, p) => sum + p.quantidade, 0);
+
+    if (!acc[produto]) {
+      acc[produto] = { meta: 0, producao: 0 };
+    }
+
+    acc[produto].meta += meta.valor;
+    acc[produto].producao += producao;
+
+    return acc;
+  }, {} as Record<string, { meta: number; producao: number }>);
+
+  // Converte para array no formato esperado
+  return Object.entries(resultado).map(([produto, { meta, producao }]) => ({
+    produto,
+    meta,
+    producao
+  }));
+};
+
+const getSafraNome = () => {
+  
+  const producoesFiltradas = fazendaSelecionada
+    ? producoes.filter(p => p.fazenda === fazendaSelecionada.nome)
+    : producoes;
+
+  if (producoesFiltradas.length === 0) {
+    return [{ safra: "Nenhuma produção", produto: "N/A", producao: 0 }];
+  }
+
+  const agrupado = producoesFiltradas.reduce((acc, p) => {
+    const safra = safras.find(s => s.id === p.safra)?.nome || p.safra;
+    const produto = produtos.find(pr => pr.id === p.produto)?.nome || p.produto;
+    
+    if (!acc[safra]) acc[safra] = {};
+    acc[safra][produto] = (acc[safra][produto] || 0) + p.quantidade;
+    
+    return acc;
+  }, {} as Record<string, Record<string, number>>);
+
+
+  return Object.entries(agrupado).flatMap(([safra, produtos]) =>
+    Object.entries(produtos).map(([produto, producao]) => ({
+      safra,
+      produto,
+      producao
+    }))
+  );
+};
+
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        background: 'linear-gradient(to bottom, #F2EDDD, #E2C772)'
+      }}>
+        <p>Carregando dados...</p>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h2>Dashboard</h2>
+    <>
+      {/* <Header>
+        <Container>
+          <h1>Home</h1>
+          <p>Bem-vindo!</p>
+        </Container>
+      </Header> */}
 
-      <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
-        <ProdutoSelect
-          value={filtros.produto}
-          onChange={handleFiltroChange}
-          name="produto"
-        />
-        <SafraSelect
-          value={filtros.safra}
-          onChange={handleFiltroChange}
-          name="safra"
-        />
-        <FazendaSelect
-          value={filtros.fazenda}
-          onChange={handleFiltroChange}
-          name="fazenda"
-        />
-        <select name="tipo" value={filtros.tipo} onChange={handleFiltroChange}>
-          <option value="producao">Produção</option>
-          <option value="vendas">Vendas</option>
-        </select>
-      </div>
+      <Main>
+        <Container>
+          <Title>Suas Dashboards</Title>
+          <Subtitle>Escolha qual quer visualizar</Subtitle>
+          <Select
+            value={fazendaSelecionada?.id || ""}
+            onChange={(e) => {
+              const fazenda = fazendas.find(f => f.id === e.target.value);
+              setFazendaSelecionada(fazenda || null);
+            }}
+          >
+            <option value="">Todas as Fazendas</option>
+            {fazendas.map(fazenda => (
+              <option key={fazenda.id} value={fazenda.id}>
+                {fazenda.nome} - {fazenda.estado}
+              </option>
+            ))}
+          </Select>
 
-      {metaSelecionada ? (
-        <>
-          <p>
-            Produto: {getProdutoNome(metaSelecionada.produto)} | Safra:{" "}
-            {formatarSafra(metaSelecionada.safra)} | Meta:{" "}
-            {metaSelecionada.valor} unidades | Tipo:{" "}
-            {metaSelecionada.tipo === "producao" ? "Produção" : "Vendas"}
-          </p>
+          <CardsGrid>
+            {/* Card Localidade */}
+            <Card>
+              <CardHeader>Localidade</CardHeader>
+              <CardContent>
+                <DashboardRemote
+                  tipo="mapa"
+                  data={calcularSomaMetaPorEstado()}
+                />
+              </CardContent>
+            </Card>
 
-          <DashboardRemote
-            meta={metaSelecionada.valor}
-            atingido={atingido}
-            tipo={"metas"}
-            tipoMeta={metaSelecionada.tipo}
-          />
-        </>
-      ) : (
-        <p style={{ color: "gray" }}>
-          Selecione produto, safra, fazenda e tipo para visualizar a meta
-        </p>
-      )}
-    </div>
+            {/* Card Vendas */}
+            <Card>
+              <CardHeader>Vendas</CardHeader>
+              <CardContent>
+                <DashboardRemote
+                  tipo="lucro"
+                  data={getVendasPorProduto()}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Card Metas */}
+            <Card>
+              <CardHeader>Metas</CardHeader>
+              <CardContent>
+                <DashboardRemote
+                  tipo="metas"
+                  data={getMetaPorProduto()}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Card Produção */}
+            <Card>
+              <CardHeader>Produção/Safra Ano</CardHeader>
+              <CardContent>
+                <DashboardRemote
+                  tipo="producao"
+                  data={getSafraNome()}
+                />
+              </CardContent>
+            </Card>
+          </CardsGrid>
+        </Container>
+      </Main>
+    </>
   );
 }
