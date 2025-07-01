@@ -11,6 +11,7 @@ export const themed = {
     ochreFontsButton: "#A67F00",
     logotypeRed: "#BE164D",
     tableGreen: "#9FCA86",
+    mediumGreen: "#6A9253",
     success: "#29B21E", //verde do logotipo
     error: "#BD0000",
     dark: "#000000",
@@ -41,7 +42,6 @@ export const themed = {
       lineHeight: "19.36px",
       textAlign: "center",
     },
-
   },
   font_size: {
     fontsizesmall: "14px",
