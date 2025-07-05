@@ -25,6 +25,7 @@ export default function VendaList() {
     setFazendas(fazendasData);
   };
 
+  console.log("Vendas carregadas:", vendas);
   useEffect(() => {
     carregar();
   }, []);
