@@ -17,6 +17,7 @@ export const themed = {
     dark: "#000000",
     white: "#FFFFFF",
     grey: "#767676",
+    buttonGrey:"#CAD0C8",
     lightGrey: "#DEE2E6",
     disabledGrey: "#E9ECEF",
     disabled: "#8B8B8B",

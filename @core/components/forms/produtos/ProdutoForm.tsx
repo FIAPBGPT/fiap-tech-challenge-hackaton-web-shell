@@ -6,7 +6,6 @@ import {
 } from "@/@core/services/firebase/pages/produtosService";
 import { useEffect, useState } from "react";
 import SelectComponent from "../../ui/select/Select.component";
-import { InputStyles } from "@/@theme/custom/Input.styles";
 import InputComponent from "../../ui/input/Input.component";
 import { Container } from "@/@theme/custom/ProdutoForm.styles";
 
@@ -124,15 +123,16 @@ export default function ProdutoForm({
           />
 
           {error && <p style={{ color: "red" }}>{error}</p>}
-
-          <button type="submit">
-            {editarProduto ? "Salvar" : "Cadastrar"}
-          </button>
-          {editarProduto && (
-            <button type="button" onClick={onCancelEdit}>
-              Cancelar
+          <div id="div-buttons">
+            <button type="submit" id="btn-cadastrar">
+              {editarProduto ? "Salvar" : "Cadastrar"}
             </button>
-          )}
+            {editarProduto && (
+              <button type="button" id="btn-cancelar" onClick={onCancelEdit}>
+                Cancelar
+              </button>
+            )}
+          </div>
         </fieldset>
       </form>
     </Container>

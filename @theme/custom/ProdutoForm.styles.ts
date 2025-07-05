@@ -5,15 +5,14 @@ export const Container = styled.div`
   height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  border: 1px black solid;
+  align-items: flex-start;
 
   form {
     width: 100%;
-    max-width: 500px; /* Adiciona uma largura máxima para não ficar muito largo */
+    max-width: 700px;
     display: flex;
     justify-content: center;
-    border: 1px blue solid;
+    align-items: center;
   }
 
   fieldset {
@@ -21,10 +20,9 @@ export const Container = styled.div`
     display: flex;
     justify-content: center;
     flex-direction: column;
-    gap: 15px; /* Adiciona espaçamento entre os elementos */
-    padding: 20px;
+    gap: 15px;
   }
-  
+
   legend {
     font-size: ${(props) => props.theme.themeFonts.subTitleHeader};
     color: ${(props) => props.theme.themeColor.ochreFontsButton};
@@ -40,14 +38,33 @@ export const Container = styled.div`
     padding: 10px;
   }
 
- 
+  #div-buttons {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
 
   button {
     width: 100%;
     max-width: 300px;
     padding: 10px;
     margin-top: 10px;
+    height: 40px;
+    font-size: 16px;
+    color: ${(props) => props.theme.themeColor.white};
+    border-radius: 4px;
+
+    &:hover, &.active {
+      font-weight: bold;
+      text-decoration: underline;
+    }
   }
 
-
+  #btn-cadastrar {
+    background-color: ${(props) => props.theme.themeColor.secondary};
+  
+  }
+  #btn-cancelar{
+    background-color: ${(props) => props.theme.themeColor.buttonGrey};
+  }
 `;

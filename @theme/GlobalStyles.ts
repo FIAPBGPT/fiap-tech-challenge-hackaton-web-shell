@@ -19,6 +19,7 @@ declare module "styled-components" {
       primary: string;
       error: string;
       lightGrey: string;
+      buttonGrey: string;
       disabledGrey: string;
       disabled: string;
     };

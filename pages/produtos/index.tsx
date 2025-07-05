@@ -14,7 +14,6 @@ export default function ProdutosPage() {
             throw new Error("Function not implemented.");
           }}
         />
-        <div style={{ height: "150px" }}></div>
         <ProdutoList />
       </Container>
     </HeaderMenuComponent>

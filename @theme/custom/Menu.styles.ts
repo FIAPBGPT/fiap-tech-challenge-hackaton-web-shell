@@ -35,7 +35,7 @@ export const Container = styled.div`
     justify-content: center;
     align-items: flex-start;
     width: 100%;
-    font-weight: 900;
+    font-weight:  ${({ theme }) => theme.themeFonts.subTitleHeader.fontWeight};
     color: ${({ theme }) => theme.themeColor.backgroundLightBase};
     background-color: ${({ theme }) => theme.themeColor.secondary};
     padding: 0px;
