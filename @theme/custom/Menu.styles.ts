@@ -35,7 +35,7 @@ export const Container = styled.div`
     justify-content: center;
     align-items: flex-start;
     width: 100%;
-    font-weight: 900;
+    font-weight:  ${({ theme }) => theme.themeFonts.subTitleHeader.fontWeight};
     color: ${({ theme }) => theme.themeColor.backgroundLightBase};
     background-color: ${({ theme }) => theme.themeColor.secondary};
     padding: 0px;
@@ -127,6 +127,9 @@ export const Container = styled.div`
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
     }
+    &.isActive svg{
+        fill: ${({ theme }) => theme.themeColor.secondary};
+      }
   }
 
   #menu-navigation svg,
@@ -146,14 +149,13 @@ export const Container = styled.div`
     transition: all 0.3s ease;
     border-top: 1px solid ${({ theme }) => theme.themeColor.ochreFontsButton};
     border-bottom: 1px solid ${({ theme }) => theme.themeColor.ochreFontsButton};
-
     &.show {
       display: flex;
     }
   }
 
   #menu-links-cadastro a {
-    background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+    background-color: ${({ theme }) => theme.themeColor.backgroundLightBase};
     padding: 5px 35px;
     color: ${({ theme }) => theme.themeColor.ochreFontsButton};
 
@@ -166,6 +168,7 @@ export const Container = styled.div`
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
       text-decoration: underline;
+      background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
     }
   }
 `;

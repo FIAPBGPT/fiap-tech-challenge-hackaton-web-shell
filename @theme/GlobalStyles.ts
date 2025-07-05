@@ -11,6 +11,7 @@ declare module "styled-components" {
       ochreFontsButton: string;
       logotypeRed: string;
       tableGreen: string;
+      mediumGreen: string;
       dark: string;
       white: string;
       success: string;
@@ -18,7 +19,9 @@ declare module "styled-components" {
       primary: string;
       error: string;
       lightGrey: string;
+      buttonGrey: string;
       disabledGrey: string;
+      disabled: string;
     };
     themeFonts: {
       jura: string;
