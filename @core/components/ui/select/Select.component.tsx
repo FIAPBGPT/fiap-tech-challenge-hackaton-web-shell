@@ -4,13 +4,11 @@ import { useState } from "react";
 type SelectProps = {
   id: string;
   value: string;
-  label: string;
+  label?: string;
   options: string[];
   onChange: (value: string) => void;
   placeholder?: string;
   required?: boolean;
-  className?: string;
-  width?: string | number;
 };
 
 export default function SelectComponent({
@@ -21,11 +19,9 @@ export default function SelectComponent({
   onChange,
   placeholder = "Selecione uma opção",
   required = false,
-  className = "",
-  width = "100%",
 }: SelectProps) {
   return (
-    <div className={`select-wrapper ${className}`}>
+    <div>
       {label && (
         <label htmlFor={id} className="select-label">
           {label}
@@ -36,8 +32,6 @@ export default function SelectComponent({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
-        className="select-input"
-        style={{ width }}
       >
         <option value="">{placeholder}</option>
         {options.map((opt) => (

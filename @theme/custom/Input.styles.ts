@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const SelectStyles = styled.select`
+export const InputStyles = styled.input`
   width: 100%;
   height: 35px;
   background-color: ${(props) => props.theme.themeColor.white};
@@ -9,22 +9,20 @@ export const SelectStyles = styled.select`
   margin: 0 10px;
   border: none;
   outline: none;
+  appearance: none;
+  -webkit-appearance: none;
   margin: 10px 0;
+
+  label {
+    font-size: 16px;
+    color: ${(props) => props.theme.themeColor.ochreFontsButton};
+  }
 
   option {
     color: ${(props) => props.theme.themeColor.disabled};
     font-size: 14px;
     font-weight: 400;
     background-color: ${(props) => props.theme.themeColor.white};
-  }
-
-  &:invalid {
-    color: ${(props) => props.theme.themeColor.disabled};
-  }
-
-  &:valid {
-    color: ${(props) => props.theme.themeColor.mediumGreen};
-    font-weight: 900;
   }
 
   &:focus {
