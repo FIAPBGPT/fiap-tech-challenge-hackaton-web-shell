@@ -6,11 +6,21 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import useWindowSize from "../../../hooks/useWindowSize";
 import { usePathname } from "next/navigation";
+import CardapioIcon from "@/public/icons8cardapio.svg";
 
-export default function MenuComponent({ isMenuOpen }: { isMenuOpen: boolean }) {
+interface MenuComponentProps {
+  isMenuOpen: boolean;
+  onClose?: () => void; // Função opcional para fechar o menu
+}
+
+export default function MenuComponent({
+  isMenuOpen,
+  onClose,
+}: MenuComponentProps) {
   const [isMenuLinksOpen, setIsMenuLinksOpen] = useState(false);
   const { width } = useWindowSize();
   const pathname = usePathname();
+  const isMobile = width <= 720;
 
   useEffect(() => {
     // Abre automaticamente se estiver em uma rota de cadastro
@@ -18,6 +28,7 @@ export default function MenuComponent({ isMenuOpen }: { isMenuOpen: boolean }) {
       "/complete-cadastro",
       "/fazendas",
       "/produtos",
+      "/estoque",
       "/metas",
     ];
     const isInCadastroRoute = cadastroRoutes.includes(pathname);
@@ -25,12 +36,19 @@ export default function MenuComponent({ isMenuOpen }: { isMenuOpen: boolean }) {
     setIsMenuLinksOpen(isInCadastroRoute);
   }, [pathname]);
 
-  const isVisible = width > 720 || isMenuOpen;
+  // Desktop: sempre visível | Mobile: só se isMenuOpen for true
+  const isVisible = !isMobile || isMenuOpen;
   if (!isVisible) return null;
 
   function toggleMenuLinks() {
     setIsMenuLinksOpen((isMenuLinksOpen) => !isMenuLinksOpen);
   }
+
+  const handleLinkClick = () => {
+    if (isMobile && onClose) {
+      onClose();
+    }
+  };
 
   const renderActiveLink = (
     href: string,
@@ -41,14 +59,18 @@ export default function MenuComponent({ isMenuOpen }: { isMenuOpen: boolean }) {
     const currentPath = customPathname ?? pathname;
     if (currentPath === href) {
       return (
-        <Link href={href} className={pathname === href ? "isActive" : ""}>
+        <Link
+          href={href}
+          className={pathname === href ? "isActive" : ""}
+          onClick={handleLinkClick}
+        >
           {icon}
           {label}
         </Link>
       );
     } else {
       return (
-        <Link href={href}>
+        <Link href={href} onClick={handleLinkClick}>
           {icon}
           {label}
         </Link>
@@ -57,7 +79,15 @@ export default function MenuComponent({ isMenuOpen }: { isMenuOpen: boolean }) {
   };
 
   return (
-    <Container>
+    <Container className={isMobile && isMenuOpen ? "mobile-menu-open" : ""}>
+      {isMobile && onClose && (
+        <div className="menu-close-button">
+          <button onClick={onClose} className="close-btn">
+            <CardapioIcon />
+          </button>
+        </div>
+      )}
+
       <div id="menu-header">
         <div id="menu-user-icon">
           <UserIcon />
@@ -68,9 +98,10 @@ export default function MenuComponent({ isMenuOpen }: { isMenuOpen: boolean }) {
           <p>Matrícula: 12345</p>
         </div>
       </div>
+
       <div id="menu-navigation">
         <div className="menu-navigation-item">
-          {renderActiveLink("/", "Home", <HomeIcon />)}
+          {renderActiveLink("/dashboard", "Home", <HomeIcon />)}
         </div>
         <div className="menu-navigation-item">
           <button
@@ -87,6 +118,7 @@ export default function MenuComponent({ isMenuOpen }: { isMenuOpen: boolean }) {
         {renderActiveLink("/complete-cadastro", "Usuário")}
         {renderActiveLink("/fazendas", "Fazenda")}
         {renderActiveLink("/produtos", "Produto")}
+        {renderActiveLink("/estoque", "Estoque")}
         {renderActiveLink("/metas", "Meta")}
       </div>
     </Container>

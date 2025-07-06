@@ -1,56 +1,52 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  display: flex;
-  flex-direction: column;
   width: 100%;
   height: 100vh;
-  background-color: ${({ theme }) => theme.themeColor.backgroundBase};
-  * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-  }
-
-  main {
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 0 25px 25px 25px;
-    width: 100%;
-    height: 100vh;
-  }
+  display: flex;
+  flex-direction: column;
+  position: relative;
 
   #menu-main-container {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    width: 100%;
-    height: 100%;
+    flex: 1;
+    overflow: hidden;
+    position: fixed;
+    top: 150px; 
+    left: 0;
+    width: 100vh;
+    height: calc(100vh - 150px); 
+
+    main {
+      flex: 1;
+      overflow: auto;
+
+      @media (max-width: 720px) {
+        width: 100%;
+      }
+    }
+
+    /* Overlay/Backdrop para mobile */
+    .menu-overlay {
+      z-index: 998;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+
+      &.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      @media (min-width: 721px) {
+        display: none;
+      }
+    }
   }
 
   #main-container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    flex: 1;
-    padding: 0 20px 20px 20px;
+    padding: 20px;
     width: 100%;
-    height: 100vh;
-    max-width: 1024px;
-    border-left: 1px solid
-      ${({ theme }) => theme.themeColor.backgroundLightBase};
-    border-right: 1px solid
-      ${({ theme }) => theme.themeColor.backgroundLightBase};
-    border-bottom: 1px solid ${({ theme }) => theme.themeColor.secondary};
-  }
-  @media (max-width: 720px) {
-    main {
-      padding: 0 20px 20px 20px;
-    }
-    #main-container {
-      padding: 0 15px 15px 15px;
-    }
+    height: 100%;
   }
 `;

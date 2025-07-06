@@ -10,6 +10,8 @@ export default function HeaderMenuComponent({
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const closeMenu = () => setIsMenuOpen(false);
+
   return (
     <Container>
       <HeaderComponent
@@ -17,7 +19,15 @@ export default function HeaderMenuComponent({
         isActive={isMenuOpen}
       />
       <div id="menu-main-container">
-        <MenuComponent isMenuOpen={isMenuOpen} />
+        {/* mobile */}
+
+        <div
+          className={`menu-overlay ${isMenuOpen ? "show" : ""}`}
+          onClick={closeMenu}
+        />
+
+        <MenuComponent isMenuOpen={isMenuOpen} onClose={closeMenu} />
+
         <main>
           <div id="main-container">{children}</div>
         </main>
