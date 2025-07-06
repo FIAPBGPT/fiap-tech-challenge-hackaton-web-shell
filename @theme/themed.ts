@@ -7,6 +7,7 @@ export const themed = {
     backgroundBase: "linear-gradient(to bottom, #F2EDDD, #E2C772)",
     backgroundLightBase: "#F1EBD9",
     backgroundDarkBase: "#E2C772",
+    backgroundMediumBase: "#EDE3C5",
     ochreFontsButton: "#A67F00",
     logotypeRed: "#BE164D",
     tableGreen: "#9FCA86",

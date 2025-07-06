@@ -6,6 +6,8 @@ import {
   excluirFazenda,
   listarFazendas,
 } from "@/@core/services/firebase/pages/fazendasService";
+import GenericTable from "../../ui/GenericTable";
+import { Col, Row } from "react-bootstrap";
 
 export default function FazendaList() {
   const { fazendas, setFazendas, loading, setLoading, removeFazenda } =
@@ -73,21 +75,30 @@ export default function FazendaList() {
         onCancelEdit={handleCancelEdit}
       />
 
-      <ul>
-        {fazendas.map((f) => (
-          <li key={f.id}>
-            <strong>{f.nome}</strong> - {f.estado}{" "}
-            {f.latitude !== null && f.latitude !== undefined && (
-              <>| Latitude: {f.latitude.toFixed(6)} </>
-            )}
-            {f.longitude !== null && f.longitude !== undefined && (
-              <>| Longitude: {f.longitude.toFixed(6)}</>
-            )}{" "}
-            <button onClick={() => handleEditar(f)}>Editar</button>
-            <button onClick={() => handleDelete(f.id)}>Excluir</button>
-          </li>
-        ))}
-      </ul>
+      <Row>
+        <Col>
+          <GenericTable
+            data={fazendas}
+            columns={[
+              { key: "nome", label: "Nome" },
+              { key: "estado", label: "Estado" },
+              {
+                key: "latitude",
+                label: "Latitude",
+                render: (f) => f.latitude?.toFixed(6) ?? "-",
+              },
+              {
+                key: "longitude",
+                label: "Longitude",
+                render: (f) => f.longitude?.toFixed(6) ?? "-",
+              },
+            ]}
+            onEdit={handleEditar}
+            onDelete={(f) => handleDelete(f.id)}
+            loading={loading}
+          />
+        </Col>
+      </Row>
 
       {loading && <p>Carregando...</p>}
     </div>

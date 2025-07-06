@@ -7,6 +7,7 @@ declare module "styled-components" {
       backgroundBase: string;
       backgroundLightBase: string;
       backgroundDarkBase: string;
+      backgroundMediumBase: string;
       ochreFontsButton: string;
       logotypeRed: string;
       tableGreen: string;

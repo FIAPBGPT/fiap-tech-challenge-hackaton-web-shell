@@ -14,6 +14,12 @@ const nextConfig = {
   },
   webpack(config, options) {
     const { isServer } = options;
+    config.module.rules.push({
+      test: /\.svg$/,
+      issuer: /\.[jt]sx?$/,
+      use: ["@svgr/webpack"],
+    });
+    
     const remotes = {
       mfe: `mfe@${remoteNextAppUrl}/_next/static/chunks/remoteEntry.js`,
     };

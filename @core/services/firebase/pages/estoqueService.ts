@@ -13,13 +13,13 @@ import { firestore } from "../firebase";
 
 const COLLECTION = "estoque";
 
-// Função para listar movimentações de estoque
+// Lista todas as movimentações de estoque
 export async function listarEstoque() {
   const snapshot = await getDocs(collection(firestore, COLLECTION));
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }
 
-// Adicionar uma nova movimentação de estoque (entrada ou saída)
+// Adiciona uma movimentação ao estoque
 export async function adicionarEstoque(movimentacao: {
   produtoId: string;
   safraId?: string | null;
@@ -29,7 +29,6 @@ export async function adicionarEstoque(movimentacao: {
   observacao?: string;
 }) {
   const data = Timestamp.now();
-
   await addDoc(collection(firestore, COLLECTION), {
     ...movimentacao,
     quantidade: Math.abs(movimentacao.quantidade),
@@ -37,19 +36,19 @@ export async function adicionarEstoque(movimentacao: {
   });
 }
 
-// Atualizar uma movimentação existente
+// Atualiza um registro de estoque existente
 export async function atualizarEstoque(id: string, dado: any) {
   const ref = doc(firestore, COLLECTION, id);
   await updateDoc(ref, dado);
 }
 
-// Excluir uma movimentação
+// Exclui um registro de estoque
 export async function excluirEstoque(id: string) {
   const ref = doc(firestore, COLLECTION, id);
   await deleteDoc(ref);
 }
 
-// Registrar VENDA no estoque (saida)
+// Registra saída de estoque referente a uma venda
 export async function registrarVendaEstoque(venda: {
   id: string;
   itens: Array<{
@@ -71,7 +70,7 @@ export async function registrarVendaEstoque(venda: {
   }
 }
 
-// Registrar PRODUÇÃO no estoque (entrada)
+// Registra entrada de estoque referente a uma produção
 export async function registrarProducaoEstoque(producao: {
   id: string;
   itens: Array<{
@@ -93,64 +92,29 @@ export async function registrarProducaoEstoque(producao: {
   }
 }
 
-// Registrar ENTRADA genérica (entrada)
-export async function registrarEntradaEstoque(movimentacao: {
-  id?: string;
+// Remove estoque referente a uma produção excluída
+export async function removerProducaoEstoque(producao: {
+  id: string;
   itens: Array<{
     produtoId: string;
     quantidade: number;
     safraId?: string | null;
     fazendaId?: string | null;
   }>;
-  data?: Date;
-  origem?: string;
-  referenciaId?: string;
 }) {
-  const dataMovimentacao = movimentacao.data || new Date();
-
-  for (const item of movimentacao.itens) {
+  for (const item of producao.itens) {
     await adicionarEstoque({
       produtoId: item.produtoId,
       quantidade: item.quantidade,
       safraId: item.safraId || null,
       fazendaId: item.fazendaId || null,
-      tipo: "entrada",
-      observacao: `Entrada - Origem: ${movimentacao.origem || "manual"}`,
+      tipo: "saida",
+      observacao: `Remoção de produção ID: ${producao.id}`,
     });
   }
 }
 
-// Consultar saldo com base nas movimentações (sem usar estoque_saldos)
-export async function consultarSaldoEstoque(
-  produtoId: string,
-  safraId: string | null,
-  fazendaId: string | null
-): Promise<number> {
-  try {
-    const constraints = [where("produtoId", "==", produtoId)];
-
-    if (safraId) constraints.push(where("safraId", "==", safraId));
-    if (fazendaId) constraints.push(where("fazendaId", "==", fazendaId));
-
-    const q = query(collection(firestore, COLLECTION), ...constraints);
-    const snapshot = await getDocs(q);
-
-    let saldo = 0;
-
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      const quantidade = Number(data.quantidade) || 0;
-      saldo += data.tipo === "entrada" ? quantidade : -quantidade;
-    });
-
-    return saldo;
-  } catch (error) {
-    console.error("Erro ao calcular saldo de estoque:", error);
-    return 0;
-  }
-}
-
-// NOVA FUNÇÃO: Reabastecer estoque ao excluir uma venda
+// Reabastece estoque ao excluir venda
 export async function reabastecerEstoqueVenda(venda: {
   id: string;
   itens: Array<{
@@ -166,8 +130,36 @@ export async function reabastecerEstoqueVenda(venda: {
       quantidade: item.quantidade,
       safraId: item.safraId || null,
       fazendaId: item.fazendaId || null,
-      tipo: "entrada", // reabastece
+      tipo: "entrada",
       observacao: `Reabastecimento por exclusão da Venda ID: ${venda.id}`,
     });
+  }
+}
+
+// Consulta o saldo do estoque (com base nas movimentações)
+export async function consultarSaldoEstoque(
+  produtoId: string,
+  safraId: string | null,
+  fazendaId: string | null
+): Promise<number> {
+  try {
+    const constraints = [where("produtoId", "==", produtoId)];
+    if (safraId) constraints.push(where("safraId", "==", safraId));
+    if (fazendaId) constraints.push(where("fazendaId", "==", fazendaId));
+
+    const q = query(collection(firestore, COLLECTION), ...constraints);
+    const snapshot = await getDocs(q);
+
+    let saldo = 0;
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const quantidade = Number(data.quantidade) || 0;
+      saldo += data.tipo === "entrada" ? quantidade : -quantidade;
+    });
+
+    return saldo;
+  } catch (error) {
+    console.error("Erro ao calcular saldo de estoque:", error);
+    return 0;
   }
 }
