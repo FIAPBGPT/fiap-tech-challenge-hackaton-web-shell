@@ -1,17 +1,6 @@
+import { InputProps } from '@/@core/props/input';
 import { InputStyle } from '@/@theme/custom/input.style';
 import React from 'react';
-
-interface InputProps {
-  type?: string;
-  id?: string;
-  name?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  required?: boolean;
-  className?: string;
-  style?: React.CSSProperties;
-}
 
 const InputComponent: React.FC<InputProps> = ({
   type = 'text',
