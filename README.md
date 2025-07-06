@@ -1,40 +1,78 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# FIAP Tech Challenge Hackathon - Web Shell
 
-## Getting Started
+Este projeto é uma aplicação web desenvolvida com [Next.js](https://nextjs.org/) para o Tech Challenge da FIAP. O objetivo do projeto é fornecer uma interface moderna e eficiente para resolver desafios propostos durante o hackathon, utilizando as melhores práticas de desenvolvimento web.
 
-First, run the development server:
+## Sobre o Projeto
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+O **FIAP Tech Challenge Hackathon - Web Shell** é uma aplicação que permite aos usuários interagir com desafios técnicos, visualizar resultados em tempo real e colaborar em equipe. O projeto foi estruturado para ser facilmente extensível e de fácil manutenção, utilizando tecnologias modernas do ecossistema React.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Este projeto segue o padrão **Clean Architecture**, garantindo separação de responsabilidades e facilitando a escalabilidade e manutenção do código. O gerenciamento de estado é feito com [Zustand](https://zustand-demo.pmnd.rs/), proporcionando uma solução leve e eficiente para estados globais. Além disso, a aplicação é um **Micro Frontend Shell (MFE Shell)** utilizando **Module Federation**, permitindo integração e orquestração de múltiplos micro frontends de forma dinâmica.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Como Rodar o Projeto
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Siga os passos abaixo para executar o projeto localmente:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+1. **Clone o repositório:**
+    ```bash
+    git clone https://github.com/seu-usuario/fiap-tech-challenge-hackaton-web-shell.git
+    cd fiap-tech-challenge-hackaton-web-shell
+    ```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+2. **Instale as dependências:**
+    ```bash
+    npm install
+    # ou
+    yarn install
+    # ou
+    pnpm install
+    # ou
+    bun install
+    ```
 
-## Learn More
+3. **Inicie o servidor de desenvolvimento:**
+    ```bash
+    npm run dev
+    # ou
+    yarn dev
+    # ou
+    pnpm dev
+    # ou
+    bun dev
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+4. **Acesse a aplicação:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    Abra [http://localhost:3000](http://localhost:3000) no seu navegador para visualizar a aplicação.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Configurações Adicionais
 
-## Deploy on Vercel
+- **Variáveis de Ambiente:**  
+  Caso o projeto utilize variáveis de ambiente, crie um arquivo `.env.local` na raiz do projeto e adicione as configurações necessárias conforme a documentação interna.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Scripts Disponíveis:**
+  - `dev`: Inicia o servidor de desenvolvimento.
+  - `build`: Gera a versão de produção do projeto.
+  - `start`: Inicia o servidor em modo produção.
+  - `lint`: Executa o linter para verificar problemas de código.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Estrutura do Projeto
+
+- `pages/`: Contém as páginas da aplicação.
+- `components/`: Componentes reutilizáveis de UI.
+- `public/`: Arquivos estáticos.
+- `styles/`: Estilos globais e módulos CSS.
+
+## Tecnologias Utilizadas
+
+- [Next.js](https://nextjs.org/)
+- [React](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Zustand](https://zustand-demo.pmnd.rs/) para gerenciamento de estado
+- [next/font](https://nextjs.org/docs/basic-features/font-optimization) para otimização de fontes
+- **Clean Architecture**
+- **Module Federation** para Micro Frontends
+
+## Saiba Mais
+
+- [Documentação do Next.js](https://nextjs.org/docs)
+- [Tutorial Interativo Next.js](https://nextjs.org/learn)
