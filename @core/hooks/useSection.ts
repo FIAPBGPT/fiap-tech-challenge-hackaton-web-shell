@@ -1,39 +1,58 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+
+interface Item{
+  item:ItemProps;
+}
+
+export enum ItemProps{
+ HOME = "home",
+ USUARIO = "usuario",
+ PRODUTO = "produto",
+ ESTOQUE = "estoque",
+ PRODUCAO = "producao",
+ FAZENDA = "fazenda",
+ METAS = "ME",
+}
+
 export enum CurrentSection {
-  HOME = "Home",
+  DASHBORAD = "Sua Dashbord",
   CAD_PRODUTOS = "Cadastro de Produtos",
   CAD_FAZENDAS = "Cadastro de Fazendas",
   COMPLETE_CADASTRO = "Complete seu cadastro",
-  METAS = "Metas",
+  ESTOQUE = "Gestão de Estoque",
+  METAS = "metas",
 }
 
-export function useSection(): CurrentSection {
-  const pathname = usePathname();
-  const [section, setSection] = useState<CurrentSection>(CurrentSection.HOME);
+
+export function useSection(props: Item): CurrentSection {
+  const [section, setSection] = useState<CurrentSection>(CurrentSection.DASHBORAD);
 
   useEffect(() => {
-    switch (pathname) {
-      case "/":
-        setSection(CurrentSection.HOME);
+    switch (props.item) {
+      case ItemProps.HOME:
+        setSection(CurrentSection.DASHBORAD);
         break;
-      case "/produtos":
+      case ItemProps.PRODUTO:
         setSection(CurrentSection.CAD_PRODUTOS);
         break;
-      case "/fazendas":
+      case ItemProps.FAZENDA:
         setSection(CurrentSection.CAD_FAZENDAS);
         break;
-      case "/complete-cadastro":
+      case ItemProps.USUARIO:
         setSection(CurrentSection.COMPLETE_CADASTRO);
         break;
-      case "/metas":
+      case ItemProps.ESTOQUE:
+        setSection(CurrentSection.ESTOQUE);
+        break;
+      case ItemProps.METAS:
         setSection(CurrentSection.METAS);
         break;
       default:
-        setSection(CurrentSection.HOME);
+        setSection(CurrentSection.DASHBORAD);
     }
-  }, [pathname]);
+  }, [props.item]);
 
   return section;
 }

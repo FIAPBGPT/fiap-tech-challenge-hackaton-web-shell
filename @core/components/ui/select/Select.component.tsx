@@ -1,40 +1,34 @@
 import { SelectStyles } from "@/@theme/custom/Select.styles";
-import { useState } from "react";
 
 type SelectProps = {
   id: string;
   value: string;
   label?: string;
-  options: string[];
+  options: any[];
   onChange: (value: string) => void;
   placeholder?: string;
   required?: boolean;
 };
 
-export default function SelectComponent({
-  id,
-  value,
-  label,
-  options = [] as string[],
-  onChange,
-  placeholder = "Selecione uma opção",
-  required = false,
-}: SelectProps) {
+export default function SelectComponent(
+  props: SelectProps,
+  { placeholder = "Selecione uma opção" }: SelectProps
+) {
   return (
     <div>
-      {label && (
-        <label htmlFor={id} className="select-label">
-          {label}
+      {props.label && (
+        <label htmlFor={props.id} className="select-label">
+          {props.label}
         </label>
       )}
       <SelectStyles
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        required={required}
+        id={props.id}
+        value={props.value}
+        onChange={(e) => props.onChange(e.target.value)}
+        required={props.required}
       >
         <option value="">{placeholder}</option>
-        {options.map((opt) => (
+        {props.options.map((opt) => (
           <option key={opt} value={opt}>
             {opt}
           </option>

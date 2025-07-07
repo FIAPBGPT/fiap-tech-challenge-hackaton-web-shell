@@ -7,34 +7,46 @@ import { useEffect, useState } from "react";
 import useWindowSize from "../../../hooks/useWindowSize";
 import { usePathname } from "next/navigation";
 import CardapioIcon from "@/public/icons8cardapio.svg";
+import FazendasPage from "@/pages/fazendas";
+import MetaForm from "../../forms/metas/MetaForm";
+import DashboardPage from "@/pages/dashboard";
+import ProdutosPage from "@/pages/produtos";
+import EstoquePage from "@/pages/estoque";
+import ProducoesPage from "@/pages/producoes";
+import CompleteCadastro from "@/pages/complete-cadastro";
+import { ItemProps } from "@/@core/hooks/useSection";
 
 interface MenuComponentProps {
   isMenuOpen: boolean;
-  onClose?: () => void; // Função opcional para fechar o menu
+  onClose?: () => void;
+  onOpenCadastro: (form: React.ReactNode, item: ItemProps)  => void;
 }
 
 export default function MenuComponent({
   isMenuOpen,
   onClose,
+  onOpenCadastro,
 }: MenuComponentProps) {
   const [isMenuLinksOpen, setIsMenuLinksOpen] = useState(false);
+  const [isMenuBtnActive, setIsMenuBtnActive] = useState(false);
+  const [activeItem, setActiveItem] = useState<string | null>(null);
   const { width } = useWindowSize();
   const pathname = usePathname();
   const isMobile = width <= 720;
 
-  useEffect(() => {
-    // Abre automaticamente se estiver em uma rota de cadastro
-    const cadastroRoutes = [
-      "/complete-cadastro",
-      "/fazendas",
-      "/produtos",
-      "/estoque",
-      "/metas",
-    ];
-    const isInCadastroRoute = cadastroRoutes.includes(pathname);
+  // useEffect(() => {
+  //   // Abre automaticamente se estiver em uma rota de cadastro
+  //   const cadastroRoutes = [
+  //     "/complete-cadastro",
+  //     "/fazendas",
+  //     "/produtos",
+  //     "/estoque",
+  //     "/metas",
+  //   ];
+  //   const isInCadastroRoute = cadastroRoutes.includes(pathname);
 
-    setIsMenuLinksOpen(isInCadastroRoute);
-  }, [pathname]);
+  //   setIsMenuLinksOpen(isInCadastroRoute);
+  // }, [pathname]);
 
   // Desktop: sempre visível | Mobile: só se isMenuOpen for true
   const isVisible = !isMobile || isMenuOpen;
@@ -50,32 +62,30 @@ export default function MenuComponent({
     }
   };
 
-  const renderActiveLink = (
-    href: string,
+  function toggleMenuButton() {
+    setIsMenuBtnActive((prev) => !prev);
+  }
+
+  const renderActiveButton = (
+    item: ItemProps,
+    content: React.ReactNode,
     label: string,
-    icon?: any,
-    customPathname?: string
+    icon?: React.ReactNode,
+    href?: string,
+    pathname?: string
   ) => {
-    const currentPath = customPathname ?? pathname;
-    if (currentPath === href) {
-      return (
-        <Link
-          href={href}
-          className={pathname === href ? "isActive" : ""}
-          onClick={handleLinkClick}
-        >
-          {icon}
-          {label}
-        </Link>
-      );
-    } else {
-      return (
-        <Link href={href} onClick={handleLinkClick}>
-          {icon}
-          {label}
-        </Link>
-      );
-    }
+    const isActive = item === ItemProps.HOME || (href && href === pathname);
+    return (
+      <button
+        onClick={() => {
+          onOpenCadastro(content, item);
+        }}
+        className={`menu-button ${isActive ? "isActive" : ""}`}
+      >
+        {icon}
+        {label}
+      </button>
+    );
   };
 
   return (
@@ -101,7 +111,12 @@ export default function MenuComponent({
 
       <div id="menu-navigation">
         <div className="menu-navigation-item">
-          {renderActiveLink("/dashboard", "Home", <HomeIcon />)}
+          {renderActiveButton(
+            ItemProps.HOME,
+            <DashboardPage />,
+            "Home",
+            <HomeIcon />
+          )}
         </div>
         <div className="menu-navigation-item">
           <button
@@ -114,12 +129,44 @@ export default function MenuComponent({
         </div>
       </div>
 
-      <div id="menu-links-cadastro" className={isMenuLinksOpen ? "show" : ""}>
-        {renderActiveLink("/complete-cadastro", "Usuário")}
-        {renderActiveLink("/fazendas", "Fazenda")}
-        {renderActiveLink("/produtos", "Produto")}
-        {renderActiveLink("/estoque", "Estoque")}
-        {renderActiveLink("/metas", "Meta")}
+      <div id="menu-button-cadastro" className={isMenuLinksOpen ? "show" : ""}>
+        {/* <button
+          onClick={() => {
+            onOpenCadastro(<FazendasPage />);
+            setActiveItem("fazenda");
+          }}
+          className={`menu-button ${
+            activeItem === "fazenda" ? "isActive" : ""
+          }`}
+        >
+          Fazenda
+        </button>
+        <button
+          onClick={() => {
+            onOpenCadastro(
+              <MetaForm
+                onSuccess={function (): void {
+                  throw new Error("Function not implemented.");
+                }}
+              />
+            );
+            setActiveItem("metas");
+          }}
+          className={`menu-button ${activeItem === "metas" ? "isActive" : ""}`}
+        >
+          Metas
+        </button> */}
+        {/* {renderActiveButton("fazenda", <FazendasPage />), "Fazenda")} */}
+        {/* // {renderActiveLink("/fazendas", "Fazenda")}
+        // {renderActiveLink("/produtos", "Produto")}
+        // {renderActiveLink("/estoque", "Estoque")}
+        // {renderActiveLink("/metas", "Meta")} */}
+
+        {renderActiveButton(ItemProps.USUARIO, <CompleteCadastro />, "Usuário")}
+        {renderActiveButton(ItemProps.PRODUTO, <ProdutosPage />, "Produto")}
+        {renderActiveButton(ItemProps.ESTOQUE, <EstoquePage />, "Estoque")}
+        {renderActiveButton(ItemProps.PRODUCAO, <ProducoesPage />, "Produção")}
+        {renderActiveButton(ItemProps.FAZENDA, <FazendasPage />, "Fazenda")}
       </div>
     </Container>
   );

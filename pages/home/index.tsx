@@ -1,14 +1,9 @@
-'use client';
+import HeaderMenuComponent from "@/@core/components/baseHeaderMenu/HeaderMenu.component";
+import DashboardPage from "../dashboard";
 
-import { MainContainer } from "@/@theme/custom/DashboradPage-styles";
+export default function Home(){
+    return(
+            <HeaderMenuComponent children={<DashboardPage/>}/>
+    )
 
-
-export default function DashboardPage() {
-  return (
-   <MainContainer>
-        <div>
-            
-        </div>
-    </MainContainer>
-  );
 }

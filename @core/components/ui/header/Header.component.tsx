@@ -1,5 +1,5 @@
 import { Container } from "@/@theme/custom/Header.styles";
-import { useSection } from "@/@core/hooks/useSection";
+import { ItemProps, useSection } from "@/@core/hooks/useSection";
 import useWindowSize from "@/@core/hooks/useWindowSize";
 import CardapioIcon from "@/public/icons8cardapio.svg";
 import { useState } from "react";
@@ -7,10 +7,11 @@ import { useState } from "react";
 interface HeaderProps {
   toggleMenu: () => void;
   isActive: boolean;
+  item: ItemProps | null;
 }
 
-export default function HeaderComponent({ toggleMenu, isActive }: HeaderProps) {
-  const section = useSection();
+export default function HeaderComponent({ toggleMenu, isActive, item }: HeaderProps) {
+  const section = useSection({ item: item ?? ItemProps.HOME });
   const { width } = useWindowSize();
 
   function DataSection() {

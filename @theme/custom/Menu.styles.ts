@@ -140,7 +140,7 @@ export const Container = styled.div`
     fill: ${({ theme }) => theme.themeColor.ochreFontsButton};
   }
 
-  #menu-links-cadastro {
+  #menu-button-cadastro {
     display: none;
     flex-direction: column;
     width: 100%;
@@ -153,7 +153,7 @@ export const Container = styled.div`
     }
   }
 
-  #menu-links-cadastro a {
+  #menu-button-cadastro button {
     background-color: ${({ theme }) => theme.themeColor.backgroundLightBase};
     padding: 5px 35px;
     color: ${({ theme }) => theme.themeColor.ochreFontsButton};
