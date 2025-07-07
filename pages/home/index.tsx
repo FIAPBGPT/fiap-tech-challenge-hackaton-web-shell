@@ -1,9 +1,14 @@
-import HeaderMenuComponent from "@/@core/components/baseHeaderMenu/HeaderMenu.component";
-import DashboardPage from "../dashboard";
 
-export default function Home(){
-    return(
-            <HeaderMenuComponent children={<DashboardPage/>}/>
-    )
+import ButtonComponent from "@/@core/components/ui/Button";
+import { MainContainer } from "@/@theme/custom/DashboradPage-styles";
+import Login from "../login";
 
+
+
+export default function DashboardPage() {
+  return (
+    <MainContainer>
+      <Login/>
+    </MainContainer>
+  );
 }

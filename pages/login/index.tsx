@@ -1,13 +1,25 @@
 "use client";
+import Image from 'next/image';
 import { auth } from "@/@core/services/firebase/firebase";
 import { useAuthStore } from "@/@core/store/authStore";
+import { StyledButton } from "@/@theme/custom/Button.style";
+import { FooterContainer, ContactContainer, ContactText, IconsContainer, IconLink } from "@/@theme/custom/Footer.style";
+import { Content, FormContainer, Header, LeftText, LoginContainer, LoginContainerContent, Logo, PageContainer, TitleForm } from "@/@theme/custom/LoginPage-style";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Spinner } from "react-bootstrap";
+import { FaInstagram, FaLinkedin, FaWhatsapp } from "react-icons/fa";
+import logo from "@/public/image/logo.png";
 
-export default function LoginPage() {
+// @ts-ignore
+const Mfe = dynamic(() => import("mfe/app"), {
+  ssr: false,
+  loading: () => <Spinner animation="border" variant="secondary" size="sm" />,
+});
+
+export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,43 +50,63 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "400px", margin: "0 auto" }}>
-      <h2>Login</h2>
+    <PageContainer>
+      <LoginContainer>        
+        <Header>
+        <Image src={logo} alt="Logo" width={120} height={40} />
+        </Header>
+        <LoginContainerContent>
+          <Content>
+            <LeftText>
+              Sua solução em planejamento
+            </LeftText>
 
-      {error && (
-        <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>
-      )}
+            <FormContainer>
+            <TitleForm>
+              Faça seu Login
+            </TitleForm>
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
+                  style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
+                />
+                <input
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  type="password"
+                  placeholder="Senha"
+                  style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
+                />
+              <StyledButton variant="secondary" onClick={handleLogin}>{loading ? <Spinner animation="border" size="sm" /> : "Entrar"}</StyledButton>
+              <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>
+            </FormContainer>
+          </Content>
+        </LoginContainerContent>
+      </LoginContainer>
+      
 
-      <div>
-        <input
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-        />
-        <input
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          type="password"
-          placeholder="Senha"
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-        />
-        <button
-          onClick={handleLogin}
-          disabled={loading}
-          style={{
-            width: "100%",
-            padding: "10px",
-            backgroundColor: "#007BFF",
-            color: "white",
-            border: "none",
-            cursor: loading ? "not-allowed" : "pointer",
-            marginBottom: "10px",
-          }}
-        >
-          {loading ? <Spinner animation="border" size="sm" /> : "Entrar"}
-        </button>
-      </div>
-    </div>
+      <FooterContainer>
+        <ContactContainer>
+          <ContactText>Contate-nos</ContactText>
+          <IconsContainer>
+            <IconLink href="https://instagram.com" target="_blank" aria-label="Instagram">
+              <FaInstagram />
+            </IconLink>
+            <IconLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
+              <FaLinkedin />
+            </IconLink>
+            <IconLink href="https://wa.me/1234567890" target="_blank" aria-label="WhatsApp">
+              <FaWhatsapp />
+            </IconLink>
+          </IconsContainer>
+        </ContactContainer>
+
+        <ContactContainer>
+          <ContactText>0800 004 250 08   |   suporte@fiapfams.com.br </ContactText>
+          <ContactText>Desenvolvido por Grupo 29 </ContactText>
+        </ContactContainer>
+      </FooterContainer>
+    </PageContainer>    
   );
 }

@@ -13,6 +13,7 @@
   "dependencies": {
     "@module-federation/nextjs-mf": "^8.8.27",
     "@react-google-maps/api": "^2.20.6",
+    "bootstrap": "^5.3.7",
     "fiap-farms-mf-shell": "file:",
     "firebase": "^11.8.1",
     "next": "14.2.3",
@@ -20,6 +21,7 @@
     "react-bootstrap": "^2.10.10",
     "react-dom": "^18",
     "react-google-charts": "^5.2.1",
+    "react-icons": "^5.5.0",
     "styled-components": "^6.1.18",
     "typeface-jura": "^1.1.13",
     "zustand": "^5.0.5"

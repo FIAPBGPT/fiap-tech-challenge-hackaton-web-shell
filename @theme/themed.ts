@@ -22,6 +22,7 @@ export const themed = {
     disabledGrey: "#E9ECEF",
     disabled: "#8B8B8B",
     darkGrey: "#CBCBCB",
+    mustard: '#765B04' // texto do login
   },
   themeFonts: {
     jura: "Jura, sans-serif",
@@ -41,7 +42,8 @@ export const themed = {
       fontSize: "16px",
       fontWeight: "600",
       lineHeight: "19.36px",
-      textAlign: "center",
+      textAlign: "center",      
+      fontFamily: "Jura, sans-serif",
     },
       text: {
       fontSize: "18px",
