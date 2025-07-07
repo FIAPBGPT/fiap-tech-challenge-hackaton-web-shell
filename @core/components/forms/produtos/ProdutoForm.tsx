@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
 import {
   adicionarProduto,
   atualizarProduto,
 } from "@/@core/services/firebase/pages/produtosService";
 import { useEffect, useState } from "react";
+import SelectComponent from "../../ui/select/Select.component";
+import InputComponent from "../../ui/input/Input.component";
+import { Container } from "@/@theme/custom/ProdutoForm.styles";
 
 interface ProdutoFormProps {
   onSuccess: () => void;
@@ -82,55 +85,56 @@ export default function ProdutoForm({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <fieldset>
-        <legend>
-          {editarProduto ? "Editar Produto" : "Cadastrar Produto"}
-        </legend>
+    <Container>
+      <form onSubmit={handleSubmit}>
+        <fieldset>
+          <div id="containers-legend">
+            <legend>
+              {editarProduto ? "Editar Produto" : "Cadastrar Produto"}
+            </legend>
+          </div>
 
-        <label htmlFor="nome">Nome do Produto:</label>
-        <input
-          id="nome"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          placeholder="Nome do produto"
-          required
-        />
+          <InputComponent
+            id="nome"
+            type="text"
+            value={nome}
+            onChange={(value) => setNome(value)}
+            placeholder="Nome do produto"
+            required
+          />
 
-        <label htmlFor="categoria">Categoria:</label>
-        <select
-          id="categoria"
-          value={categoria}
-          onChange={(e) => setCategoria(e.target.value)}
-          required
-        >
-          <option value="">Selecione a categoria</option>
-          {categorias.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+          <InputComponent
+            id="preco"
+            type="number"
+            value={preco}
+            step="0.01"
+            onChange={(value) => setPreco(value)}
+            placeholder="Preço (opcional)"
+            required
+          />
 
-        <label htmlFor="preco">Preço:</label>
-        <input
-          id="preco"
-          type="number"
-          step="0.01"
-          value={preco}
-          onChange={(e) => setPreco(e.target.value)}
-          placeholder="Preço (opcional)"
-        />
+          <SelectComponent
+            id={"categoria2"}
+            value={categoria}
+            options={categorias}
+            onChange={(value) => setCategoria(value)}
+            placeholder={"Selecione a categoria"}
+            required={true}
+          />
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
-        <button type="submit">{editarProduto ? "Salvar" : "Cadastrar"}</button>
-        {editarProduto && (
-          <button type="button" onClick={onCancelEdit}>
-            Cancelar
-          </button>
-        )}
-      </fieldset>
-    </form>
+          {error && <p style={{ color: "red" }}>{error}</p>}
+          <div id="div-buttons">
+            <button type="submit" id="btn-cadastrar">
+              {editarProduto ? "Salvar" : "Cadastrar"}
+            </button>
+            {editarProduto && (
+              <button type="button" id="btn-cancelar" onClick={onCancelEdit}>
+                Cancelar
+              </button>
+            )}
+          </div>
+        </fieldset>
+      </form>
+    </Container>
   );
 }

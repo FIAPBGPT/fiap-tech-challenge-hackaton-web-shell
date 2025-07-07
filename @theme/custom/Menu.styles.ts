@@ -9,7 +9,6 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* border: 1px green solid; */
 
   * {
     padding: 0;
@@ -35,7 +34,7 @@ export const Container = styled.div`
     justify-content: center;
     align-items: flex-start;
     width: 100%;
-    font-weight: 900;
+    font-weight: ${({ theme }) => theme.themeFonts.subTitleHeader.fontWeight};
     color: ${({ theme }) => theme.themeColor.backgroundLightBase};
     background-color: ${({ theme }) => theme.themeColor.secondary};
     padding: 0px;
@@ -127,6 +126,9 @@ export const Container = styled.div`
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
     }
+    &.isActive svg {
+      fill: ${({ theme }) => theme.themeColor.secondary};
+    }
   }
 
   #menu-navigation svg,
@@ -138,7 +140,7 @@ export const Container = styled.div`
     fill: ${({ theme }) => theme.themeColor.ochreFontsButton};
   }
 
-  #menu-links-cadastro {
+  #menu-button-cadastro {
     display: none;
     flex-direction: column;
     width: 100%;
@@ -146,14 +148,13 @@ export const Container = styled.div`
     transition: all 0.3s ease;
     border-top: 1px solid ${({ theme }) => theme.themeColor.ochreFontsButton};
     border-bottom: 1px solid ${({ theme }) => theme.themeColor.ochreFontsButton};
-
     &.show {
       display: flex;
     }
   }
 
-  #menu-links-cadastro a {
-    background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+  #menu-button-cadastro button {
+    background-color: ${({ theme }) => theme.themeColor.backgroundLightBase};
     padding: 5px 35px;
     color: ${({ theme }) => theme.themeColor.ochreFontsButton};
 
@@ -166,6 +167,61 @@ export const Container = styled.div`
       color: ${({ theme }) => theme.themeColor.secondary};
       font-weight: 700;
       text-decoration: underline;
+      background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+    }
+  }
+  @media (max-width: 720px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+
+    &.mobile-menu-open {
+      transform: translateX(0);
+    }
+  }
+
+  .menu-close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    display: none;
+
+    /* Só aparece no mobile */
+    @media (max-width: 720px) {
+      display: block;
+    }
+
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: ${({ theme }) =>
+          theme.themeColor.backgroundMediumBase};
+        svg {
+          color: ${({ theme }) => theme.themeColor.secondary};
+        }
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+        color: ${({ theme }) => theme.themeColor.backgroundLightBase};
+      }
     }
   }
 `;

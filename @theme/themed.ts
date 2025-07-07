@@ -11,16 +11,18 @@ export const themed = {
     ochreFontsButton: "#A67F00",
     logotypeRed: "#BE164D",
     tableGreen: "#9FCA86",
+    mediumGreen: "#6A9253",
     success: "#29B21E", //verde do logotipo
     error: "#BD0000",
     dark: "#000000",
     white: "#FFFFFF",
     grey: "#767676",
+    buttonGrey: "#CAD0C8",
     lightGrey: "#DEE2E6",
     disabledGrey: "#E9ECEF",
     disabled: "#8B8B8B",
     darkGrey: "#CBCBCB",
-    mustard: '#765B04' // texto do login
+    mustard: "#765B04", // texto do login
   },
   themeFonts: {
     jura: "Jura, sans-serif",
@@ -40,14 +42,14 @@ export const themed = {
       fontSize: "16px",
       fontWeight: "600",
       lineHeight: "19.36px",
-      textAlign: "center",      
+      textAlign: "center",
       fontFamily: "Jura, sans-serif",
     },
     text: {
       fontSize: "18px",
-      fontWeight: "700",    
+      fontWeight: "700",
       fontFamily: "Jura, sans-serif",
-    }
+    },
   },
   font_size: {
     fontsizesmall: "14px",
