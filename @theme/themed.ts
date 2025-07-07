@@ -43,6 +43,10 @@ export const themed = {
       lineHeight: "19.36px",
       textAlign: "center",
     },
+      text: {
+      fontSize: "18px",
+      fontWeight: "700",    
+      fontFamily: "Jura, sans-serif",
   },
   font_size: {
     fontsizesmall: "14px",
