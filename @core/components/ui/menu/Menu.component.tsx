@@ -28,6 +28,7 @@ export default function MenuComponent({
 }: MenuComponentProps) {
   const [isMenuLinksOpen, setIsMenuLinksOpen] = useState(false);
   const [isMenuBtnActive, setIsMenuBtnActive] = useState(false);
+  const [isActiveBtn, setIsActiveBtn] = useState(ItemProps.HOME);
   const { width } = useWindowSize();
   const pathname = usePathname();
   const isMobile = width <= 720;
@@ -48,10 +49,11 @@ export default function MenuComponent({
   };
 
   function toggleMenuButton() {
-    setIsMenuBtnActive((prev) => !prev);
+    setIsMenuBtnActive((isActiveBtn) => !isActiveBtn);
   }
 
   const renderActiveButton = (
+    id: string,
     item: ItemProps,
     content: React.ReactNode,
     label: string,
@@ -59,13 +61,14 @@ export default function MenuComponent({
     href?: string,
     pathname?: string
   ) => {
-    const isActive = item === ItemProps.HOME || (href && href === pathname);
+
     return (
       <button
         onClick={() => {
           onOpenCadastro(content, item);
+          setIsActiveBtn(item);
         }}
-        className={`menu-button ${isActive ? "isActive" : ""}`}
+        className={`menu-button ${isActiveBtn === item ? "isActive" : ""}`}
       >
         {icon}
         {label}
@@ -97,6 +100,7 @@ export default function MenuComponent({
       <div id="menu-navigation">
         <div className="menu-navigation-item">
           {renderActiveButton(
+            "home",
             ItemProps.HOME,
             <DashboardPage />,
             "Home",
@@ -116,12 +120,12 @@ export default function MenuComponent({
 
       <div id="menu-button-cadastro" className={isMenuLinksOpen ? "show" : ""}>
 
-        {renderActiveButton(ItemProps.USUARIO, <CompleteCadastro />, "Usuário")}
-        {renderActiveButton(ItemProps.PRODUTO, <ProdutosPage />, "Produto")}
-        {renderActiveButton(ItemProps.ESTOQUE, <EstoquePage />, "Estoque")}
-        {renderActiveButton(ItemProps.PRODUCAO, <ProducoesPage />, "Produção")}
-        {renderActiveButton(ItemProps.FAZENDA, <FazendasPage />, "Fazenda")}
-        {renderActiveButton(ItemProps.METAS, <MetasPage/>, "Metas")}
+        {renderActiveButton("usuario", ItemProps.USUARIO, <CompleteCadastro />, "Usuário")}
+        {renderActiveButton("produto", ItemProps.PRODUTO, <ProdutosPage />, "Produto")}
+        {renderActiveButton("estoque", ItemProps.ESTOQUE, <EstoquePage />, "Estoque")}
+        {renderActiveButton("producao", ItemProps.PRODUCAO, <ProducoesPage />, "Produção")}
+        {renderActiveButton("fazenda", ItemProps.FAZENDA, <FazendasPage />, "Fazenda")}
+        {renderActiveButton("metas", ItemProps.METAS, <MetasPage/>, "Metas")}
       </div>
     </Container>
   );

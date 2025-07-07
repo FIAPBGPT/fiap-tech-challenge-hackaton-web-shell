@@ -22,7 +22,7 @@ export enum CurrentSection {
   COMPLETE_CADASTRO = "Complete seu cadastro",
   CAD_ESTOQUE = "Gestão de Estoque",
   CAD_PRODUCAO = "Gestão de Produção",
-  CAD_METAS = "metas",
+  CAD_METAS = "Gestão de Metas",
 }
 
 export function useSection(props: Item): CurrentSection {
