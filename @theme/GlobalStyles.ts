@@ -31,17 +31,17 @@ declare module "styled-components" {
         lineHeight?: string;
         textAlign: string;
       };
-      titleHeader:{
-      fontFamily: string;
-      fontSize: string;
-      fontWeight: string;
-      lineHeight: string;
+      titleHeader: {
+        fontFamily: string;
+        fontSize: string;
+        fontWeight: string;
+        lineHeight: string;
       };
-      subTitleHeader:{
-      fontFamily: string;
-      fontSize: string;
-      fontWeight: string;
-      lineHeight: string;
+      subTitleHeader: {
+        fontFamily: string;
+        fontSize: string;
+        fontWeight: string;
+        lineHeight: string;
       };
     };
   }
@@ -137,6 +137,14 @@ const GlobalStyles = createGlobalStyle`
    body > div.fade.home-modal.modal.show > div > div {
     min-height: 100%;
    }
+
+   // para que não coloque padding automaticamente nas pages flexbox
+  .container-fluid {
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
 
    // ** DATEPICKER */
    .react-datepicker-wrapper { 

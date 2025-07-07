@@ -6,10 +6,9 @@ export const SelectStyles = styled.select`
   background-color: ${(props) => props.theme.themeColor.white};
   padding: 8px;
   border-radius: 4px;
-  margin: 0 10px;
   border: none;
   outline: none;
-  margin: 10px 0;
+  margin: 5px 0;
 
   option {
     color: ${(props) => props.theme.themeColor.disabled};

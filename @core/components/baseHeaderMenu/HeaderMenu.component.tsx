@@ -50,7 +50,6 @@ export default function HeaderMenuComponent({
           <div id="main-container">
             {activeContent ? (
               <>
-                <button onClick={handleCloseCadastro}>Fechar Cadastro</button>
                 {activeContent}
               </>
             ) : (

@@ -6,12 +6,11 @@ export const InputStyles = styled.input`
   background-color: ${(props) => props.theme.themeColor.white};
   padding: 8px;
   border-radius: 4px;
-  margin: 0 10px;
   border: none;
   outline: none;
   appearance: none;
   -webkit-appearance: none;
-  margin: 10px 0;
+  margin: 5px 0;
 
   label {
     font-size: 16px;

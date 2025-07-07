@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import SelectComponent from "../../ui/select/Select.component";
 import InputComponent from "../../ui/input/Input.component";
 import { Container } from "@/@theme/custom/ProdutoForm.styles";
+import ButtonComponent from "../../ui/Button";
 
 interface ProdutoFormProps {
   onSuccess: () => void;
@@ -124,13 +125,22 @@ export default function ProdutoForm({
 
           {error && <p style={{ color: "red" }}>{error}</p>}
           <div id="div-buttons">
-            <button type="submit" id="btn-cadastrar">
-              {editarProduto ? "Salvar" : "Cadastrar"}
-            </button>
+            <ButtonComponent
+              type="submit"
+              id="btn-cadastrar"
+              variant="secondary"
+              label={editarProduto ? "Salvar" : "Cadastrar"}
+              onClick={() => {}}
+            />
+
             {editarProduto && (
-              <button type="button" id="btn-cancelar" onClick={onCancelEdit}>
-                Cancelar
-              </button>
+              <ButtonComponent
+                type="button"
+                id="btn-cancelar"
+                variant="buttonGrey"
+                label={"Cancelar"}
+                onClick={onCancelEdit ?? (() => {})}
+              />
             )}
           </div>
         </fieldset>

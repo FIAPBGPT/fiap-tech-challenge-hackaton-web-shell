@@ -1,20 +1,19 @@
-import { Container, LinkIsActive } from "@/@theme/custom/Menu.styles";
+import { Container,} from "@/@theme/custom/Menu.styles";
 import UserIcon from "@/public/contact.svg";
 import HomeIcon from "@/public/home.svg";
 import RegisterIcon from "@/public/cadastro_check.svg";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useWindowSize from "../../../hooks/useWindowSize";
 import { usePathname } from "next/navigation";
 import CardapioIcon from "@/public/icons8cardapio.svg";
 import FazendasPage from "@/pages/fazendas";
-import MetaForm from "../../forms/metas/MetaForm";
 import DashboardPage from "@/pages/dashboard";
 import ProdutosPage from "@/pages/produtos";
 import EstoquePage from "@/pages/estoque";
 import ProducoesPage from "@/pages/producoes";
 import CompleteCadastro from "@/pages/complete-cadastro";
 import { ItemProps } from "@/@core/hooks/useSection";
+import MetasPage from "@/pages/metas";
 
 interface MenuComponentProps {
   isMenuOpen: boolean;
@@ -29,24 +28,10 @@ export default function MenuComponent({
 }: MenuComponentProps) {
   const [isMenuLinksOpen, setIsMenuLinksOpen] = useState(false);
   const [isMenuBtnActive, setIsMenuBtnActive] = useState(false);
-  const [activeItem, setActiveItem] = useState<string | null>(null);
   const { width } = useWindowSize();
   const pathname = usePathname();
   const isMobile = width <= 720;
 
-  // useEffect(() => {
-  //   // Abre automaticamente se estiver em uma rota de cadastro
-  //   const cadastroRoutes = [
-  //     "/complete-cadastro",
-  //     "/fazendas",
-  //     "/produtos",
-  //     "/estoque",
-  //     "/metas",
-  //   ];
-  //   const isInCadastroRoute = cadastroRoutes.includes(pathname);
-
-  //   setIsMenuLinksOpen(isInCadastroRoute);
-  // }, [pathname]);
 
   // Desktop: sempre visível | Mobile: só se isMenuOpen for true
   const isVisible = !isMobile || isMenuOpen;
@@ -130,43 +115,13 @@ export default function MenuComponent({
       </div>
 
       <div id="menu-button-cadastro" className={isMenuLinksOpen ? "show" : ""}>
-        {/* <button
-          onClick={() => {
-            onOpenCadastro(<FazendasPage />);
-            setActiveItem("fazenda");
-          }}
-          className={`menu-button ${
-            activeItem === "fazenda" ? "isActive" : ""
-          }`}
-        >
-          Fazenda
-        </button>
-        <button
-          onClick={() => {
-            onOpenCadastro(
-              <MetaForm
-                onSuccess={function (): void {
-                  throw new Error("Function not implemented.");
-                }}
-              />
-            );
-            setActiveItem("metas");
-          }}
-          className={`menu-button ${activeItem === "metas" ? "isActive" : ""}`}
-        >
-          Metas
-        </button> */}
-        {/* {renderActiveButton("fazenda", <FazendasPage />), "Fazenda")} */}
-        {/* // {renderActiveLink("/fazendas", "Fazenda")}
-        // {renderActiveLink("/produtos", "Produto")}
-        // {renderActiveLink("/estoque", "Estoque")}
-        // {renderActiveLink("/metas", "Meta")} */}
 
         {renderActiveButton(ItemProps.USUARIO, <CompleteCadastro />, "Usuário")}
         {renderActiveButton(ItemProps.PRODUTO, <ProdutosPage />, "Produto")}
         {renderActiveButton(ItemProps.ESTOQUE, <EstoquePage />, "Estoque")}
         {renderActiveButton(ItemProps.PRODUCAO, <ProducoesPage />, "Produção")}
         {renderActiveButton(ItemProps.FAZENDA, <FazendasPage />, "Fazenda")}
+        {renderActiveButton(ItemProps.METAS, <MetasPage/>, "Metas")}
       </div>
     </Container>
   );

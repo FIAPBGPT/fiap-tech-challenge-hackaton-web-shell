@@ -23,11 +23,7 @@ export default function InputComponent(props: InputProps) {
         step={props.step}
         type={props.type}
         value={props.value}
-        onChange={(e) =>
-          props.onChange(
-             e.target.value
-          )
-        }
+        onChange={(e) => props.onChange(e.target.value)}
         placeholder={props.placeholder ? props.placeholder : ""}
         required={props.required}
       />

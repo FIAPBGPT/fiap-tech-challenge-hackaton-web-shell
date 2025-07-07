@@ -1,19 +1,18 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-
-interface Item{
-  item:ItemProps;
+interface Item {
+  item: ItemProps;
 }
 
-export enum ItemProps{
- HOME = "home",
- USUARIO = "usuario",
- PRODUTO = "produto",
- ESTOQUE = "estoque",
- PRODUCAO = "producao",
- FAZENDA = "fazenda",
- METAS = "ME",
+export enum ItemProps {
+  HOME = "home",
+  USUARIO = "usuario",
+  PRODUTO = "produto",
+  ESTOQUE = "estoque",
+  PRODUCAO = "producao",
+  FAZENDA = "fazenda",
+  METAS = "metas",
 }
 
 export enum CurrentSection {
@@ -21,13 +20,15 @@ export enum CurrentSection {
   CAD_PRODUTOS = "Cadastro de Produtos",
   CAD_FAZENDAS = "Cadastro de Fazendas",
   COMPLETE_CADASTRO = "Complete seu cadastro",
-  ESTOQUE = "Gestão de Estoque",
-  METAS = "metas",
+  CAD_ESTOQUE = "Gestão de Estoque",
+  CAD_PRODUCAO = "Gestão de Produção",
+  CAD_METAS = "metas",
 }
 
-
 export function useSection(props: Item): CurrentSection {
-  const [section, setSection] = useState<CurrentSection>(CurrentSection.DASHBORAD);
+  const [section, setSection] = useState<CurrentSection>(
+    CurrentSection.DASHBORAD
+  );
 
   useEffect(() => {
     switch (props.item) {
@@ -44,10 +45,13 @@ export function useSection(props: Item): CurrentSection {
         setSection(CurrentSection.COMPLETE_CADASTRO);
         break;
       case ItemProps.ESTOQUE:
-        setSection(CurrentSection.ESTOQUE);
+        setSection(CurrentSection.CAD_ESTOQUE);
+        break;
+      case ItemProps.PRODUCAO:
+        setSection(CurrentSection.CAD_PRODUCAO);
         break;
       case ItemProps.METAS:
-        setSection(CurrentSection.METAS);
+        setSection(CurrentSection.CAD_METAS);
         break;
       default:
         setSection(CurrentSection.DASHBORAD);
