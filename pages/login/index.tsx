@@ -4,7 +4,7 @@ import { auth } from "@/@core/services/firebase/firebase";
 import { useAuthStore } from "@/@core/store/authStore";
 import { StyledButton } from "@/@theme/custom/Button.style";
 import { FooterContainer, ContactContainer, ContactText, IconsContainer, IconLink } from "@/@theme/custom/Footer.style";
-import { Content, FormContainer, Header, LeftText, LoginContainer, LoginContainerContent, Logo, PageContainer, TitleForm } from "@/@theme/custom/LoginPage-style";
+import { Content, ErrorText, FormContainer, Header, LeftText, LoginContainer, LoginContainerContent, Logo, PageContainer, TitleForm } from "@/@theme/custom/LoginPage-style";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -12,6 +12,7 @@ import { useState } from "react";
 import { Spinner } from "react-bootstrap";
 import { FaInstagram, FaLinkedin, FaWhatsapp } from "react-icons/fa";
 import logo from "@/public/image/logo.png";
+import InputComponent from '@/@core/components/ui/Input';
 
 // @ts-ignore
 const Mfe = dynamic(() => import("mfe/app"), {
@@ -62,24 +63,22 @@ export default function Login() {
             </LeftText>
 
             <FormContainer>
-            <TitleForm>
-              Faça seu Login
-            </TitleForm>
-                <input
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email"
-                  style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-                />
-                <input
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  type="password"
-                  placeholder="Senha"
-                  style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-                />
+              <TitleForm>
+                Faça seu Login
+              </TitleForm>
+              <InputComponent
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+              />
+              <InputComponent
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                type="password"
+                placeholder="Senha"
+              />
               <StyledButton variant="secondary" onClick={handleLogin}>{loading ? <Spinner animation="border" size="sm" /> : "Entrar"}</StyledButton>
-              <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>
+              <ErrorText>{error}</ErrorText>
             </FormContainer>
           </Content>
         </LoginContainerContent>
