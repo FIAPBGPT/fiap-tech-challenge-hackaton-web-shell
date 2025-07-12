@@ -111,3 +111,24 @@ export const TypeBadge = styled.span`
   color: #4b5563;
   text-transform: capitalize;
 `;
+
+// NotificationBellStyle.ts
+export const MarkAllButton = styled.button`
+  width: 100%;
+  padding: 8px;
+  background-color: #f0f4f8;
+  color: #2563eb;
+  border: none;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #e0e7ff;
+  }
+
+  &:active {
+    background-color: #d0d7f0;
+  }
+`;
