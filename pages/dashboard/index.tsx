@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { listar } from "@/@core/services/firebase/firebaseService";
 import styled from "styled-components";
 import { Card, CardContent, CardHeader, CardsGrid, Select, Subtitle, Title } from "@/@theme/custom/DashboardStyle";
+import { NotificationBell } from "@/@core/components/NotificationBell/NotificationBell";
 
 // Tipos
 interface Meta {
@@ -63,7 +64,7 @@ type DashboardRemoteProps =
   | { tipo: "metas"; data: { produto: string; meta: number; producao: number }[] }
   | { tipo: "producao"; data: { safra: string; produto: string, producao: number }[] };
 
- // @ts-ignore 
+// @ts-ignore 
 const DashboardRemote = dynamic<DashboardRemoteProps>(() => import("mfe/ChartView"), {
   ssr: false,
   loading: () => <p>Carregando gráfico...</p>,
@@ -85,12 +86,12 @@ export default function DashboardPage() {
       try {
         setLoading(true);
         const [metas, producoesRaw, produtosRaw, fazendasData, vendasData, safra] = await Promise.all([
-        listar("metas"),
-        listar("producoes"),
-        listar("produtos"),
-        listar("fazendas"),
-        listar("vendas"),
-        listar("safras"),
+          listar("metas"),
+          listar("producoes"),
+          listar("produtos"),
+          listar("fazendas"),
+          listar("vendas"),
+          listar("safras"),
         ]);
 
         setVendas(vendasData);
@@ -129,10 +130,18 @@ export default function DashboardPage() {
       } finally {
         setLoading(false);
       }
+
     }
 
     carregarDados();
   }, []);
+
+  console.log("Metas", metas)
+  console.log("Produções", producoes)
+  console.log("Produtos", produtos);
+  console.log("Fazendas", fazendas);
+  console.log("Safras", safras);
+  console.log("Vendas", vendas);
 
   useEffect(() => {
     if (!fazendaSelecionada) return;
@@ -176,108 +185,108 @@ export default function DashboardPage() {
     }));
   };
 
-const getVendasPorProduto = () => {
-  if (!vendas || vendas.length === 0) {
-    return [];
-  }
+  const getVendasPorProduto = () => {
+    if (!vendas || vendas.length === 0) {
+      return [];
+    }
 
-  // Primeiro, achatar todos os itens de todas as vendas em um único array
-  const todosItens = vendas.flatMap(venda => 
-    venda.itens.map((item: any) => ({
-      ...item,
-      dataVenda: venda.data // Podemos incluir a data da venda se necessário
-    }))
-  );
+    // Primeiro, achatar todos os itens de todas as vendas em um único array
+    const todosItens = vendas.flatMap(venda =>
+      venda.itens.map((item: any) => ({
+        ...item,
+        dataVenda: venda.data // Podemos incluir a data da venda se necessário
+      }))
+    );
 
-  // Filtrar itens pela fazenda selecionada (se houver)
-   const itensFiltrados = fazendaSelecionada 
-    ? todosItens.filter(item => {
+    // Filtrar itens pela fazenda selecionada (se houver)
+    const itensFiltrados = fazendaSelecionada
+      ? todosItens.filter(item => {
         // Encontrar a fazenda correspondente ao item.fazendaId
         const fazendaItem = fazendas.find(f => f.id === item.fazendaId);
-        
+
         // Comparar com a fazenda selecionada
         return fazendaItem?.id === fazendaSelecionada.id;
       })
-    : todosItens;
+      : todosItens;
 
-  // Agrupar por produto e somar os valores
-  const vendasAgrupadas = itensFiltrados.reduce((acc, item) => {
-    const nomeProduto = getProdutoNome(item.produtoId);
-    acc[nomeProduto] = (acc[nomeProduto] || 0) + item.valor;
-    return acc;
-  }, {} as Record<string, number>);
+    // Agrupar por produto e somar os valores
+    const vendasAgrupadas = itensFiltrados.reduce((acc, item) => {
+      const nomeProduto = getProdutoNome(item.produtoId);
+      acc[nomeProduto] = (acc[nomeProduto] || 0) + item.valor;
+      return acc;
+    }, {} as Record<string, number>);
 
-  return Object.entries(vendasAgrupadas).map(([produto, valor]) => ({
-    produto,
-    valor: Number(valor)
-  }));
-};
+    return Object.entries(vendasAgrupadas).map(([produto, valor]) => ({
+      produto,
+      valor: Number(valor)
+    }));
+  };
 
-const getMetaPorProduto = () => {
-  // Filtra metas e produções conforme seleção
-  const metasFiltradas = fazendaSelecionada
-    ? metas.filter(m => m.fazenda === fazendaSelecionada.nome)
-    : metas;
+  const getMetaPorProduto = () => {
+    // Filtra metas e produções conforme seleção
+    const metasFiltradas = fazendaSelecionada
+      ? metas.filter(m => m.fazenda === fazendaSelecionada.nome)
+      : metas;
 
-  // Pré-filtra produções para melhor performance
-  const producoesFiltradas = fazendaSelecionada
-    ? producoes.filter(p => p.fazenda === fazendaSelecionada.nome)
-    : producoes;
+    // Pré-filtra produções para melhor performance
+    const producoesFiltradas = fazendaSelecionada
+      ? producoes.filter(p => p.fazenda === fazendaSelecionada.nome)
+      : producoes;
 
-  // Agrupa usando reduce
-  const resultado = metasFiltradas.reduce((acc, meta) => {
-    const produto = getProdutoNome(meta.produto);
-    const producao = producoesFiltradas
-      .filter(p => p.produto === meta.produto && p.safra === meta.safra)
-      .reduce((sum, p) => sum + p.quantidade, 0);
+    // Agrupa usando reduce
+    const resultado = metasFiltradas.reduce((acc, meta) => {
+      const produto = getProdutoNome(meta.produto);
+      const producao = producoesFiltradas
+        .filter(p => p.produto === meta.produto && p.safra === meta.safra)
+        .reduce((sum, p) => sum + p.quantidade, 0);
 
-    if (!acc[produto]) {
-      acc[produto] = { meta: 0, producao: 0 };
+      if (!acc[produto]) {
+        acc[produto] = { meta: 0, producao: 0 };
+      }
+
+      acc[produto].meta += meta.valor;
+      acc[produto].producao += producao;
+
+      return acc;
+    }, {} as Record<string, { meta: number; producao: number }>);
+
+    // Converte para array no formato esperado
+    return Object.entries(resultado).map(([produto, { meta, producao }]) => ({
+      produto,
+      meta,
+      producao
+    }));
+  };
+
+  const getSafraNome = () => {
+
+    const producoesFiltradas = fazendaSelecionada
+      ? producoes.filter(p => p.fazenda === fazendaSelecionada.nome)
+      : producoes;
+
+    if (producoesFiltradas.length === 0) {
+      return [{ safra: "Nenhuma produção", produto: "N/A", producao: 0 }];
     }
 
-    acc[produto].meta += meta.valor;
-    acc[produto].producao += producao;
+    const agrupado = producoesFiltradas.reduce((acc, p) => {
+      const safra = safras.find(s => s.id === p.safra)?.nome || p.safra;
+      const produto = produtos.find(pr => pr.id === p.produto)?.nome || p.produto;
 
-    return acc;
-  }, {} as Record<string, { meta: number; producao: number }>);
+      if (!acc[safra]) acc[safra] = {};
+      acc[safra][produto] = (acc[safra][produto] || 0) + p.quantidade;
 
-  // Converte para array no formato esperado
-  return Object.entries(resultado).map(([produto, { meta, producao }]) => ({
-    produto,
-    meta,
-    producao
-  }));
-};
-
-const getSafraNome = () => {
-  
-  const producoesFiltradas = fazendaSelecionada
-    ? producoes.filter(p => p.fazenda === fazendaSelecionada.nome)
-    : producoes;
-
-  if (producoesFiltradas.length === 0) {
-    return [{ safra: "Nenhuma produção", produto: "N/A", producao: 0 }];
-  }
-
-  const agrupado = producoesFiltradas.reduce((acc, p) => {
-    const safra = safras.find(s => s.id === p.safra)?.nome || p.safra;
-    const produto = produtos.find(pr => pr.id === p.produto)?.nome || p.produto;
-    
-    if (!acc[safra]) acc[safra] = {};
-    acc[safra][produto] = (acc[safra][produto] || 0) + p.quantidade;
-    
-    return acc;
-  }, {} as Record<string, Record<string, number>>);
+      return acc;
+    }, {} as Record<string, Record<string, number>>);
 
 
-  return Object.entries(agrupado).flatMap(([safra, produtos]) =>
-    Object.entries(produtos).map(([produto, producao]) => ({
-      safra,
-      produto,
-      producao
-    }))
-  );
-};
+    return Object.entries(agrupado).flatMap(([safra, produtos]) =>
+      Object.entries(produtos).map(([produto, producao]) => ({
+        safra,
+        produto,
+        producao
+      }))
+    );
+  };
 
   if (loading) {
     return (
@@ -293,6 +302,7 @@ const getSafraNome = () => {
     );
   }
 
+
   return (
     <>
       {/* <Header>
@@ -301,6 +311,13 @@ const getSafraNome = () => {
           <p>Bem-vindo!</p>
         </Container>
       </Header> */}
+
+
+      <Container >
+        <NotificationBell products={produtos} />
+      </Container>
+
+
 
       <Main>
         <Container>
