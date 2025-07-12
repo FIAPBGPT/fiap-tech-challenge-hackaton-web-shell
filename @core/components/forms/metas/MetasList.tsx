@@ -49,16 +49,15 @@ export default function MetaList() {
     carregar();
   };
 
-  const formatarSafra = (safra: string) => {
-    console.log(safra);
-    console.log(safras);
-    const safraSelected = safras.find((s) => s.id === safra);
-    if (!safraSelected) {
-      console.warn(`Safra não encontrada: ${safra}`);
-      return safraSelected.nome; // Retorna o ID se a safra não for encontrada
+  const formatarSafra = (safraId: string): string => {
+    const safraEncontrada = safras.find((s) => s.id === safraId);
+    
+    if (!safraEncontrada) {
+      console.warn(`Safra não encontrada: ${safraId}`);
+      return safraId; // Retorna apenas o ID se a safra não for encontrada
     }
-
-    return safraSelected.nome;
+    
+    return safraEncontrada.nome;
   };
 
   const nomeProduto = (produtoId: string) => {
