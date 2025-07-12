@@ -67,13 +67,12 @@ export default function ProdutoList() {
 
   return (
     <div>
-      <h3>Produtos</h3>
-
+      {/* <h3>Produtos</h3>
       <ProdutoForm
         editarProduto={produtoEditando ?? undefined}
         onSuccess={handleSucesso}
         onCancelEdit={handleCancelEdit}
-      />
+      /> */}
 
       <ul>
         {produtos.map((p) => (

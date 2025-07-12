@@ -23,6 +23,7 @@ interface ProducoesFormProps {
     quantidade: number;
     fazenda: string;
     safra: string;
+    data?: string;
   };
   onCancelEdit?: () => void;
 }
@@ -38,6 +39,7 @@ export default function ProducoesForm({
     quantidade: "",
     fazenda: "",
     safra: "",
+    data: "",
   });
 
   const [saldoEstoque, setSaldoEstoque] = useState<number | null>(null);
@@ -58,16 +60,22 @@ export default function ProducoesForm({
 
   useEffect(() => {
     if (editarProducao) {
-      console.log(editarProducao);
       setForm({
         produto: editarProducao.produto,
         quantidade: String(editarProducao.quantidade),
         fazenda: editarProducao.fazenda,
         safra: editarProducao.safra,
+        data: editarProducao.data || "",
       });
       setQuantidadeAnterior(editarProducao.quantidade);
     } else {
-      setForm({ produto: "", quantidade: "", fazenda: "", safra: "" });
+      setForm({
+        produto: "",
+        quantidade: "",
+        fazenda: "",
+        safra: "",
+        data: "",
+      });
       setQuantidadeAnterior(0);
     }
   }, [editarProducao]);
@@ -95,12 +103,16 @@ export default function ProducoesForm({
       return;
     }
 
+    // Set datetime now in ISO format
+    const data = new Date().toISOString();
+
     const payload = {
       produto,
       safra,
       fazenda,
       quantidade: quantidadeNum,
       uid: user.uid,
+      data,
     };
 
     try {
@@ -149,7 +161,13 @@ export default function ProducoesForm({
         });
       }
 
-      setForm({ produto: "", quantidade: "", fazenda: "", safra: "" });
+      setForm({
+        produto: "",
+        quantidade: "",
+        fazenda: "",
+        safra: "",
+        data: "",
+      });
       onSuccess();
     } catch (err: any) {
       console.error(err);
@@ -194,6 +212,9 @@ export default function ProducoesForm({
         required
         min={1}
       />
+
+      {/* Hidden input to show the datetime now if needed */}
+      <input type="hidden" name="data" value={form.data} />
 
       <button type="submit">
         {editarProducao ? "Atualizar Produção" : "Registrar Produção"}
