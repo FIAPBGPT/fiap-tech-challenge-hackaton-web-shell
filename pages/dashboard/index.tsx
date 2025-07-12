@@ -165,26 +165,26 @@ export default function DashboardPage() {
   //   return safra;
   // };
 
-  const calcularSomaMetaPorEstado = () => {
-    const estadoMap = new Map<string, number>();
+ const calcularSomaMetaPorEstado = () => {
+  const estadoMap = new Map<string, number>();
 
-    metas.forEach(meta => {
-      if (fazendaSelecionada && meta.fazenda !== fazendaSelecionada.nome) return;
+  metas.forEach(meta => {
+    const fazenda = fazendas.find(f => f.id === meta.fazenda);
+    if (!fazenda) return;
 
-      const fazenda = fazendas.find(f => f.nome === meta.fazenda);
-      if (!fazenda?.estado) return;
+    // Filtro por fazenda selecionada
+    if (fazendaSelecionada && fazenda.id !== fazendaSelecionada.id) return;
 
-      const estado = fazenda.estado;
-      const valorAtual = estadoMap.get(estado) || 0;
-      estadoMap.set(estado, valorAtual + meta.valor);
-    });
+    const estado = fazenda.estado;
+    const valorAtual = estadoMap.get(estado) || 0;
+    estadoMap.set(estado, valorAtual + meta.valor);
+  });
 
-    return Array.from(estadoMap.entries()).map(([estado, soma]) => ({
-      estado: `BR-${estado}`,
-      meta: soma,
-    }));
-  };
-
+  return Array.from(estadoMap.entries()).map(([estado, soma]) => ({
+    estado: `BR-${estado}`,
+    meta: soma,
+  }));
+};
   const getVendasPorProduto = () => {
     if (!vendas || vendas.length === 0) {
       return [];
@@ -222,41 +222,47 @@ export default function DashboardPage() {
     }));
   };
 
-  const getMetaPorProduto = () => {
-    // Filtra metas e produções conforme seleção
-    const metasFiltradas = fazendaSelecionada
-      ? metas.filter(m => m.fazenda === fazendaSelecionada.nome)
-      : metas;
+const getMetaPorProduto = () => {
+  // Filtra metas conforme seleção
+  const metasFiltradas = fazendaSelecionada
+    ? metas.filter(m => m.fazenda === fazendaSelecionada.id) // Comparar por ID
+    : metas;
 
-    // Pré-filtra produções para melhor performance
-    const producoesFiltradas = fazendaSelecionada
-      ? producoes.filter(p => p.fazenda === fazendaSelecionada.nome)
-      : producoes;
+  // Agrupa metas e produções por produto e safra
+  const resultado = metasFiltradas.reduce((acc, meta) => {
+    const produto = getProdutoNome(meta.produto);
+    const key = `${produto}-${meta.safra}`; // Chave única por produto e safra
+    
+    if (!acc[key]) {
+      acc[key] = {
+        produto,
+        safra: meta.safra,
+        meta: 0,
+        producao: 0
+      };
+    }
 
-    // Agrupa usando reduce
-    const resultado = metasFiltradas.reduce((acc, meta) => {
-      const produto = getProdutoNome(meta.produto);
-      const producao = producoesFiltradas
-        .filter(p => p.produto === meta.produto && p.safra === meta.safra)
-        .reduce((sum, p) => sum + p.quantidade, 0);
+    acc[key].meta += meta.valor;
+    
+    // Calcula produção correspondente
+    const producoesCorrespondentes = producoes.filter(p => 
+      p.produto === meta.produto && 
+      p.safra === meta.safra &&
+      (!fazendaSelecionada || p.fazenda === fazendaSelecionada.id)
+    );
+    
+    acc[key].producao += producoesCorrespondentes.reduce((sum, p) => sum + p.quantidade, 0);
 
-      if (!acc[produto]) {
-        acc[produto] = { meta: 0, producao: 0 };
-      }
+    return acc;
+  }, {} as Record<string, { produto: string; safra: string; meta: number; producao: number }>);
 
-      acc[produto].meta += meta.valor;
-      acc[produto].producao += producao;
-
-      return acc;
-    }, {} as Record<string, { meta: number; producao: number }>);
-
-    // Converte para array no formato esperado
-    return Object.entries(resultado).map(([produto, { meta, producao }]) => ({
-      produto,
-      meta,
-      producao
-    }));
-  };
+  // Converte para array e formata para o gráfico
+  return Object.values(resultado).map(item => ({
+    produto: `${item.produto} (${item.safra})`, // Inclui safra no nome
+    meta: item.meta,
+    producao: item.producao
+  }));
+};
 
   const getSafraNome = () => {
 
