@@ -11,12 +11,16 @@ type NotificationBellProps = {
     id: string;
     nome: string;
   }>;
+    fazendas: Array<{ // NOVA PROP
+    id: string;
+    nome: string;
+  }>;
 };
 
-export function NotificationBell({ products }: NotificationBellProps) {
+export function NotificationBell({ products, fazendas }: NotificationBellProps) {
   const [isOpen, setIsOpen] = useState(false);
    const panelRef = useRef<HTMLDivElement>(null);
-  const { notifications, unreadCount, markAsRead } = useNotifications(products);
+  const { notifications, unreadCount, markAsRead } = useNotifications(products, fazendas);
 
 
    useEffect(() => {

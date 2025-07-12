@@ -314,7 +314,7 @@ export default function DashboardPage() {
 
 
       <Container >
-        <NotificationBell products={produtos} />
+        <NotificationBell products={produtos} fazendas={fazendas} />
       </Container>
 
 
