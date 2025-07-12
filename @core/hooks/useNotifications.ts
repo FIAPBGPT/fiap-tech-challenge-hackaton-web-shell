@@ -7,7 +7,7 @@ import { useAuthStore } from '../store/authStore';
 type Notification = {
   id: string;
   message: string;
-  type: 'sale' | 'goal' | 'production';
+  type: 'venda' | 'meta' | 'producao';
   read: boolean;
   createdAt: Date;
   productId?: string;
@@ -51,9 +51,9 @@ export function useNotifications(products: Array<{id: string, nome: string}>, fa
             const productName = getProductName(userItems[0].produtoId);
             
             const newNotification: Notification = {
-              id: `sale_${change.doc.id}`,
+              id: `venda_${change.doc.id}`,
               message: `Nova venda: ${totalQuantity} unidades de ${productName}`,
-              type: 'sale',
+              type: 'venda',
               read: false,
               createdAt: new Date(newSale.data.seconds * 1000)
             };
@@ -70,12 +70,12 @@ export function useNotifications(products: Array<{id: string, nome: string}>, fa
   }, [user?.uid, products, fazendas]);
 
   // Verificar metas - ATUALIZADO com nome da fazenda
-  const checkGoals = async (sale: any) => {
+  const checkGoals = async (venda: any) => {
     if (!user?.uid) return;
 
     const metasSnapshot = await getDocs(collection(firestore, 'metas'));
     
-    sale.itens.forEach((item: any) => {
+    venda.itens.forEach((item: any) => {
       if (item.uid === user.uid) {
         metasSnapshot.forEach((doc) => {
           const meta = doc.data();
@@ -88,9 +88,9 @@ export function useNotifications(products: Array<{id: string, nome: string}>, fa
             const farmName = getFarmName(item.fazendaId); // NOVO
             
             const goalNotification: Notification = {
-              id: `goal_${doc.id}_${sale.id}`,
+              id: `meta_${doc.id}_${venda.id}`,
               message: `Meta atingida! ${productName} na ${farmName}`, // ATUALIZADO
-              type: 'goal',
+              type: 'meta',
               read: false,
               createdAt: new Date()
             };
@@ -113,16 +113,16 @@ export function useNotifications(products: Array<{id: string, nome: string}>, fa
     const unsubscribe = onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
-          const production = change.doc.data();
-          const productName = getProductName(production.produto);
+          const producao = change.doc.data();
+          const productName = getProductName(producao.produto);
           
           const newNotification: Notification = {
             id: `prod_${change.doc.id}`,
-            message: `Nova produção: ${production.quantidade} unidades de ${productName}`,
-            type: 'production',
+            message: `Nova produção: ${producao.quantidade} unidades de ${productName}`,
+            type: 'producao',
             read: false,
             createdAt: new Date(),
-            productId: production.produto
+            productId: producao.produto
           };
           
           setNotifications(prev => [newNotification, ...prev]);

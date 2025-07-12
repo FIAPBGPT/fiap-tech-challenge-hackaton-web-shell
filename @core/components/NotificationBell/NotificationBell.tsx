@@ -47,7 +47,7 @@ export function NotificationBell({ products, fazendas }: NotificationBellProps) 
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      style={{ display: 'block' }} // Garante alinhamento correto
+
     >
       <path
         d="M18 8C18 4.68629 15.3137 2 12 2C8.68629 2 6 4.68629 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"
@@ -69,25 +69,25 @@ export function NotificationBell({ products, fazendas }: NotificationBellProps) 
   // Ícones coloridos para cada tipo
   const NotificationIcon = ({ type }: { type: string }) => {
     const iconColor = {
-      sale: '#10B981', // verde-500
-      goal: '#F59E0B', // amarelo-500
-      production: '#3B82F6' // azul-500
+      venda: '#10B981', // verde-500
+      meta: '#F59E0B', // amarelo-500
+      producao: '#3B82F6' // azul-500
     }[type] || '#6B7280'; // cinza-500
 
     switch(type) {
-      case 'sale':
+      case 'venda':
         return (
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={iconColor}>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
           </svg>
         );
-      case 'goal':
+      case 'meta':
         return (
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={iconColor}>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
           </svg>
         );
-      case 'production':
+      case 'producao':
         return (
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={iconColor}>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
