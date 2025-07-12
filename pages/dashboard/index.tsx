@@ -168,11 +168,11 @@ export default function DashboardPage() {
  const calcularSomaMetaPorEstado = () => {
   const estadoMap = new Map<string, number>();
 
+  // 1. Primeiro processamos todas as metas (como antes)
   metas.forEach(meta => {
     const fazenda = fazendas.find(f => f.id === meta.fazenda);
     if (!fazenda) return;
 
-    // Filtro por fazenda selecionada
     if (fazendaSelecionada && fazenda.id !== fazendaSelecionada.id) return;
 
     const estado = fazenda.estado;
@@ -180,6 +180,28 @@ export default function DashboardPage() {
     estadoMap.set(estado, valorAtual + meta.valor);
   });
 
+  // 2. Se houver fazenda selecionada mas sem metas, garantimos que apareça
+  if (fazendaSelecionada && estadoMap.size === 0) {
+    return [{
+      estado: `BR-${fazendaSelecionada.estado}`,
+      meta: 0 // Valor zero para aparecer no mapa
+    }];
+  }
+
+  // 3. Para o caso sem filtro, incluímos todos os estados com fazendas
+  if (!fazendaSelecionada) {
+    const estadosComFazendas = new Set(
+      fazendas.map(f => `BR-${f.estado}`)
+    );
+    
+    estadosComFazendas.forEach(estado => {
+      if (!estadoMap.has(estado.replace('BR-', ''))) {
+        estadoMap.set(estado.replace('BR-', ''), 0);
+      }
+    });
+  }
+
+  // 4. Formatamos o resultado final
   return Array.from(estadoMap.entries()).map(([estado, soma]) => ({
     estado: `BR-${estado}`,
     meta: soma,
