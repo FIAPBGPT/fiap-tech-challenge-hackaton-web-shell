@@ -22,6 +22,8 @@ declare module "styled-components" {
       buttonGrey: string;
       disabledGrey: string;
       disabled: string;
+      shadowButton: string;
+      shadowInputSelects: string;
     };
     themeFonts: {
       jura: string;
@@ -38,6 +40,24 @@ declare module "styled-components" {
         lineHeight: string;
       };
       subTitleHeader: {
+        fontFamily: string;
+        fontSize: string;
+        fontWeight: string;
+        lineHeight: string;
+      };
+      titleForms: {
+        fontFamily: string;
+        fontSize: string;
+        fontWeight: string;
+        lineHeight: string;
+      };
+      subtitleForms: {
+        fontFamily: string;
+        fontSize: string;
+        fontWeight: string;
+        lineHeight: string;
+      };
+      text: {
         fontFamily: string;
         fontSize: string;
         fontWeight: string;

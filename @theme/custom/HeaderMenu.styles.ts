@@ -2,7 +2,8 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  height: auto;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -13,13 +14,13 @@ export const Container = styled.div`
     box-sizing: border-box;
   }
 
-   #menu-main-container {
+  #menu-main-container {
     display: flex;
     flex: 1;
     overflow: hidden;
-    position: fixed;
+    /* position: fixed;
     top: 150px;
-    left: 0;
+    left: 0; */
     width: 100%;
 
     main {
@@ -58,7 +59,9 @@ export const Container = styled.div`
   #main-container {
     flex: 1;
     justify-content: center;
-    padding: 20px;
+    padding: 10px;
+    min-height: 100vh;
+    height: auto;
     width: 100%;
     max-width: 1024px;
     height: 100%;
