@@ -1,42 +1,47 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from "react";
-import { listarEstoque } from "@/@core/services/firebase/pages/estoqueService";
-import { listarProdutos } from "@/@core/services/firebase/pages/produtosService";
-import { listarSafras } from "@/@core/services/firebase/pages/safraService";
-import FazendaSelect from "../fazendas/FazendaSelect";
+import { useEffect, useState } from 'react'
+import { listarEstoque } from '@/@core/services/firebase/pages/estoqueService'
+import { listarProdutos } from '@/@core/services/firebase/pages/produtosService'
+import { listarSafras } from '@/@core/services/firebase/pages/safraService'
+import FazendaSelect from '../fazendas/FazendaSelect'
+import ButtonComponent from '../../ui/Button'
+import { Container } from '@/@theme/custom/Forms.styles'
+import SafraSelect from '../safras/SafraSelect'
+import ProdutoSelect from '../produtos/ProdutoSelect'
 
 interface EstoqueItem {
-  id: string;
-  produtoId: string;
-  safraId?: string | null;
-  fazendaId?: string | null;
-  quantidade: number;
-  tipo: "entrada" | "saida";
-  observacao?: string;
+  id: string
+  produtoId: string
+  safraId?: string | null
+  fazendaId?: string | null
+  quantidade: number
+  tipo: 'Entrada' | 'Saída'
+  observacao?: string
 }
 
 interface ItemLista {
-  id: string;
-  nome: string;
+  id: string
+  nome: string
 }
 
 function getNomePorId(id: string | null | undefined, lista: ItemLista[]) {
-  if (!id) return "";
-  const item = lista.find((i) => i.id === id);
-  return item ? item.nome : id;
+  if (!id) return ''
+  const item = lista.find((i) => i.id === id)
+  return item ? item.nome : id
 }
 
 export default function EstoqueList() {
-  const [estoques, setEstoques] = useState<EstoqueItem[]>([]);
-  const [produtos, setProdutos] = useState<ItemLista[]>([]);
-  const [safras, setSafras] = useState<ItemLista[]>([]);
-  const [showSaldo, setShowSaldo] = useState(false);
+  const [estoques, setEstoques] = useState<EstoqueItem[]>([])
+  const [produtos, setProdutos] = useState<ItemLista[]>([])
+  const [safras, setSafras] = useState<ItemLista[]>([])
+  const [showSaldo, setShowSaldo] = useState(false)
 
   // Estados dos filtros
-  const [filtroProduto, setFiltroProduto] = useState("");
-  const [filtroSafra, setFiltroSafra] = useState("");
-  const [filtroFazenda, setFiltroFazenda] = useState("");
+  const [filtroProduto, setFiltroProduto] = useState('')
+  const [filtroSafra, setFiltroSafra] = useState('')
+  const [filtroFazenda, setFiltroFazenda] = useState('')
+  const [fazendas, setFazendas] = useState<any[]>([])
 
   const carregar = async () => {
     try {
@@ -44,126 +49,107 @@ export default function EstoqueList() {
         listarEstoque(),
         listarProdutos(),
         listarSafras(),
-      ]);
+      ])
       setEstoques(
         e.map((item: any) => ({
           id: item.id,
-          produtoId: item.produtoId ?? "",
+          produtoId: item.produtoId ?? '',
           safraId: item.safraId ?? null,
           fazendaId: item.fazendaId ?? null,
           quantidade: item.quantidade ?? 0,
-          tipo: item.tipo ?? "entrada",
-          observacao: item.observacao ?? "",
+          tipo: item.tipo ?? 'Entrada',
+          observacao: item.observacao ?? '',
         }))
-      );
+      )
       setProdutos(
         p.map((item: any) => ({
           id: item.id,
-          nome: item.nome ?? "",
+          nome: item.nome ?? '',
         }))
-      );
+      )
       setSafras(
         s.map((item: any) => ({
           id: item.id,
-          nome: item.nome ?? "",
+          nome: item.nome ?? '',
         }))
-      );
+      )
     } catch (error) {
-      console.error("Erro ao carregar os dados:", error);
-      alert("Erro ao carregar os dados.");
+      console.error('Erro ao carregar os dados:', error)
+      alert('Erro ao carregar os dados.')
     }
-  };
+  }
 
   useEffect(() => {
-    carregar();
-  }, []);
+    carregar()
+  }, [])
 
   // Filtra os registros
   const estoquesFiltrados = estoques.filter((e) => {
     return (
-      (filtroProduto === "" || e.produtoId === filtroProduto) &&
-      (filtroSafra === "" || e.safraId === filtroSafra) &&
-      (filtroFazenda === "" || e.fazendaId === filtroFazenda)
-    );
-  });
+      (filtroProduto === '' || e.produtoId === filtroProduto) &&
+      (filtroSafra === '' || e.safraId === filtroSafra) &&
+      (filtroFazenda === '' || e.fazendaId === filtroFazenda)
+    )
+  })
 
   // Calcula saldo apenas se algum filtro estiver ativo
   const saldoFiltrado =
     filtroProduto || filtroSafra || filtroFazenda
       ? estoquesFiltrados.reduce((saldo, item) => {
-          const qtd = Number(item.quantidade) || 0;
-          return saldo + (item.tipo === "entrada" ? qtd : -qtd);
+          const qtd = Number(item.quantidade) || 0
+          return saldo + (item.tipo === 'Entrada' ? qtd : -qtd)
         }, 0)
-      : 0;
+      : 0
 
   // Atualiza a exibição do saldo conforme filtros
   useEffect(() => {
-    setShowSaldo(!!(filtroProduto || filtroSafra || filtroFazenda));
-  }, [filtroProduto, filtroSafra, filtroFazenda]);
+    setShowSaldo(!!(filtroProduto || filtroSafra || filtroFazenda))
+  }, [filtroProduto, filtroSafra, filtroFazenda])
 
   const limparFiltros = () => {
-    setFiltroProduto("");
-    setFiltroSafra("");
-    setFiltroFazenda("");
-  };
+    setFiltroProduto('')
+    setFiltroSafra('')
+    setFiltroFazenda('')
+  }
 
   return (
-    <div>
-      <h3>Controle de Estoque</h3>
-
+    <Container>
       {/* Filtros */}
-      <div className="flex gap-4 mb-4">
-        <select
-          value={filtroProduto}
-          onChange={(e) => setFiltroProduto(e.target.value)}
-          aria-label="Filtrar por produto"
-        >
-          <option value="">Todos os produtos</option>
-          {produtos.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.nome}
-            </option>
-          ))}
-        </select>
-
-        <select
+      <div className="form-container">
+        <h3 className="subtitle-form">Controle de Estoque</h3>
+        <ProdutoSelect value={filtroProduto} onChange={setFiltroProduto} />
+        <SafraSelect
           value={filtroSafra}
-          onChange={(e) => setFiltroSafra(e.target.value)}
-          aria-label="Filtrar por safra"
-        >
-          <option value="">Todas as safras</option>
-          {safras.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.nome}
-            </option>
-          ))}
-        </select>
-
-        <FazendaSelect
-          value={filtroFazenda}
-          onChange={(e) => setFiltroFazenda(e.target.value)}
-          name="fazenda"
+          valueKey="id"
+          labelKey="nome"
+          onChange={setFiltroSafra}
+          required={false}
         />
 
-        <button
-          onClick={limparFiltros}
-          className="btn btn-secondary"
-          type="button"
-          aria-label="Limpar filtros"
-        >
-          Limpar Filtros
-        </button>
-      </div>
+        <FazendaSelect
+          id="filtro-fazenda"
+          value={filtroFazenda}
+          onChange={setFiltroFazenda}
+          required={false}
+        />
 
-      {showSaldo && (
-        <p
-          style={{ fontWeight: "bold", fontSize: "1.1rem", marginBottom: 10 }}
-          aria-live="polite"
-        >
-          Saldo Atual (filtrado): {saldoFiltrado}
-        </p>
-      )}
+        <div id="div-button">
+          <ButtonComponent
+            label={'Limpar'}
+            onClick={limparFiltros}
+            aria-label="Limpar filtros"
+            variant="buttonGrey"
+            textColor="secondary"
+          />
+        </div>
 
+        {showSaldo && (
+          <p id="text-destaque" aria-live="polite">
+            Saldo Atual (filtrado): {saldoFiltrado}
+          </p>
+        )}
+
+        {/* 
       <ul className="space-y-2 mt-4">
         {estoquesFiltrados.map((e) => (
           <li
@@ -184,7 +170,8 @@ export default function EstoqueList() {
             </div>
           </li>
         ))}
-      </ul>
-    </div>
-  );
+      </ul> */}
+      </div>
+    </Container>
+  )
 }

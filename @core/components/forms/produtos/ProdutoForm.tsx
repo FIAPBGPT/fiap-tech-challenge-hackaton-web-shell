@@ -1,89 +1,89 @@
-"use client";
+'use client'
 
 import {
   adicionarProduto,
   atualizarProduto,
-} from "@/@core/services/firebase/pages/produtosService";
-import { useEffect, useState } from "react";
-import SelectComponent from "../../ui/select/Select.component";
-import InputComponent from "../../ui/input/Input.component";
-import { Container } from "@/@theme/custom/ProdutoForm.styles";
-import ButtonComponent from "../../ui/Button";
+} from '@/@core/services/firebase/pages/produtosService'
+import { useEffect, useState } from 'react'
+import SelectComponent from '../../ui/select/Select.component'
+import InputComponent from '../../ui/input/Input.component'
+import { Container } from '@/@theme/custom/ProdutoForm.styles'
+import ButtonComponent from '../../ui/Button'
 
 interface ProdutoFormProps {
-  onSuccess: () => void;
+  onSuccess: () => void
   editarProduto?: {
-    id: string;
-    nome: string;
-    categoria?: string;
-    preco?: number;
-  };
-  onCancelEdit?: () => void;
+    id: string
+    nome: string
+    categoria?: string
+    preco?: number
+  }
+  onCancelEdit?: () => void
 }
 
 // Categorias válidas para seleção
-const categorias = ["C1", "C2", "S1", "S2", "Genética", "Básica"];
+const categorias = ['C1', 'C2', 'S1', 'S2', 'Genética', 'Básica']
 
 export default function ProdutoForm({
   onSuccess,
   editarProduto,
   onCancelEdit,
 }: ProdutoFormProps) {
-  const [nome, setNome] = useState("");
-  const [categoria, setCategoria] = useState("");
-  const [preco, setPreco] = useState("");
-  const [error, setError] = useState<string | null>(null); // Estado de erro
+  const [nome, setNome] = useState('')
+  const [categoria, setCategoria] = useState('')
+  const [preco, setPreco] = useState('')
+  const [error, setError] = useState<string | null>(null) // Estado de erro
 
   // Preenche campos ao editar
   useEffect(() => {
     if (editarProduto) {
-      setNome(editarProduto.nome);
-      setCategoria(editarProduto.categoria || "");
-      setPreco(editarProduto.preco?.toString() || "");
+      setNome(editarProduto.nome)
+      setCategoria(editarProduto.categoria || '')
+      setPreco(editarProduto.preco?.toString() || '')
     } else {
-      setNome("");
-      setCategoria("");
-      setPreco("");
+      setNome('')
+      setCategoria('')
+      setPreco('')
     }
-  }, [editarProduto]);
+  }, [editarProduto])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     // Validação de campos obrigatórios
     if (!nome.trim()) {
-      return setError("Nome do produto é obrigatório.");
+      return setError('Nome do produto é obrigatório.')
     }
 
     if (preco && isNaN(Number(preco))) {
-      return setError("Preço deve ser um valor numérico válido.");
+      return setError('Preço deve ser um valor numérico válido.')
     }
 
-    setError(null); // Limpa o erro anterior
+    setError(null) // Limpa o erro anterior
 
     const dados = {
       nome,
       categoria: categoria || undefined,
       preco: preco ? Number(preco) : undefined,
-    };
+    }
 
     try {
       if (editarProduto) {
-        await atualizarProduto(editarProduto.id, dados);
+        await atualizarProduto(editarProduto.id, dados)
       } else {
-        await adicionarProduto(dados);
+        await adicionarProduto(dados)
       }
 
       // Limpa o formulário após envio
-      setNome("");
-      setCategoria("");
-      setPreco("");
-      onSuccess();
+      setNome('')
+      setCategoria('')
+      setPreco('')
+      onSuccess()
     } catch (error) {
-      console.error("Erro ao salvar produto:", error);
-      setError("Erro ao salvar produto. Tente novamente.");
+      console.error('Erro ao salvar produto:', error)
+      setError('Erro ao salvar produto. Tente novamente.')
     }
-  };
+  }
 
   return (
     <Container>
@@ -91,7 +91,7 @@ export default function ProdutoForm({
         <fieldset>
           <div id="containers-legend">
             <legend>
-              {editarProduto ? "Editar Produto" : "Cadastrar Produto"}
+              {editarProduto ? 'Editar Produto' : 'Cadastrar Produto'}
             </legend>
           </div>
 
@@ -102,6 +102,7 @@ export default function ProdutoForm({
             onChange={(value) => setNome(value)}
             placeholder="Nome do produto"
             required
+            name={'produto'}
           />
 
           <InputComponent
@@ -112,24 +113,25 @@ export default function ProdutoForm({
             onChange={(value) => setPreco(value)}
             placeholder="Preço (opcional)"
             required
+            name={'preco'}
           />
 
           <SelectComponent
-            id={"categoria2"}
+            id={'categoria2'}
             value={categoria}
             options={categorias}
             onChange={(value) => setCategoria(value)}
-            placeholder={"Selecione a categoria"}
+            placeholder={'Selecione a categoria'}
             required={true}
           />
 
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
           <div id="div-buttons">
             <ButtonComponent
               type="submit"
               id="btn-cadastrar"
               variant="secondary"
-              label={editarProduto ? "Salvar" : "Cadastrar"}
+              label={editarProduto ? 'Salvar' : 'Cadastrar'}
               onClick={() => {}}
             />
 
@@ -138,7 +140,7 @@ export default function ProdutoForm({
                 type="button"
                 id="btn-cancelar"
                 variant="buttonGrey"
-                label={"Cancelar"}
+                label={'Cancelar'}
                 onClick={onCancelEdit ?? (() => {})}
               />
             )}
@@ -146,5 +148,5 @@ export default function ProdutoForm({
         </fieldset>
       </form>
     </Container>
-  );
+  )
 }

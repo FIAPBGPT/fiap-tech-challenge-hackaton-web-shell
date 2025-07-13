@@ -1,21 +1,28 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from "react";
-import { adicionarEstoque, atualizarEstoque } from "@/@core/services/firebase/pages/estoqueService";
-import ProdutoSelect from "../produtos/ProdutoSelect";
-import SafraSelect from "../safras/SafraSelect";
+import { useEffect, useState } from 'react'
+import {
+  adicionarEstoque,
+  atualizarEstoque,
+} from '@/@core/services/firebase/pages/estoqueService'
+import ProdutoSelect from '../produtos/ProdutoSelect'
+import SafraSelect from '../safras/SafraSelect'
+import InputComponent from '../../ui/input/Input.component'
+import SelectComponent from '../../ui/select/Select.component'
+import { Container } from '@/@theme/custom/Forms.styles'
+import ButtonComponent from '../../ui/Button'
 
 interface EstoqueFormProps {
-  onSuccess: () => void;
+  onSuccess: () => void
   editarEstoque?: {
-    id: string;
-    produtoId: string;
-    safraId?: string | null;
-    quantidade: number;
-    tipo: "entrada" | "saida";
-    observacao?: string;
-  };
-  onCancelEdit?: () => void;
+    id: string
+    produtoId: string
+    safraId?: string | null
+    quantidade: number
+    tipo: 'Entrada' | 'Saída'
+    observacao?: string
+  }
+  onCancelEdit?: () => void
 }
 
 export default function EstoqueForm({
@@ -24,145 +31,150 @@ export default function EstoqueForm({
   onCancelEdit,
 }: EstoqueFormProps) {
   const [form, setForm] = useState({
-    produto: "",
-    safra: "",
-    quantidade: "",
-    tipo: "entrada",
-    observacao: "",
-  });
+    produto: '',
+    safra: '',
+    quantidade: '',
+    tipo: 'Entrada',
+    observacao: '',
+  })
 
   // Preenche formulário ao editar
   useEffect(() => {
     if (editarEstoque) {
       setForm({
         produto: editarEstoque.produtoId,
-        safra: editarEstoque.safraId || "",
+        safra: editarEstoque.safraId || '',
         quantidade: editarEstoque.quantidade.toString(),
         tipo: editarEstoque.tipo,
-        observacao: editarEstoque.observacao || "",
-      });
+        observacao: editarEstoque.observacao || '',
+      })
     } else {
       setForm({
-        produto: "",
-        safra: "",
-        quantidade: "",
-        tipo: "entrada",
-        observacao: "",
-      });
+        produto: '',
+        safra: '',
+        quantidade: '',
+        tipo: 'Entrada',
+        observacao: '',
+      })
     }
-  }, [editarEstoque]);
+  }, [editarEstoque])
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleChange = (name: string, value: string) => {
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!form.produto || !form.quantidade || Number(form.quantidade) <= 0) {
-      alert("Preencha os campos obrigatórios corretamente.");
-      return;
+      alert('Preencha os campos obrigatórios corretamente.')
+      return
     }
 
     const estoqueData = {
       produtoId: form.produto,
       safraId: form.safra || null,
       quantidade: Number(form.quantidade),
-      tipo: form.tipo as "entrada" | "saida",
+      tipo: form.tipo as 'Entrada' | 'Saída',
       observacao: form.observacao.trim() || undefined,
       data: new Date(),
-    };
+    }
 
     try {
-      // Não validar saldo aqui pois é movimentação manual (entrada ou saída arbitrária)
+      // Não validar saldo aqui pois é movimentação manual (Entrada ou saída arbitrária)
       if (editarEstoque) {
-        await atualizarEstoque(editarEstoque.id, estoqueData);
+        await atualizarEstoque(editarEstoque.id, estoqueData)
       } else {
-        await adicionarEstoque(estoqueData);
+        await adicionarEstoque(estoqueData)
       }
 
       setForm({
-        produto: "",
-        safra: "",
-        quantidade: "",
-        tipo: "entrada",
-        observacao: "",
-      });
+        produto: '',
+        safra: '',
+        quantidade: '',
+        tipo: 'Entrada',
+        observacao: '',
+      })
 
-      onSuccess();
+      onSuccess()
     } catch (error) {
-      alert("Erro ao salvar movimentação de estoque.");
-      console.error(error);
+      alert('Erro ao salvar movimentação de estoque.')
+      console.error(error)
     }
-  };
+  }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4 p-4 border rounded-md bg-white"
-    >
-      <h2 className="text-lg font-bold">
-        {editarEstoque ? "Editar Movimentação" : "Nova Movimentação"}
-      </h2>
+    <Container>
+      <form onSubmit={handleSubmit}>
+        <h2 className="title-form">
+          {editarEstoque ? 'Editar Movimentação' : 'Nova Movimentação'}
+        </h2>
 
-      <ProdutoSelect
-        value={form.produto}
-        onChange={handleChange}
-        name="produto"
-        required
-      />
-
-      <SafraSelect value={form.safra} onChange={handleChange} name="safra" />
-
-      <div>
-        <label>Quantidade:</label>
-        <input
-          type="number"
-          min={1}
-          name="quantidade"
-          value={form.quantidade}
-          onChange={handleChange}
+        <ProdutoSelect
+          value={form.produto}
+          onChange={(value) => handleChange('produto', value)}
+          name="produto"
           required
         />
-      </div>
 
-      <div>
-        <label>Tipo:</label>
-        <select name="tipo" value={form.tipo} onChange={handleChange} required>
-          <option value="entrada">Entrada</option>
-          <option value="saida">Saída</option>
-        </select>
-      </div>
-
-      <div>
-        <label>Observação:</label>
-        <input
-          type="text"
-          name="observacao"
-          value={form.observacao}
-          onChange={handleChange}
-          placeholder="Opcional"
+        <SafraSelect
+          value={form.safra}
+          onChange={(value) => handleChange('safra', value)}
+          name="safra"
+          required
         />
-      </div>
 
-      <div className="flex gap-2">
-        <button type="submit" className="btn btn-primary">
-          {editarEstoque ? "Salvar" : "Cadastrar"}
-        </button>
+        <InputComponent
+          id="quantidade"
+          name="quantidade"
+          type="number"
+          value={form.quantidade}
+          onChange={(value) => handleChange('quantidade', value)}
+          placeholder="Digite a quantidade"
+          required={true}
+          min={1}
+        />
+        <SelectComponent
+          id="tipo"
+          value={form.tipo}
+          options={['Entrada', 'Saída']}
+          onChange={(value) => handleChange('tipo', value)}
+          placeholder="Selecione um tipo"
+          required={true}
+          ariaLabel="Selecionar tipo"
+          valueKey="id"
+          labelKey="nome"
+          name="tipo"
+        />
 
-        {editarEstoque && (
-          <button
-            type="button"
-            onClick={onCancelEdit}
-            className="btn btn-secondary"
-          >
-            Cancelar
-          </button>
-        )}
-      </div>
-    </form>
-  );
+        <InputComponent
+          id="observacao"
+          name="observacao"
+          type="text"
+          value={form.observacao}
+          onChange={(value) => handleChange('observacao', value)}
+          placeholder="Observação (opcional)"
+          required={false}
+        />
+
+        <div>
+          <ButtonComponent
+            type="submit"
+            label={editarEstoque ? 'Salvar' : 'Cadastrar'}
+            onClick={function (): void {}}
+            variant="secondary"
+          />
+
+          {editarEstoque && onCancelEdit && (
+            <ButtonComponent
+              type="button"
+              label="Cancelar"
+              onClick={onCancelEdit}
+              variant="buttonGrey"
+            />
+          )}
+        </div>
+      </form>
+    </Container>
+  )
 }

@@ -20,6 +20,7 @@ export default function MetaList() {
       listarProdutos(),
       listarSafras(),
     ]);
+    console.log("Safras carregadas:", listaSafras);
     setMetas(listaMetas);
     setProdutos(listaProdutos);
     setSafras(listaSafras);
@@ -55,8 +56,8 @@ export default function MetaList() {
     const safraSelected = safras.find((s) => s.id === safra);
     if (!safraSelected) {
       console.warn(`Safra não encontrada: ${safra}`);
-      return safraSelected.nome; // Retorna o ID se a safra não for encontrada
-    }
+      return safraSelected.nome; 
+    }// Retorna o ID se a safra não for encontrada
 
     return safraSelected.nome;
   };
@@ -83,7 +84,6 @@ export default function MetaList() {
 
   return (
     <div>
-      <h3>Metas</h3>
 
       <MetaForm
         editarMeta={metaEditando ?? undefined}

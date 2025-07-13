@@ -1,16 +1,20 @@
-'use client';
+"use client";
 import { listarFazendas } from "@/@core/services/firebase/pages/fazendasService";
 import { useEffect, useState } from "react";
+import SelectComponent from "../../ui/select/Select.component";
 
-export default function FazendaSelect({
-  value,
-  onChange,
-  name = "fazenda",
-}: {
+interface FazendaSelectProps {
+  id: string;
   value: string;
-  onChange: (e: any) => void;
+  onChange: (value: string) => void;
   name?: string;
-}) {
+  valueKey?: string;
+  labelKey?: string;
+  required: boolean;
+  label?: string;
+}
+
+export default function FazendaSelect(props: FazendaSelectProps) {
   const [fazendas, setFazendas] = useState<any[]>([]);
 
   useEffect(() => {
@@ -28,13 +32,18 @@ export default function FazendaSelect({
   }, []);
 
   return (
-    <select name={name} value={value} onChange={onChange} required>
-      <option value="">Selecione uma fazenda</option>
-      {fazendas.map((f) => (
-        <option key={f.id} value={f.id}>
-          {f.nome}
-        </option>
-      ))}
-    </select>
+    <SelectComponent
+      id={props.id}
+      value={props.value}
+      options={fazendas}
+      onChange={props.onChange}
+      placeholder="Selecione uma fazenda"
+      required={props.required}
+      ariaLabel="Filtrar por fazenda"
+      valueKey="id"
+      labelKey="nome"
+      label={props.label}
+      name="fazenda"
+    />
   );
 }
