@@ -1,6 +1,11 @@
 "use client";
+import Image from 'next/image';
 import { sendInviteEmail } from "@/@core/services/firebase/pages/inviteUserService";
+import { Content, ErrorText, FormContainer, Header, LeftText, LoginContainer, LoginContainerContent, PageContainer, SucessText } from "@/@theme/custom/LoginPage-style";
 import { useState } from "react";
+import logo from "@/public/image/logo.png";
+import { StyledButton } from '@/@theme/custom/Button.style';
+import InputComponent from '@/@core/components/ui/Input';
 
 export default function InviteUser() {
   const [email, setEmail] = useState<string>("");
@@ -32,64 +37,37 @@ export default function InviteUser() {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px", borderRadius: "8px", backgroundColor: "#f9f9f9", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
-      <h2>Enviar Convite para Cadastro</h2>
-      
-      {/* Mensagem de Sucesso */}
-      {successMessage && (
-        <div style={{ color: "green", marginBottom: "15px", textAlign: "center" }}>
-          {successMessage}
-        </div>
-      )}
-
-      {/* Mensagem de Erro */}
-      {error && (
-        <div style={{ color: "red", marginBottom: "15px", textAlign: "center" }}>
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "15px" }}>
-          <label htmlFor="email" style={{ display: "block", marginBottom: "5px" }}>
-            E-mail do Usuário:
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Digite o e-mail do usuário"
-            style={{
-              width: "100%",
-              padding: "10px",
-              borderRadius: "5px",
-              border: "1px solid #ddd",
-              fontSize: "14px",
-            }}
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "12px",
-            backgroundColor: "#007BFF",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            fontSize: "16px",
-            cursor: "pointer",
-            transition: "background-color 0.3s",
-          }}
-          disabled={loading}
-        >
-          {loading ? "Enviando..." : "Enviar Convite"}
-        </button>
-      </form>
-    </div>
+    <PageContainer>
+      <LoginContainer>
+        <Header>
+          <Image src={logo} alt="Logo" width={120} height={40} />
+        </Header>
+        <LoginContainerContent>
+          <Content>
+            <LeftText>
+              Enviar Convite para Cadastro
+            </LeftText>
+            <FormContainer>
+              <InputComponent
+                type="email"
+                id="email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Digite o e-mail do usuário"
+                required
+              />
+              <StyledButton variant="secondary" onClick={handleSubmit}>{loading ? "Enviando..." : "Enviar Convite"}</StyledButton>
+              {successMessage && (
+                <SucessText>{successMessage}</SucessText>
+              )}
+              {error && (
+                <ErrorText>{error}</ErrorText>
+              )}              
+            </FormContainer>
+          </Content>  
+        </LoginContainerContent>
+      </LoginContainer>
+    </PageContainer>
   );
 }

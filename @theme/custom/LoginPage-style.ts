@@ -87,3 +87,15 @@ export const TitleForm = styled.div`
 export const FormContainer = styled.div`
   flex: 1;
 `;
+
+
+export const ErrorText = styled.p`
+  margin: 5px 0;
+  color: red;
+  font-weight: 700;
+`
+
+export const SucessText = styled.p`
+  margin: 5px 0;
+  color: green;
+`
