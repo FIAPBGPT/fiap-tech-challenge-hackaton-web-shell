@@ -131,7 +131,6 @@ export default function FazendaForm({
           <legend className="title-form">
             {editarFazenda ? 'Editar Fazenda' : 'Cadastrar Fazenda'}
           </legend>
-          41
           <InputComponent
             id="nome"
             type="text"
