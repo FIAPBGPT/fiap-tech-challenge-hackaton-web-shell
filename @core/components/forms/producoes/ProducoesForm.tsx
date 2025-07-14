@@ -1,31 +1,34 @@
 // ProducoesForm.tsx
-"use client";
-import { useEffect, useState } from "react";
-import { useAuthStore } from "@/@core/store/authStore";
-import FazendaSelect from "../fazendas/FazendaSelect";
-import ProdutoSelect from "../produtos/ProdutoSelect";
-import SafraSelect from "../safras/SafraSelect";
+'use client'
+import { useEffect, useState } from 'react'
+import { useAuthStore } from '@/@core/store/authStore'
+import FazendaSelect from '../fazendas/FazendaSelect'
+import ProdutoSelect from '../produtos/ProdutoSelect'
+import SafraSelect from '../safras/SafraSelect'
 import {
   registrarProducaoEstoque,
   removerProducaoEstoque,
   consultarSaldoEstoque,
-} from "@/@core/services/firebase/pages/estoqueService";
+} from '@/@core/services/firebase/pages/estoqueService'
 import {
   adicionarProducao,
   atualizarProducao,
-} from "@/@core/services/firebase/pages/producoesService";
+} from '@/@core/services/firebase/pages/producoesService'
+import InputComponent from '../../ui/input/Input.component'
+import { Container } from '@/@theme/custom/Forms.styles'
+import ButtonComponent from '../../ui/Button'
 
 interface ProducoesFormProps {
-  onSuccess: () => void;
+  onSuccess: () => void
   editarProducao?: {
-    id: string;
-    produto: string;
-    quantidade: number;
-    fazenda: string;
-    safra: string;
-    data?: string;
-  };
-  onCancelEdit?: () => void;
+    id: string
+    produto: string
+    quantidade: number
+    fazenda: string
+    safra: string
+    data?: string
+  }
+  onCancelEdit?: () => void
 }
 
 export default function ProducoesForm({
@@ -33,30 +36,32 @@ export default function ProducoesForm({
   editarProducao,
   onCancelEdit,
 }: ProducoesFormProps) {
-  const user = useAuthStore((s) => s.user);
+  const user = useAuthStore((s) => s.user)
   const [form, setForm] = useState({
-    produto: "",
-    quantidade: "",
-    fazenda: "",
-    safra: "",
-    data: "",
-  });
+    produto: '',
+    quantidade: '',
+    fazenda: '',
+    safra: '',
+    data: '',
+  })
 
-  const [saldoEstoque, setSaldoEstoque] = useState<number | null>(null);
-  const [quantidadeAnterior, setQuantidadeAnterior] = useState<number>(0);
+  const [saldoEstoque, setSaldoEstoque] = useState<number | null>(null)
+  const [quantidadeAnterior, setQuantidadeAnterior] = useState<number>(0)
 
   const fetchSaldoEstoque = async (
     produto: string,
     safra: string,
     fazenda: string
   ) => {
+    // console.log('Buscando saldo com:', { produto, safra, fazenda })
     if (produto && safra && fazenda) {
-      const saldo = await consultarSaldoEstoque(produto, safra, fazenda);
-      setSaldoEstoque(saldo);
+      const saldo = await consultarSaldoEstoque(produto, safra, fazenda)
+      setSaldoEstoque(saldo)
     } else {
-      setSaldoEstoque(null);
+      setSaldoEstoque(null)
     }
-  };
+    console.log('Buscando saldo com:', { produto, safra, fazenda })
+  }
 
   useEffect(() => {
     if (editarProducao) {
@@ -65,46 +70,43 @@ export default function ProducoesForm({
         quantidade: String(editarProducao.quantidade),
         fazenda: editarProducao.fazenda,
         safra: editarProducao.safra,
-        data: editarProducao.data || "",
-      });
-      setQuantidadeAnterior(editarProducao.quantidade);
+        data: editarProducao.data || '',
+      })
+      setQuantidadeAnterior(editarProducao.quantidade)
     } else {
       setForm({
-        produto: "",
-        quantidade: "",
-        fazenda: "",
-        safra: "",
-        data: "",
-      });
-      setQuantidadeAnterior(0);
+        produto: '',
+        quantidade: '',
+        fazenda: '',
+        safra: '',
+        data: '',
+      })
+      setQuantidadeAnterior(0)
     }
-  }, [editarProducao]);
+  }, [editarProducao])
 
   useEffect(() => {
-    fetchSaldoEstoque(form.produto, form.safra, form.fazenda);
-  }, [form.produto, form.safra, form.fazenda]);
+    fetchSaldoEstoque(form.produto, form.safra, form.fazenda)
+  }, [form.produto, form.safra, form.fazenda])
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleChange = (name: string, value: string) => {
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return alert("Usuário não autenticado");
+    e.preventDefault()
+    if (!user) return alert('Usuário não autenticado')
 
-    const { produto, safra, fazenda, quantidade } = form;
-    const quantidadeNum = Number(quantidade);
+    const { produto, safra, fazenda, quantidade } = form
+    const quantidadeNum = Number(quantidade)
 
     if (!produto || !safra || !fazenda || quantidadeNum <= 0) {
-      alert("Todos os campos devem ser preenchidos corretamente");
-      return;
+      alert('Todos os campos devem ser preenchidos corretamente')
+      return
     }
 
     // Set datetime now in ISO format
-    const data = new Date().toISOString();
+    const data = new Date().toISOString()
 
     const payload = {
       produto,
@@ -113,7 +115,7 @@ export default function ProducoesForm({
       quantidade: quantidadeNum,
       uid: user.uid,
       data,
-    };
+    }
 
     try {
       if (editarProducao) {
@@ -128,10 +130,10 @@ export default function ProducoesForm({
               fazendaId: editarProducao.fazenda,
             },
           ],
-        });
+        })
 
         // Atualiza a produção
-        await atualizarProducao(editarProducao.id, payload);
+        await atualizarProducao(editarProducao.id, payload)
 
         // Registra novo estoque
         await registrarProducaoEstoque({
@@ -144,9 +146,9 @@ export default function ProducoesForm({
               fazendaId: fazenda,
             },
           ],
-        });
+        })
       } else {
-        const docRef = await adicionarProducao(payload);
+        const docRef = await adicionarProducao(payload)
 
         await registrarProducaoEstoque({
           id: docRef.id,
@@ -158,73 +160,95 @@ export default function ProducoesForm({
               fazendaId: fazenda,
             },
           ],
-        });
+        })
       }
 
       setForm({
-        produto: "",
-        quantidade: "",
-        fazenda: "",
-        safra: "",
-        data: "",
-      });
-      onSuccess();
+        produto: '',
+        quantidade: '',
+        fazenda: '',
+        safra: '',
+        data: '',
+      })
+      onSuccess()
     } catch (err: any) {
-      console.error(err);
-      alert("Erro ao salvar a produção: " + err.message);
+      console.error(err)
+      alert('Erro ao salvar a produção: ' + err.message)
     }
-  };
+  }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <ProdutoSelect
-        value={form.produto}
-        onChange={handleChange}
-        name="produto"
-        required
-      />
-      <SafraSelect
-        value={form.safra}
-        onChange={handleChange}
-        name="safra"
-        required
-      />
-      <FazendaSelect
-        value={form.fazenda}
-        onChange={handleChange}
-        name="fazenda"
-      />
+    <Container>
+      <form onSubmit={handleSubmit}>
+        <div className="form-container">
+          <h2 className="title-form">Cadastrar ou consultar os saldos</h2>
+          <h3 className="subtitle-form">
+            Selecione produto, safra e fazenda para ver saldo.
+          </h3>
+          <ProdutoSelect
+            value={form.produto}
+            onChange={(value) => handleChange('produto', value)}
+            name="produto"
+            required
+          />
+          <SafraSelect
+            value={form.safra}
+            onChange={(value) => handleChange('safra', value)}
+            name="safra"
+            required
+          />
+          <FazendaSelect
+            id="filtro-fazenda"
+            value={form.fazenda}
+            onChange={(value) => handleChange('fazenda', value)}
+            name="fazenda"
+            required={false}
+          />
+        </div>
+        {saldoEstoque !== null ? (
+          <div style={{ width: '100%' }}>
+            <p>Saldo atual do estoque:</p>
+            <p id="text-destaque">{saldoEstoque}</p>
+          </div>
+        ) : (
+          <>
+            <h3 className="subtitle-form">
+              Selecione todos os itens acima e digite uma quantidade para nova
+              produção.
+            </h3>
+          </>
+        )}
 
-      {saldoEstoque !== null ? (
-        <p style={{ color: "green" }}>Saldo atual do estoque: {saldoEstoque}</p>
-      ) : (
-        <p style={{ color: "gray" }}>
-          Selecione produto, safra e fazenda para ver saldo.
-        </p>
-      )}
+        <InputComponent
+          id="quantidade"
+          name="quantidade"
+          type="number"
+          value={form.quantidade}
+          onChange={(value) => handleChange('quantidade', value)}
+          placeholder="Digite a quantidade"
+          required={true}
+          min={1}
+        />
 
-      <input
-        type="number"
-        name="quantidade"
-        value={form.quantidade}
-        onChange={handleChange}
-        placeholder="Quantidade"
-        required
-        min={1}
-      />
+        {/* Hidden input to show the datetime now if needed */}
+        <input type="hidden" name="data" value={form.data} />
+        <div className="div-buttons">
+          <ButtonComponent
+            type="submit"
+            label={editarProducao ? 'Atualizar' : 'Cadastrar'}
+          />
 
-      {/* Hidden input to show the datetime now if needed */}
-      <input type="hidden" name="data" value={form.data} />
-
-      <button type="submit">
-        {editarProducao ? "Atualizar Produção" : "Registrar Produção"}
-      </button>
-
-      {editarProducao && (
-        <button type="button" onClick={onCancelEdit}>
-          Cancelar
-        </button>
-      )}
-    </form>
-  );
+          {editarProducao && onCancelEdit && (
+            <ButtonComponent
+              type="button"
+              label="Cancelar"
+              onClick={onCancelEdit}
+              variant="buttonGrey"
+              textColor="secondary"
+            />
+          )}
+        </div>
+      </form>
+    </Container>
+  )
 }

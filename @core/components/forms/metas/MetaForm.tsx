@@ -1,24 +1,28 @@
-import { useEffect, useState } from "react";
-import { useAuthStore } from "@/@core/store/authStore";
-import FazendaSelect from "../fazendas/FazendaSelect";
-import SafraSelect from "../safras/SafraSelect";
-import ProdutoSelect from "../produtos/ProdutoSelect";
+import { useEffect, useState } from 'react'
+import { useAuthStore } from '@/@core/store/authStore'
+import FazendaSelect from '../fazendas/FazendaSelect'
+import SafraSelect from '../safras/SafraSelect'
+import ProdutoSelect from '../produtos/ProdutoSelect'
 import {
   adicionarMeta,
   atualizarMeta,
-} from "@/@core/services/firebase/pages/metasService";
+} from '@/@core/services/firebase/pages/metasService'
+import InputComponent from '../../ui/input/Input.component'
+import SelectComponent from '../../ui/select/Select.component'
+import { Container } from '@/@theme/custom/Forms.styles'
+import ButtonComponent from '../../ui/Button'
 
 interface MetaFormProps {
-  onSuccess: () => void;
+  onSuccess: () => void
   editarMeta?: {
-    id: string;
-    produto: string;
-    valor: number;
-    safra: string;
-    fazenda: string;
-    tipo?: string;
-  };
-  onCancelEdit?: () => void;
+    id: string
+    produto: string
+    valor: number
+    safra?: string
+    fazenda: string
+    tipo?: string
+  }
+  onCancelEdit?: () => void
 }
 
 export default function MetaForm({
@@ -26,48 +30,45 @@ export default function MetaForm({
   editarMeta,
   onCancelEdit,
 }: MetaFormProps) {
-  const user = useAuthStore((state) => state.user);
+  const user = useAuthStore((state) => state.user)
 
   const [form, setForm] = useState({
-    produto: "",
-    valor: "",
-    safra: "",
-    fazenda: "",
-    tipo: "producao", // valor padrão
-  });
+    produto: '',
+    valor: '',
+    safra: '',
+    fazenda: '',
+    tipo: 'producao', // valor padrão
+  })
 
   useEffect(() => {
     if (editarMeta) {
       setForm({
         produto: editarMeta.produto,
         valor: String(editarMeta.valor),
-        safra: editarMeta.safra,
+        safra: editarMeta.safra!,
         fazenda: editarMeta.fazenda,
-        tipo: editarMeta.tipo ?? "producao",
-      });
+        tipo: editarMeta.tipo ?? 'producao',
+      })
     } else {
       setForm({
-        produto: "",
-        valor: "",
-        safra: "",
-        fazenda: "",
-        tipo: "producao",
-      });
+        produto: '',
+        valor: '',
+        safra: '',
+        fazenda: '',
+        tipo: 'producao',
+      })
     }
-  }, [editarMeta]);
+  }, [editarMeta])
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleChange = (name: string, value: string) => {
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!user) {
-      alert("Usuário não autenticado");
-      return;
+      alert('Usuário não autenticado')
+      return
     }
 
     const novaMeta = {
@@ -77,73 +78,96 @@ export default function MetaForm({
       fazenda: form.fazenda,
       tipo: form.tipo,
       uid: user.uid,
-    };
+    }
 
     try {
       if (editarMeta) {
-        await atualizarMeta(editarMeta.id, novaMeta);
+        await atualizarMeta(editarMeta.id, novaMeta)
       } else {
-        await adicionarMeta(novaMeta);
+        await adicionarMeta(novaMeta)
       }
 
       setForm({
-        produto: "",
-        valor: "",
-        safra: "",
-        fazenda: "",
-        tipo: "producao",
-      });
-      onSuccess();
+        produto: '',
+        valor: '',
+        safra: '',
+        fazenda: '',
+        tipo: 'producao',
+      })
+      onSuccess()
     } catch (error) {
-      console.error("Erro ao salvar meta:", error);
-      alert("Erro ao salvar meta");
+      console.error('Erro ao salvar meta:', error)
+      alert('Erro ao salvar meta')
     }
-  };
+  }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <ProdutoSelect
-        name="produto"
-        value={form.produto}
-        onChange={handleChange}
-        required
-      />
+    <Container>
+      <form onSubmit={handleSubmit}>
+        <ProdutoSelect
+          name="produto"
+          value={form.produto}
+          onChange={(value) => handleChange('produto', value)}
+          required
+        />
 
-      <input
-        type="number"
-        name="valor"
-        value={form.valor}
-        onChange={handleChange}
-        placeholder="Valor da meta"
-        min={0}
-        required
-      />
+        <InputComponent
+          type="number"
+          name="valor"
+          value={form.valor}
+          onChange={(value) => handleChange('valor', value)}
+          placeholder="Valor da meta"
+          min={0}
+          required
+          id={'valor'}
+        />
 
-      <SafraSelect
-        name="safra"
-        value={form.safra}
-        onChange={handleChange}
-        required
-      />
+        <SafraSelect
+          name="safra"
+          valueKey="id"
+          labelKey="nome"
+          value={form.safra}
+          onChange={(value) => handleChange('safra', value)}
+          required
+        />
 
-      <FazendaSelect
-        name="fazenda"
-        value={form.fazenda}
-        onChange={handleChange}
-      />
+        <FazendaSelect
+          name="fazenda"
+          value={form.fazenda}
+          onChange={(value) => handleChange('fazenda', value)}
+          id={'fazenda'}
+          required
+        />
 
-      <select name="tipo" value={form.tipo} onChange={handleChange} required>
-        <option value="producao">Meta de Produção</option>
-        <option value="vendas">Meta de Vendas</option>
-      </select>
+        <SelectComponent
+          name="tipo"
+          value={form.tipo}
+          onChange={(value) => handleChange('tipo', value)}
+          required
+          options={[
+            { label: 'Meta de Produção', value: 'producao' },
+            { label: 'Meta de Vendas', value: 'vendas' },
+          ]}
+          valueKey="value"
+          labelKey="label"
+        />
+        <div className="div-buttons">
+          <ButtonComponent
+            type="submit"
+            label={editarMeta ? 'Salvar' : 'Cadastrar'}
+          />
 
-      <button type="submit">{editarMeta ? "Salvar" : "Cadastrar"}</button>
-
-      {editarMeta && (
-        <button type="button" onClick={onCancelEdit}>
-          Cancelar
-        </button>
-      )}
-    </form>
-  );
+          {editarMeta && onCancelEdit && (
+            <ButtonComponent
+              type="button"
+              label="Cancelar"
+              onClick={onCancelEdit}
+              variant="buttonGrey"
+              textColor="secondary"
+            />
+          )}
+        </div>
+      </form>
+    </Container>
+  )
 }
