@@ -131,14 +131,16 @@ export default function FazendaForm({
           <legend className="title-form">
             {editarFazenda ? 'Editar Fazenda' : 'Cadastrar Fazenda'}
           </legend>
-
-          <FazendaSelect
+          41
+          <InputComponent
             id="nome"
+            type="text"
             value={nome}
             onChange={(value) => setNome(value)}
+            placeholder="Nome da fazenda"
             required
+            name={'fazenda'}
           />
-
           <SelectComponent
             id="estado"
             value={estado}
@@ -147,7 +149,6 @@ export default function FazendaForm({
             required
             options={estadosBR}
           />
-
           <InputComponent
             type="number"
             step="any"
@@ -158,7 +159,6 @@ export default function FazendaForm({
             name={'latitude'}
             required
           />
-
           <InputComponent
             type="number"
             step="any"
@@ -169,19 +169,21 @@ export default function FazendaForm({
             name={'longitude'}
             required
           />
+          <div className="div-buttons">
+            <ButtonComponent
+              type="submit"
+              label={editarFazenda ? 'Salvar' : 'Cadastrar'}
+            />
 
-          <ButtonComponent
-            type="submit"
-            label={editarFazenda ? 'Salvar' : 'Cadastrar'}
-            onClick={function (): void {}}
-            variant="secondary"
-          />
-
-          {editarFazenda && (
-            <button type="button" onClick={onCancelEdit}>
-              Cancelar
-            </button>
-          )}
+            {editarFazenda && onCancelEdit && (
+              <ButtonComponent
+                type="button"
+                label="Cancelar"
+                onClick={onCancelEdit}
+                variant="buttonGrey"
+              />
+            )}
+          </div>
         </fieldset>
       </form>
     </Container>

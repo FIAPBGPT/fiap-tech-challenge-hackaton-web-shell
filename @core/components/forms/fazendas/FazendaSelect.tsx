@@ -11,11 +11,13 @@ interface FazendaSelectProps {
   valueKey?: string;
   labelKey?: string;
   required: boolean;
+  placeholder?:string;
   label?: string;
 }
 
 export default function FazendaSelect(props: FazendaSelectProps) {
   const [fazendas, setFazendas] = useState<any[]>([]);
+  
 
   useEffect(() => {
     const carregarFazendas = async () => {
@@ -37,7 +39,7 @@ export default function FazendaSelect(props: FazendaSelectProps) {
       value={props.value}
       options={fazendas}
       onChange={props.onChange}
-      placeholder="Selecione uma fazenda"
+      placeholder={props.placeholder ? props.placeholder :  "Selecione uma fazenda"}
       required={props.required}
       ariaLabel="Filtrar por fazenda"
       valueKey="id"

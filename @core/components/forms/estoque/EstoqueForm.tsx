@@ -153,16 +153,14 @@ export default function EstoqueForm({
           type="text"
           value={form.observacao}
           onChange={(value) => handleChange('observacao', value)}
-          placeholder="Observação (opcional)"
+          placeholder="Observação"
           required={false}
         />
 
-        <div>
+        <div className="div-buttons">
           <ButtonComponent
             type="submit"
             label={editarEstoque ? 'Salvar' : 'Cadastrar'}
-            onClick={function (): void {}}
-            variant="secondary"
           />
 
           {editarEstoque && onCancelEdit && (

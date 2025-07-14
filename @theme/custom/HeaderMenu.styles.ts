@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const Container = styled.div`
   width: 100%;
@@ -17,22 +17,56 @@ export const Container = styled.div`
   #menu-main-container {
     display: flex;
     flex: 1;
-    overflow: hidden;
+    overflow: auto;
     /* position: fixed;
     top: 150px;
     left: 0; */
     width: 100%;
+    @media (min-width: 721px) {
+      overflow: hidden;
+    }
 
     main {
       display: flex;
       flex: 1;
       justify-content: center;
-      align-items: flex-start;
-      padding: 25px;
+      align-items: center;
       width: 100%;
-      height: 100vh;
+      height: 100%;
       overflow: auto;
       margin: 0 auto;
+      @media (max-width: 720px) {
+        width: 100%;
+      }
+    }
+    #div-main {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+      align-items: center;
+      padding: 25px;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      margin: 0 auto;
+      @media (max-width: 720px) {
+        width: 100%;
+      }
+    }
+    #div-main-image {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+      align-items: center;
+      padding: 25px;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      margin: 0 auto;
+      background-image: url('/image/Imagem-fundo-group154.png');
+      background-size: cover;
+      background-position: top;
+      background-repeat: no-repeat;
       @media (max-width: 720px) {
         width: 100%;
       }
@@ -56,20 +90,20 @@ export const Container = styled.div`
     }
   }
 
-  #main-container {
+  #div-main-container {
     flex: 1;
     justify-content: center;
     padding: 10px;
     min-height: 100vh;
-    height: auto;
     width: 100%;
     max-width: 1024px;
     height: 100%;
-    border-left: 1px solid
+    margin-bottom: 25px;
+    border-left: 2px solid
       ${(props) => props.theme.themeColor.backgroundLightBase};
-    border-right: 1px solid
+    border-right: 2px solid
       ${(props) => props.theme.themeColor.backgroundLightBase};
-    border-bottom: 1px solid
+    border-bottom: 2px solid
       ${(props) => props.theme.themeColor.backgroundLightBase};
   }
-`;
+`

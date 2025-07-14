@@ -1,12 +1,16 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const InputStyles = styled.input`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 35px;
   background-color: ${(props) => props.theme.themeColor.white};
   padding: 8px !important;
   border-radius: 4px;
-  box-shadow: 1px 1px 2px 1px ${(props) => props.theme.themeColor.shadowInputSelects};
+  box-shadow: 1px 1px 2px 1px
+    ${(props) => props.theme.themeColor.shadowInputSelects};
   border: none;
   outline: none;
   appearance: none;
@@ -44,4 +48,4 @@ export const InputStyles = styled.input`
     background-color: ${(props) => props.theme.themeColor.white};
     box-shadow: 1px 1px 3px ${(props) => props.theme.themeColor.tableGreen};
   }
-`;
+`

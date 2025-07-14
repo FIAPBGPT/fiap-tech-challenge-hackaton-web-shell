@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from 'react'
 import SelectComponent from '../../ui/select/Select.component'
 import InputComponent from '../../ui/input/Input.component'
-import { Container } from '@/@theme/custom/ProdutoForm.styles'
+import { Container } from '@/@theme/custom/Forms.styles'
 import ButtonComponent from '../../ui/Button'
 
 interface ProdutoFormProps {
@@ -90,7 +90,7 @@ export default function ProdutoForm({
       <form onSubmit={handleSubmit}>
         <fieldset>
           <div id="containers-legend">
-            <legend>
+            <legend className='title-form' >
               {editarProduto ? 'Editar Produto' : 'Cadastrar Produto'}
             </legend>
           </div>
@@ -126,7 +126,8 @@ export default function ProdutoForm({
           />
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
-          <div id="div-buttons">
+
+          <div className="div-buttons">
             <ButtonComponent
               type="submit"
               id="btn-cadastrar"

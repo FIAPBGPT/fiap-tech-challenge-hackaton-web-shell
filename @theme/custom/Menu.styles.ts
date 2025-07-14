@@ -4,7 +4,8 @@ import Link, { LinkProps } from "next/link";
 export const Container = styled.div`
   width: 200px;
   flex: 0 0 200px;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
   background-color: ${({ theme }) => theme.themeColor.backgroundLightBase};
   display: flex;
   flex-direction: column;

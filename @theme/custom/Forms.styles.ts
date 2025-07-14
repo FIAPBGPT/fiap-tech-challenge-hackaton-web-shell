@@ -31,15 +31,82 @@ export const Container = styled.div`
     /* border: 1px solid red; */
   }
 
-  .container-80porCento{
+  .form-container-complete {
+    flex: 1;
+    flex-direction: column;
     display: flex;
-    max-width: 80%;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+    /* border: 1px solid red; */
+
+    width: 100vw;
+    height: 100vh;
+  }
+
+  #div-logo-input-button {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 60px;
+    position: relative;
+  }
+
+  #div-logotipo {
+    height: 100px;
+    width: 150px;
+    background-image: url('/image/Logotipo.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: -90px;
+    right: 10px;
+  }
+
+  .div-input-senha {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 15vh;
+    background-color: #ffffff80;
+    border-radius: 8px;
+    border: 1px solid #ffffff;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+
+    div {
+      display: flex;
+      align-items: center;
+      flex: 0 0 0;
+      margin-bottom: 20px;
+    }
+
+    div input {
+      max-width: 350px;
+    }
+
+    .div-buttons {
+      margin: 0;
+    }
+  }
+  .div-buttons {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px;
+    gap: 15px;
   }
 
   button {
+    min-width: 100px;
     padding: 10px 16px;
-    max-width: 200px;
-    margin-bottom: 40px;
+    width: 100%;
   }
 
   p {
@@ -67,26 +134,12 @@ export const Container = styled.div`
     margin-top: 30px;
   }
 
-  /* legend {
-    font-size: ${(props) => props.theme.themeFonts.subTitleHeader};
-    color: ${(props) => props.theme.themeColor.ochreFontsButton};
-    text-align: center;
-    margin-top: 25px;
-    border: 1px solid red;
-  } */
-
   #containers-legend {
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 10px;
-  }
-
-  #div-buttons {
-    display: flex;
-    justify-content: center;
-    width: 100%;
   }
 
   #text-destaque {
@@ -98,5 +151,11 @@ export const Container = styled.div`
     background-color: ${(props) => props.theme.themeColor.ochreFontsButton};
     color: ${(props) => props.theme.themeColor.white};
     font-weight: bold;
+  }
+  @media (min-width: 721px) {
+    .div-buttons {
+      max-width: 200px;
+      flex-wrap: nowrap;
+    }
   }
 `

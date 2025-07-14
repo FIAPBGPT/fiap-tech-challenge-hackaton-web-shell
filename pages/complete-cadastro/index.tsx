@@ -71,39 +71,47 @@ export default function CompleteCadastro() {
 
   return (
     <Container>
-      <div className="form-container">
-        {error && (
-          <div style={{ color: 'red', marginBottom: '15px' }}>
-            <strong>{error}</strong>
-          </div>
-        )}
+      <div className="form-container-complete">
+        <div className="form-container">
+          {error && (
+            <div style={{ color: 'red', marginBottom: '15px' }}>
+              <strong>{error}</strong>
+            </div>
+          )}
 
-        {email && (
-          <div style={{ marginBottom: '20px' }}>
-            <p>
-              O e-mail para concluir seu cadastro foi enviado para:{' '}
-              <strong>{email}</strong>
-            </p>
-          </div>
-        )}
+          {email && (
+            <div style={{ marginBottom: '20px' }}>
+              <p>
+                O e-mail para concluir seu cadastro foi enviado para:{' '}
+                <strong>{email}</strong>
+              </p>
+            </div>
+          )}
+          <div id="div-logo-input-button">
+            <div id="div-logotipo"></div>
 
-        <div className='container-80porCento' >
-          <InputComponent
-            type="password"
-            value={password}
-            onChange={(value) => setPassword(value)}
-            placeholder="Digite sua nova senha"
-            required
-            id={'complete-cadastro'}
-            name={'complete-cadastro'}
-          />
+            <div className="div-input-senha">
+              <InputComponent
+                type="password"
+                value={password}
+                onChange={(value) => setPassword(value)}
+                placeholder="Digite sua nova senha"
+                required
+                id={'complete-cadastro'}
+                name={'complete-cadastro'}
+              />
+
+              <div className="div-buttons">
+                <ButtonComponent
+                  onClick={handleCompleteCadastro}
+                  disabled={loading}
+                  label={loading ? 'Processando...' : 'Concluir Cadastro'}
+                  variant="secondary"
+                />
+              </div>
+            </div>
+          </div>
         </div>
-        <ButtonComponent
-          onClick={handleCompleteCadastro}
-          disabled={loading}
-          label={loading ? 'Processando...' : 'Concluir Cadastro'}
-          variant="secondary"
-        />
       </div>
     </Container>
   )

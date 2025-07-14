@@ -12,6 +12,7 @@ import { useState } from "react";
 import { Spinner } from "react-bootstrap";
 import { FaInstagram, FaLinkedin, FaWhatsapp } from "react-icons/fa";
 import logo from "@/public/image/logo.png";
+import Logotipo from "@/public/image/Logotipo.png";
 
 // @ts-ignore
 const Mfe = dynamic(() => import("mfe/app"), {
@@ -53,7 +54,7 @@ export default function Login() {
     <PageContainer>
       <LoginContainer>        
         <Header>
-        <Image src={logo} alt="Logo" width={120} height={40} />
+        <Image src={Logotipo} alt="Logo" width={120} height={40} />
         </Header>
         <LoginContainerContent>
           <Content>

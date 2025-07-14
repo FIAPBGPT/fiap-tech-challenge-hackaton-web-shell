@@ -1,4 +1,5 @@
 // InputComponent.tsx
+import { Container } from "@/@theme/custom/Forms.styles";
 import { InputStyles } from "@/@theme/custom/Input.styles";
 
 type InputProps = {
@@ -16,7 +17,7 @@ type InputProps = {
 
 export default function InputComponent(props: InputProps) {
   return (
-    <div style={{width: "100%"}}>
+    <Container>
       {props.label && (
         <label htmlFor={props.id} className="input-label">
           {props.label}
@@ -34,6 +35,6 @@ export default function InputComponent(props: InputProps) {
         min={props.min}
         aria-label={props.label || props.placeholder || "Input field"}
       />
-    </div>
+    </Container>
   );
 }

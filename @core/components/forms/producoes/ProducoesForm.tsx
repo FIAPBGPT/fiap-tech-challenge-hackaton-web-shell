@@ -53,18 +53,15 @@ export default function ProducoesForm({
     safra: string,
     fazenda: string
   ) => {
-    console.log('Buscando saldo com:', { produto, safra, fazenda })
+    // console.log('Buscando saldo com:', { produto, safra, fazenda })
     if (produto && safra && fazenda) {
       const saldo = await consultarSaldoEstoque(produto, safra, fazenda)
       setSaldoEstoque(saldo)
     } else {
       setSaldoEstoque(null)
     }
+    console.log('Buscando saldo com:', { produto, safra, fazenda })
   }
-
-  useEffect(() => {
-    console.log('Saldo Estoque atualizado:', saldoEstoque)
-  }, [saldoEstoque])
 
   useEffect(() => {
     if (editarProducao) {
@@ -235,24 +232,22 @@ export default function ProducoesForm({
 
         {/* Hidden input to show the datetime now if needed */}
         <input type="hidden" name="data" value={form.data} />
-
-        <ButtonComponent
-          type="submit"
-          label={editarProducao ? 'Atualizar' : 'Cadastrar'}
-          onClick={function (): void {
-            throw new Error('Function not implemented.')
-          }}
-          variant="secondary"
-        />
-
-        {editarProducao && onCancelEdit && (
+        <div className="div-buttons">
           <ButtonComponent
-            type="button"
-            label="Cancelar"
-            onClick={onCancelEdit}
-            variant="buttonGrey"
+            type="submit"
+            label={editarProducao ? 'Atualizar' : 'Cadastrar'}
           />
-        )}
+
+          {editarProducao && onCancelEdit && (
+            <ButtonComponent
+              type="button"
+              label="Cancelar"
+              onClick={onCancelEdit}
+              variant="buttonGrey"
+              textColor="secondary"
+            />
+          )}
+        </div>
       </form>
     </Container>
   )

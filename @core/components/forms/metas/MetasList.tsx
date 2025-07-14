@@ -51,9 +51,7 @@ export default function MetaList() {
   };
 
   const formatarSafra = (safra: string) => {
-    console.log(safra);
-    console.log(safras);
-    const safraSelected = safras.find((s) => s.id === safra);
+    const safraSelected = safras.find((s) => s.id === safra || s.valor === safra);
     if (!safraSelected) {
       console.warn(`Safra não encontrada: ${safra}`);
       return safraSelected.nome; 
