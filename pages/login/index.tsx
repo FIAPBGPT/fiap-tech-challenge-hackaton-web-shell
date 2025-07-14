@@ -41,7 +41,7 @@ export default function Login() {
       const res = await signInWithEmailAndPassword(auth, email, senha);
       const { uid, email: userEmail } = res.user;
       setUser({ uid, email: userEmail || "" });
-      router.push("/dashboard");
+      router.push("/home-cadastrar");
     } catch (error: any) {
       setError("Erro ao fazer login. Verifique suas credenciais.");
       console.error(error);

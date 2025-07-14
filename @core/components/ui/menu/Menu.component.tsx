@@ -11,7 +11,7 @@ import DashboardPage from "@/pages/dashboard";
 import ProdutosPage from "@/pages/produtos";
 import EstoquePage from "@/pages/estoque";
 import ProducoesPage from "@/pages/producoes";
-import CompleteCadastro from "@/pages/complete-cadastro";
+import InviteUser from "@/pages/convidar-usuario";
 import { ItemProps } from "@/@core/hooks/useSection";
 import MetasPage from "@/pages/metas";
 
@@ -120,7 +120,7 @@ export default function MenuComponent({
 
       <div id="menu-button-cadastro" className={isMenuLinksOpen ? "show" : ""}>
 
-        {renderActiveButton("usuario", ItemProps.USUARIO, <CompleteCadastro />, "Usuário")}
+        {renderActiveButton("usuario", ItemProps.USUARIO, <InviteUser />, "Usuário")}
         {renderActiveButton("produto", ItemProps.PRODUTO, <ProdutosPage />, "Produto")}
         {renderActiveButton("estoque", ItemProps.ESTOQUE, <EstoquePage />, "Estoque")}
         {renderActiveButton("producao", ItemProps.PRODUCAO, <ProducoesPage />, "Produção")}

@@ -61,7 +61,7 @@ export default function CompleteCadastro() {
       }
 
       // Redireciona para a página principal ou dashboard
-      router.push('/dashboard')
+      router.push('/home-cadastrar')
     } catch (error) {
       setError('Erro ao completar o cadastro. Tente novamente.')
     } finally {

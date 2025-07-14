@@ -22,7 +22,7 @@ export const useAuthListener = () => {
         // Caso o usuário tenha sido autenticado, redireciona para o dashboard ou outra página
         if (router.pathname === "/complete-cadastro") {
           // Se a pessoa já estiver logada, redireciona para o dashboard ou outra página
-          router.push("/dashboard");
+          router.push("/home-cadastrar");
         }
       } else {
         // Se não houver usuário, limpa o estado de usuário
