@@ -90,8 +90,6 @@ export default function ProducoesList() {
 
   return (
     <div>
-      <h3>Produções</h3>
-
       <ProducaoForm
         editarProducao={producaoEditando ?? undefined}
         onSuccess={() => {

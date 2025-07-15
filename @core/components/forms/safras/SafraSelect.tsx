@@ -1,20 +1,27 @@
-'use client';
+"use client";
 
 import { listarSafras } from "@/@core/services/firebase/pages/safraService";
 import { useEffect, useState } from "react";
+import SelectComponent from "../../ui/select/Select.component";
 
 interface SafraSelectProps {
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  required?: boolean;
+  onChange: (value: string) => void;
   name?: string;
+  valueKey?: string;
+  labelKey?: string;
+  required: boolean;
+  label?: string;
 }
 
 export default function SafraSelect({
   value,
   onChange,
-  required,
-  name,
+  required = false,
+  valueKey,
+  labelKey,
+  name = "safra",
+  label,
 }: SafraSelectProps) {
   const [safras, setSafras] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true); // Estado de carregamento
@@ -44,18 +51,18 @@ export default function SafraSelect({
   }
 
   return (
-    <select
-      name={name || "safra"} // importante passar o name para funcionar com handleChange
+    <SelectComponent
+      id={name}
       value={value}
+      options={safras}
       onChange={onChange}
+      placeholder="Selecione uma safra"
       required={required}
-    >
-      <option value="">Selecione uma safra</option>
-      {safras.map((s) => (
-        <option key={s.id} value={s.id}>
-          {s.nome} {/* Exibe o nome e o valor da safra */}
-        </option>
-      ))}
-    </select>
+      ariaLabel="Selecionar safra"
+      valueKey="id"
+      labelKey="nome"
+      label={label}
+      name={name}
+    />
   );
 }

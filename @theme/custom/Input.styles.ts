@@ -1,16 +1,34 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const InputStyles = styled.input`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 35px;
   background-color: ${(props) => props.theme.themeColor.white};
-  padding: 8px;
+  padding: 8px !important;
   border-radius: 4px;
+  box-shadow: 1px 1px 2px 1px
+    ${(props) => props.theme.themeColor.shadowInputSelects};
   border: none;
   outline: none;
   appearance: none;
   -webkit-appearance: none;
   margin: 5px 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Para Firefox */
+  input::-moz-focus-inner {
+    border: 0;
+  }
+
+  /* Para Edge/IE */
+  input::-ms-expand {
+    display: none;
+  }
 
   label {
     font-size: 16px;
@@ -30,4 +48,4 @@ export const InputStyles = styled.input`
     background-color: ${(props) => props.theme.themeColor.white};
     box-shadow: 1px 1px 3px ${(props) => props.theme.themeColor.tableGreen};
   }
-`;
+`
