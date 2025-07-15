@@ -25,7 +25,7 @@ export async function adicionarEstoque(movimentacao: {
   safraId?: string | null;
   fazendaId?: string | null;
   quantidade: number;
-  tipo: "entrada" | "saida";
+  tipo: "Entrada" | "Saída";
   observacao?: string;
 }) {
   const data = Timestamp.now();
@@ -64,7 +64,7 @@ export async function registrarVendaEstoque(venda: {
       safraId: item.safraId || null,
       fazendaId: item.fazendaId || null,
       quantidade: item.quantidade,
-      tipo: "saida",
+      tipo: "Saída",
       observacao: `Venda ID: ${venda.id}`,
     });
   }
@@ -86,7 +86,7 @@ export async function registrarProducaoEstoque(producao: {
       safraId: item.safraId || null,
       fazendaId: item.fazendaId || null,
       quantidade: item.quantidade,
-      tipo: "entrada",
+      tipo: "Entrada",
       observacao: `Produção ID: ${producao.id}`,
     });
   }
@@ -108,7 +108,7 @@ export async function removerProducaoEstoque(producao: {
       quantidade: item.quantidade,
       safraId: item.safraId || null,
       fazendaId: item.fazendaId || null,
-      tipo: "saida",
+      tipo: "Saída",
       observacao: `Remoção de produção ID: ${producao.id}`,
     });
   }
@@ -130,7 +130,7 @@ export async function reabastecerEstoqueVenda(venda: {
       quantidade: item.quantidade,
       safraId: item.safraId || null,
       fazendaId: item.fazendaId || null,
-      tipo: "entrada",
+      tipo: "Entrada",
       observacao: `Reabastecimento por exclusão da Venda ID: ${venda.id}`,
     });
   }
@@ -154,7 +154,7 @@ export async function consultarSaldoEstoque(
     snapshot.forEach((doc) => {
       const data = doc.data();
       const quantidade = Number(data.quantidade) || 0;
-      saldo += data.tipo === "entrada" ? quantidade : -quantidade;
+      saldo += data.tipo === "Entrada" ? quantidade : -quantidade;
     });
 
     return saldo;

@@ -13,6 +13,7 @@ import { Spinner } from "react-bootstrap";
 import { FaInstagram, FaLinkedin, FaWhatsapp } from "react-icons/fa";
 import logo from "@/public/image/logo.png";
 import InputComponent from '@/@core/components/ui/Input';
+import Logotipo from "@/public/image/Logotipo.png";
 
 // @ts-ignore
 const Mfe = dynamic(() => import("mfe/app"), {
@@ -41,7 +42,7 @@ export default function Login() {
       const res = await signInWithEmailAndPassword(auth, email, senha);
       const { uid, email: userEmail } = res.user;
       setUser({ uid, email: userEmail || "" });
-      router.push("/dashboard");
+      router.push("/home-cadastrar");
     } catch (error: any) {
       setError("Erro ao fazer login. Verifique suas credenciais.");
       console.error(error);
@@ -54,7 +55,7 @@ export default function Login() {
     <PageContainer>
       <LoginContainer>        
         <Header>
-        <Image src={logo} alt="Logo" width={120} height={40} />
+        <Image src={Logotipo} alt="Logo" width={120} height={40} />
         </Header>
         <LoginContainerContent>
           <Content>

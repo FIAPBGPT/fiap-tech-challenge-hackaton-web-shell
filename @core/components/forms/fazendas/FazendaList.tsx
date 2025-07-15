@@ -67,8 +67,6 @@ export default function FazendaList() {
 
   return (
     <div>
-      <h3>Fazendas</h3>
-
       <FazendaForm
         editarFazenda={fazendaEditando ?? undefined}
         onSuccess={handleSucesso}
