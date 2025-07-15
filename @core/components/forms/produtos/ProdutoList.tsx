@@ -69,7 +69,18 @@ export default function ProdutoList() {
 
   return (
     <Row className="w-100">
-      <Col>
+      <Col md={12} className="mb-3">
+        {produtoEditando ? (
+          <ProdutoForm
+            onSuccess={handleSucesso}
+            editarProduto={produtoEditando}
+            onCancelEdit={handleCancelEdit}
+          />
+        ) : (
+          <ProdutoForm onSuccess={handleSucesso} />
+        )}
+      </Col>
+      <Col md={12}>
         <GenericTable
           data={produtos.map((p) => ({
             id: p.id,

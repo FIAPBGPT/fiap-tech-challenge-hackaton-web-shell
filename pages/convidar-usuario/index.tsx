@@ -5,7 +5,7 @@ import { Content, ErrorText, FormContainer, Header, LeftText, LoginContainer, Lo
 import { useState } from "react";
 import logo from "@/public/image/logo.png";
 import { StyledButton } from '@/@theme/custom/Button.style';
-import InputComponent from '@/@core/components/ui/Input';
+import InputComponent from "@/@core/components/ui/input";
 
 export default function InviteUser() {
   const [email, setEmail] = useState<string>("");

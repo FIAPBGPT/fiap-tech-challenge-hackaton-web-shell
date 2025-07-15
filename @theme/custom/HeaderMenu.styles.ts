@@ -13,11 +13,10 @@ export const Container = styled.div`
     box-sizing: border-box;
   }
 
-   #menu-main-container {
+  #menu-main-container {
     display: flex;
     flex: 1;
     overflow: hidden;
-    position: fixed;
     top: 150px;
     left: 0;
     width: 100%;
@@ -29,7 +28,6 @@ export const Container = styled.div`
       align-items: flex-start;
       padding: 25px;
       width: 100%;
-      height: 100vh;
       overflow: auto;
       margin: 0 auto;
       @media (max-width: 720px) {
@@ -61,7 +59,6 @@ export const Container = styled.div`
     padding: 20px;
     width: 100%;
     max-width: 1024px;
-    height: 100%;
     border-left: 1px solid
       ${(props) => props.theme.themeColor.backgroundLightBase};
     border-right: 1px solid

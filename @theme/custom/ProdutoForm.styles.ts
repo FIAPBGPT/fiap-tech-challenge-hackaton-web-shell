@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   width: 100%;
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -54,7 +53,8 @@ export const Container = styled.div`
     color: ${(props) => props.theme.themeColor.white};
     border-radius: 4px;
 
-    &:hover, &.active {
+    &:hover,
+    &.active {
       font-weight: bold;
       text-decoration: underline;
     }
@@ -62,9 +62,8 @@ export const Container = styled.div`
 
   #btn-cadastrar {
     background-color: ${(props) => props.theme.themeColor.secondary};
-  
   }
-  #btn-cancelar{
+  #btn-cancelar {
     background-color: ${(props) => props.theme.themeColor.buttonGrey};
   }
 `;

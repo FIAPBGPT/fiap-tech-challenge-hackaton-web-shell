@@ -4,7 +4,6 @@ import Link, { LinkProps } from "next/link";
 export const Container = styled.div`
   width: 200px;
   flex: 0 0 200px;
-  height: 100vh;
   background-color: ${({ theme }) => theme.themeColor.backgroundLightBase};
   display: flex;
   flex-direction: column;
@@ -175,7 +174,6 @@ export const Container = styled.div`
     top: 0;
     left: 0;
     width: 280px;
-    height: 100vh;
     z-index: 999;
     transform: translateX(-100%);
     transition: transform 0.3s ease;

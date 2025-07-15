@@ -139,6 +139,7 @@ export default function ProdutoForm({
                 id="btn-cancelar"
                 variant="buttonGrey"
                 label={"Cancelar"}
+                className="ms-2"
                 onClick={onCancelEdit ?? (() => {})}
               />
             )}

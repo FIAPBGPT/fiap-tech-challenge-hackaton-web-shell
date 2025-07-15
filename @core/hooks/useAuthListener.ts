@@ -24,7 +24,7 @@ export const useAuthListener = () => {
           setUser(currentUser);
 
           if (router.pathname === "/complete-cadastro") {
-            router.push("/dashboard");
+            router.push("/home-cadastrar"); // Redireciona para o dashboard se houver usuário
           }
         } else {
           setUser(null);

@@ -9,7 +9,7 @@ import { ContactContainer, ContactText, FooterContainer, IconLink, IconsContaine
 import { FaInstagram, FaLinkedin, FaWhatsapp } from "react-icons/fa";
 import { StyledButton } from "@/@theme/custom/Button.style";
 import logo from "@/public/image/logo.png";
-import InputComponent from "@/@core/components/ui/Input";
+import InputComponent from "@/@core/components/ui/input";
 
 export default function CompleteCadastro() {
   const [email, setEmail] = useState<string | null>(null);
