@@ -48,13 +48,7 @@ export default function HeaderMenuComponent({
 
         <main>
           <div id="main-container">
-            {activeContent ? (
-              <>
-                {activeContent}
-              </>
-            ) : (
-              children
-            )}
+            {activeContent ? <>{activeContent}</> : children}
           </div>
         </main>
       </div>

@@ -5,6 +5,8 @@ import {
   excluirProduto,
   listarProdutos,
 } from "@/@core/services/firebase/pages/produtosService";
+import GenericTable from "../../ui/GenericTable";
+import { Col, Row } from "react-bootstrap";
 
 const categorias = [
   { code: "SG", label: "Semente Genética" },
@@ -66,23 +68,25 @@ export default function ProdutoList() {
   };
 
   return (
-    <div>
-      {/* <h3>Produtos</h3>
-      <ProdutoForm
-        editarProduto={produtoEditando ?? undefined}
-        onSuccess={handleSucesso}
-        onCancelEdit={handleCancelEdit}
-      /> */}
-
-      <ul>
-        {produtos.map((p) => (
-          <li key={p.id}>
-            {p.nome} {p.categoria && `- ${getCategoriaLabel(p.categoria)}`}{" "}
-            <button onClick={() => handleEditar(p)}>Editar</button>
-            <button onClick={() => handleDelete(p.id)}>Excluir</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Row className="w-100">
+      <Col>
+        <GenericTable
+          data={produtos.map((p) => ({
+            id: p.id,
+            nome: p.nome,
+            categoria: getCategoriaLabel(p.categoria),
+          }))}
+          columns={[
+            { key: "nome", label: "Nome" },
+            { key: "categoria", label: "Categoria" },
+          ]}
+          onEdit={(row) => {
+            const produto = produtos.find((p) => p.id === row.id);
+            if (produto) handleEditar(produto);
+          }}
+          onDelete={(row) => handleDelete(row.id)}
+        />
+      </Col>
+    </Row>
   );
 }
