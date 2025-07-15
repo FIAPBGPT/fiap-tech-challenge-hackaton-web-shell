@@ -1,8 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from 'next/image';
 import { getAuth, isSignInWithEmailLink, signInWithEmailLink, updatePassword } from "firebase/auth";
 import { useRouter } from "next/router";
 import { useAuthStore } from "@/@core/store/authStore";
+import { Content, ErrorText, FormContainer, Header, LeftText, LoginContainer, LoginContainerContent, PageContainer, SucessText } from "@/@theme/custom/LoginPage-style";
+import { ContactContainer, ContactText, FooterContainer, IconLink, IconsContainer } from "@/@theme/custom/Footer.style";
+import { FaInstagram, FaLinkedin, FaWhatsapp } from "react-icons/fa";
+import { StyledButton } from "@/@theme/custom/Button.style";
+import logo from "@/public/image/logo.png";
+import InputComponent from "@/@core/components/ui/Input";
 
 export default function CompleteCadastro() {
   const [email, setEmail] = useState<string | null>(null);
@@ -62,52 +69,60 @@ export default function CompleteCadastro() {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px" }}>
-      <h2>Complete seu Cadastro</h2>
-      
-      {error && (
-        <div style={{ color: "red", marginBottom: "15px" }}>
-          <strong>{error}</strong>
-        </div>
-      )}
-      
-      {email && (
-        <div style={{ marginBottom: "20px" }}>
-          <p>O e-mail para concluir seu cadastro foi enviado para: <strong>{email}</strong></p>
-        </div>
-      )}
+    <PageContainer>
+      <LoginContainer>
+        <Header>
+          <Image src={logo} alt="Logo" width={120} height={40} />
+        </Header>
+        <LoginContainerContent>
+          <Content>
+            <LeftText>
+              Complete seu Cadastro
+            </LeftText>
+            
+            <FormContainer>
+              <InputComponent
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Digite sua nova senha"
+                required
+              />
 
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Digite sua nova senha"
-        style={{
-          width: "100%",
-          padding: "12px",
-          marginBottom: "15px",
-          borderRadius: "5px",
-          border: "1px solid #ddd",
-        }}
-        required
-      />
+              <StyledButton variant="secondary" onClick={handleCompleteCadastro}>{loading ? "Processando..." : "Concluir Cadastro"}</StyledButton>
 
-      <button
-        onClick={handleCompleteCadastro}
-        style={{
-          width: "100%",
-          padding: "12px",
-          backgroundColor: "#007BFF",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          fontSize: "16px",
-          cursor: "pointer",
-        }}
-        disabled={loading}
-      >
-        {loading ? "Processando..." : "Concluir Cadastro"}
-      </button>
-    </div>
+              {error && (
+                <ErrorText>{error}</ErrorText>                
+              )}
+              
+              {email && (
+                <SucessText>O e-mail para concluir seu cadastro foi enviado para: <strong>{email}</strong></SucessText>
+              )}
+            </FormContainer>
+          </Content>
+        </LoginContainerContent>
+      </LoginContainer>
+
+      <FooterContainer>
+        <ContactContainer>
+          <ContactText>Contate-nos</ContactText>
+          <IconsContainer>
+            <IconLink href="https://instagram.com" target="_blank" aria-label="Instagram">
+              <FaInstagram />
+            </IconLink>
+            <IconLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
+              <FaLinkedin />
+            </IconLink>
+            <IconLink href="https://wa.me/1234567890" target="_blank" aria-label="WhatsApp">
+              <FaWhatsapp />
+            </IconLink>
+          </IconsContainer>
+        </ContactContainer>
+        <ContactContainer>
+          <ContactText>0800 004 250 08   |   suporte@fiapfams.com.br </ContactText>
+          <ContactText>Desenvolvido por Grupo 29 </ContactText>
+        </ContactContainer>
+      </FooterContainer>
+    </PageContainer>
   );
 }

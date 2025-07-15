@@ -1,6 +1,7 @@
 'use client';
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import { listar } from "@/@core/services/firebase/firebaseService";
 import styled from "styled-components";
 import {
   Card,
@@ -11,12 +12,6 @@ import {
   Subtitle,
   Title,
 } from "@/@theme/custom/DashboardStyle";
-import { listarMetas } from "@/@core/services/firebase/pages/metasService";
-import { listarProducoes } from "@/@core/services/firebase/pages/producoesService";
-import { listarProdutos } from "@/@core/services/firebase/pages/produtosService";
-import { listarFazendas } from "@/@core/services/firebase/pages/fazendasService";
-import { listarVendas } from "@/@core/services/firebase/pages/vendasService";
-import { listarSafras } from "@/@core/services/firebase/pages/safraService";
 
 // Tipos
 interface Meta {
@@ -50,13 +45,6 @@ interface Fazenda {
   longitude: number;
 }
 
-// Componentes estilizados
-// const Header = styled.header`
-//   background-color: #97133E;
-//   padding: 1.5rem;
-//   color: white;
-//   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-// `;
 
 const Main = styled.main`
   // min-height: calc(100vh - 80px);
@@ -100,7 +88,7 @@ export default function DashboardPage() {
   );
   const [atingido, setAtingido] = useState(0);
   const [fazendas, setFazendas] = useState<Fazenda[]>([]);
-  const [vendas, setVendas] = useState<Venda[]>([]);
+  const [vendas, setVendas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [safras, setSafras] = useState<any[]>([]);
 
@@ -108,30 +96,18 @@ export default function DashboardPage() {
     async function carregarDados() {
       try {
         setLoading(true);
-        const [
-          metas,
-          producoesRaw,
-          produtosRaw,
-          fazendasData,
-          vendasData,
-          safra,
-        ] = await Promise.all([
-          listarMetas(),
-          listarProducoes(),
-          listarProdutos(),
-          listarFazendas(),
-          listarVendas(),
-          listarSafras(),
+        const [metas, producoesRaw, produtosRaw, fazendasData, vendasData, safra] = await Promise.all([
+        listar("metas"),
+        listar("producoes"),
+        listar("produtos"),
+        listar("fazendas"),
+        listar("vendas"),
+        listar("safras"),
         ]);
 
-        setVendas(
-          vendasData.map((v: any) => ({
-            id: v.id,
-            produto: v.produto ?? "",
-            valor: v.valor ?? 0,
-            data: v.data ?? "",
-          }))
-        );
+        setVendas(vendasData);
+
+        console.log("Vendas carregadas:", vendasData);
         setMetas(
           metas.map((m: any) => ({
             id: m.id,
@@ -208,33 +184,42 @@ export default function DashboardPage() {
     }));
   };
 
-  const getVendasPorProduto = () => {
-    if (!vendas || vendas.length === 0) {
-      return [];
-    }
+const getVendasPorProduto = () => {
+  if (!vendas || vendas.length === 0) {
+    return [];
+  }
 
-    // Filtrar vendas pela fazenda selecionada (se houver)
-    const vendasFiltradas = fazendaSelecionada
-      ? vendas.filter((v) => {
-          const producao = producoes.find(
-            (p) =>
-              p.produto === v.produto && p.fazenda === fazendaSelecionada.nome
-          );
-          return producao !== undefined;
-        })
-      : vendas;
+  // Primeiro, achatar todos os itens de todas as vendas em um único array
+  const todosItens = vendas.flatMap(venda => 
+    venda.itens.map((item: any) => ({
+      ...item,
+      dataVenda: venda.data // Podemos incluir a data da venda se necessário
+    }))
+  );
 
-    const vendasAgrupadas = vendasFiltradas.reduce((acc, venda) => {
-      const nomeProduto = getProdutoNome(venda.produto);
-      acc[nomeProduto] = (acc[nomeProduto] || 0) + venda.valor;
-      return acc;
-    }, {} as Record<string, number>);
+  // Filtrar itens pela fazenda selecionada (se houver)
+   const itensFiltrados = fazendaSelecionada 
+    ? todosItens.filter(item => {
+        // Encontrar a fazenda correspondente ao item.fazendaId
+        const fazendaItem = fazendas.find(f => f.id === item.fazendaId);
+        
+        // Comparar com a fazenda selecionada
+        return fazendaItem?.id === fazendaSelecionada.id;
+      })
+    : todosItens;
 
-    return Object.entries(vendasAgrupadas).map(([produto, valor]) => ({
-      produto,
-      valor,
-    }));
-  };
+  // Agrupar por produto e somar os valores
+  const vendasAgrupadas = itensFiltrados.reduce((acc, item) => {
+    const nomeProduto = getProdutoNome(item.produtoId);
+    acc[nomeProduto] = (acc[nomeProduto] || 0) + item.valor;
+    return acc;
+  }, {} as Record<string, number>);
+
+  return Object.entries(vendasAgrupadas).map(([produto, valor]) => ({
+    produto,
+    valor: Number(valor)
+  }));
+};
 
   const getMetaPorProduto = () => {
     // Filtra metas e produções conforme seleção
