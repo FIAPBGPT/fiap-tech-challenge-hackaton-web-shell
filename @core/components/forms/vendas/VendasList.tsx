@@ -7,12 +7,15 @@ import {
 import { listarProdutos } from "@/@core/services/firebase/pages/produtosService";
 import { listarFazendas } from "@/@core/services/firebase/pages/fazendasService";
 import { reabastecerEstoqueVenda } from "@/@core/services/firebase/pages/estoqueService";
+import { Col, Row } from "react-bootstrap";
+import GenericTable from "../../ui/GenericTable";
 
 export default function VendaList() {
   const [vendas, setVendas] = useState<any[]>([]);
   const [produtos, setProdutos] = useState<any[]>([]);
   const [fazendas, setFazendas] = useState<any[]>([]);
   const [vendaEditando, setVendaEditando] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const carregar = async () => {
     const [vendasData, produtosData, fazendasData] = await Promise.all([
@@ -23,9 +26,9 @@ export default function VendaList() {
     setVendas(vendasData);
     setProdutos(produtosData);
     setFazendas(fazendasData);
+    setLoading(false);
   };
 
-  console.log("Vendas carregadas:", vendas);
   useEffect(() => {
     carregar();
   }, []);
@@ -70,44 +73,42 @@ export default function VendaList() {
     fazendas.find((f) => f.id === id)?.nome || id;
 
   return (
-    <div>
-      <h3>Vendas</h3>
-
-      <VendaForm
-        editarVenda={vendaEditando ?? undefined}
-        onSuccess={handleSucesso}
-        onCancelEdit={handleCancelEdit}
-      />
-
-      <ul className="space-y-2 mt-4">
-        {vendas.map((v) => (
-          <li
-            key={v.id}
-            className="border p-2 rounded-md bg-white flex justify-between items-center"
-          >
-            <div>
-              <strong>{getProdutoNome(v.itens[0].produtoId)}</strong> -{" "}
-              {v.itens[0].quantidade} un - R${v.itens[0].valor} -{" "}
-              {new Date(v.data.seconds * 1000).toLocaleDateString()} -{" "}
-              {getFazendaNome(v.itens[0].fazendaId)}
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleEditar(v)}
-                className="btn btn-sm btn-primary"
-              >
-                Editar
-              </button>
-              <button
-                onClick={() => handleDelete(v)}
-                className="btn btn-sm btn-danger"
-              >
-                Excluir
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Row className="w-100">
+      <Col md={12} className="mb-3">
+        {vendaEditando ? (
+          <VendaForm
+            editarVenda={vendaEditando}
+            onSuccess={handleSucesso}
+            onCancelEdit={handleCancelEdit}
+          />
+        ) : (
+          <VendaForm onSuccess={handleSucesso} />
+        )}
+      </Col>
+      <Col md={12}>
+        <GenericTable
+          data={vendas.map((v) => ({
+            id: v.id,
+            produto: getProdutoNome(v.itens[0].produtoId),
+            safra: v.itens[0].safraId ? v.itens[0].safraId : "N/A",
+            fazenda: getFazendaNome(v.itens[0].fazendaId),
+            quantidade: v.itens[0].quantidade,
+            valor: v.itens[0].valor,
+            data: new Date(v.data.seconds * 1000).toLocaleDateString(),
+          }))}
+          columns={[
+            { key: "produto", label: "Produto" },
+            { key: "safra", label: "Safra" },
+            { key: "fazenda", label: "Fazenda" },
+            { key: "quantidade", label: "Quantidade" },
+            { key: "valor", label: "Valor (R$)" },
+            { key: "data", label: "Data" },
+          ]}
+          onEdit={(row) => handleEditar(row)}
+          onDelete={(row) => handleDelete(row)}
+          loading={loading}
+        />
+      </Col>
+    </Row>
   );
 }

@@ -8,30 +8,31 @@ import {
   ContactText,
   IconsContainer,
   IconLink,
-} from '@/@theme/custom/Footer.style'
-import { FaInstagram, FaLinkedin, FaWhatsapp } from 'react-icons/fa'
-import { useState } from 'react'
+  FooterInsideContainer,
+} from "@/@theme/custom/Footer.style";
+import { FaInstagram, FaLinkedin, FaWhatsapp } from "react-icons/fa";
+import { useState } from "react";
 
 export default function HeaderMenuComponent({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   const [activeContent, setActiveContent] = useState<React.ReactNode | null>(
     null
-  )
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [activeItem, setActiveItem] = useState<ItemProps>(ItemProps.HOME)
-  const closeMenu = () => setIsMenuOpen(false)
+  );
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState<ItemProps>(ItemProps.HOME);
+  const closeMenu = () => setIsMenuOpen(false);
 
   const handleOpenCadastro = (form: React.ReactNode, item: ItemProps) => {
-    setActiveContent(form)
-    setActiveItem(item)
-  }
+    setActiveContent(form);
+    setActiveItem(item);
+  };
 
   const handleCloseCadastro = () => {
-    setActiveContent(null)
-  }
+    setActiveContent(null);
+  };
 
   return (
     <Container>
@@ -44,7 +45,7 @@ export default function HeaderMenuComponent({
         {/* mobile */}
 
         <div
-          className={`menu-overlay ${isMenuOpen ? 'show' : ''}`}
+          className={`menu-overlay ${isMenuOpen ? "show" : ""}`}
           onClick={closeMenu}
         />
 
@@ -70,7 +71,7 @@ export default function HeaderMenuComponent({
           )}
         </main>
       </div>
-      <FooterContainer>
+      <FooterInsideContainer>
         <ContactContainer>
           <ContactText>Contate-nos</ContactText>
           <IconsContainer>
@@ -102,7 +103,7 @@ export default function HeaderMenuComponent({
           <ContactText>0800 004 250 08 | suporte@fiapfams.com.br </ContactText>
           <ContactText>Desenvolvido por Grupo 29 </ContactText>
         </ContactContainer>
-      </FooterContainer>
+      </FooterInsideContainer>
     </Container>
-  )
+  );
 }

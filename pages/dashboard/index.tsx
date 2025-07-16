@@ -167,10 +167,16 @@ export default function DashboardPage() {
     const estadoMap = new Map<string, number>();
 
     metas.forEach((meta) => {
-      if (fazendaSelecionada && meta.fazenda !== fazendaSelecionada.nome)
+      if (
+        fazendaSelecionada &&
+        meta.fazenda !== fazendaSelecionada.nome &&
+        meta.fazenda !== fazendaSelecionada.id
+      )
         return;
 
-      const fazenda = fazendas.find((f) => f.nome === meta.fazenda);
+      const fazenda = fazendas.find(
+        (f) => f.nome === meta.fazenda || f.id === meta.fazenda
+      );
       if (!fazenda?.estado) return;
 
       const estado = fazenda.estado;

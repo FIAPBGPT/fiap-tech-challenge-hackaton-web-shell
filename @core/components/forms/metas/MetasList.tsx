@@ -7,12 +7,15 @@ import {
 } from "@/@core/services/firebase/pages/metasService";
 import { listarProdutos } from "@/@core/services/firebase/pages/produtosService";
 import { listarSafras } from "@/@core/services/firebase/pages/safraService";
+import { Col, Row } from "react-bootstrap";
+import GenericTable from "../../ui/GenericTable";
 
 export default function MetaList() {
   const [metas, setMetas] = useState<any[]>([]);
   const [produtos, setProdutos] = useState<any[]>([]);
   const [safras, setSafras] = useState<any[]>([]);
   const [metaEditando, setMetaEditando] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const carregar = async () => {
     const [listaMetas, listaProdutos, listaSafras] = await Promise.all([
@@ -24,6 +27,7 @@ export default function MetaList() {
     setMetas(listaMetas);
     setProdutos(listaProdutos);
     setSafras(listaSafras);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -51,11 +55,13 @@ export default function MetaList() {
   };
 
   const formatarSafra = (safra: string) => {
-    const safraSelected = safras.find((s) => s.id === safra || s.valor === safra);
+    const safraSelected = safras.find(
+      (s) => s.id === safra || s.valor === safra
+    );
     if (!safraSelected) {
       console.warn(`Safra não encontrada: ${safra}`);
-      return safraSelected.nome; 
-    }// Retorna o ID se a safra não for encontrada
+      return safraSelected.nome;
+    } // Retorna o ID se a safra não for encontrada
 
     return safraSelected.nome;
   };
@@ -81,26 +87,43 @@ export default function MetaList() {
   };
 
   return (
-    <div>
-
-      <MetaForm
-        editarMeta={metaEditando ?? undefined}
-        onSuccess={handleSucesso}
-        onCancelEdit={handleCancelEdit}
-      />
-
-      <ul>
-        {metas.map((m) => (
-          <li key={m.id} style={{ marginBottom: "1rem" }}>
-            <strong>{nomeProduto(m.produto)}</strong> - {m.valor} unidades -{" "}
-            {formatarSafra(m.safra)} - {m.fazenda || "Fazenda não definida"} -{" "}
-            <em>{tipoTexto(m.tipo)}</em>
-            <br />
-            <button onClick={() => handleEditar(m)}>Editar</button>{" "}
-            <button onClick={() => handleDelete(m.id)}>Excluir</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Row className="w-100">
+      <Col md={12} className="mb-3">
+        {metaEditando ? (
+          <MetaForm
+            editarMeta={metaEditando}
+            onSuccess={handleSucesso}
+            onCancelEdit={handleCancelEdit}
+          />
+        ) : (
+          <MetaForm onSuccess={handleSucesso} />
+        )}
+      </Col>
+      <Col md={12}>
+        <GenericTable
+          data={metas.map((m) => ({
+            id: m.id,
+            produto: nomeProduto(m.produto),
+            safra: formatarSafra(m.safra),
+            fazenda: m.fazenda || "N/A",
+            valor: m.valor,
+            tipo: tipoTexto(m.tipo),
+          }))}
+          columns={[
+            { key: "produto", label: "Produto" },
+            { key: "safra", label: "Safra" },
+            { key: "fazenda", label: "Fazenda" },
+            { key: "valor", label: "Valor" },
+            { key: "tipo", label: "Tipo" },
+          ]}
+          onEdit={(row) => {
+            const meta = metas.find((m) => m.id === row.id);
+            if (meta) handleEditar(meta);
+          }}
+          onDelete={(row) => handleDelete(row.id)}
+          loading={loading}
+        />
+      </Col>
+    </Row>
   );
 }

@@ -45,7 +45,6 @@ export default function Login() {
       setUser({ uid, email: userEmail || "" });
       setLoading(false);
       setLoadingState(false); // Define o estado de loading como false após o login
-      console.log("Usuário logado com sucesso:", res.user);
       router.push("/home-cadastrar"); // Redireciona para o dashboard após login bem-sucedido
     } catch (error: any) {
       setError("Erro ao fazer login. Verifique suas credenciais.");

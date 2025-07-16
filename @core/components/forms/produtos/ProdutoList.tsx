@@ -96,6 +96,7 @@ export default function ProdutoList() {
             if (produto) handleEditar(produto);
           }}
           onDelete={(row) => handleDelete(row.id)}
+          loading={loading}
         />
       </Col>
     </Row>

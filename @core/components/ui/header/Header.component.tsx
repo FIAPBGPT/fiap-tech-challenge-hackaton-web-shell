@@ -43,15 +43,6 @@ export default function HeaderComponent({ toggleMenu, isActive, item }: HeaderPr
           <HasMenuHamburguer />
           <div id="div-section-text">
             <DataSection />
-            {/* {section && item === ItemProps.HOME ? (
-              <div>
-                <h2>Bem-vindo(a)!</h2>
-              </div>
-            ) : (
-              <div>
-                <h2 id="section-subtitle">Gerencie suas informações</h2>
-              </div>
-            )} */}
           </div>
         </div>
       </div>
