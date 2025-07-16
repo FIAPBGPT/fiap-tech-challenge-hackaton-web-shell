@@ -2,6 +2,14 @@
 import { useNotifications } from '@/@core/hooks/useNotifications';
 import { BellButton, EmptyState, NotificationBadge, NotificationContainer, NotificationContent, NotificationItem, NotificationPanel, NotificationTime, PanelHeader, TypeBadge } from '@/@theme/custom/NotificationBellStyle';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { 
+  FiShoppingBag, 
+  FiAward, 
+  FiLayers, 
+  FiInfo,
+  FiBell,
+  FiAlertCircle
+} from 'react-icons/fi';
 
 type Product = { id: string; nome: string };
 type Farm = { id: string; nome: string };
@@ -12,40 +20,15 @@ type NotificationBellProps = {
 };
 
 const NotificationIcons = {
-  venda: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-    </svg>
-  ),
-  meta: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-    </svg>
-  ),
-  producao: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-    </svg>
-  ),
-  default: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  )
+  venda: <FiShoppingBag size={20} color="#10B981" />,
+  meta: <FiAward size={20} color="#F59E0B" />,
+  producao: <FiLayers size={20} color="#3B82F6" />,
+  default: <FiInfo size={20} color="#6B7280" />
 };
 
-const BellIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path d="M18 8C18 4.68629 15.3137 2 12 2C8.68629 2 6 4.68629 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
+const BellIcon = () => <FiBell size={24} />;
 
-const EmptyNotificationIcon = () => (
-  <svg width="48" height="48" viewBox="0 0 24 24" stroke="#9CA3AF" fill="none">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-  </svg>
-);
+const EmptyNotificationIcon = () => <FiAlertCircle size={48} color="#9CA3AF" />;
 
 export function NotificationBell({ products, fazendas }: NotificationBellProps) {
   const [isOpen, setIsOpen] = useState(false);
