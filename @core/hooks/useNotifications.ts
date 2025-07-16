@@ -4,7 +4,7 @@ import { firestore } from '../services/firebase/firebase';
 import { useAuthStore } from '../store/authStore';
 
 // Tipos melhorados
-type NotificationType = 'venda' | 'meta' | 'producao';
+type NotificationType = 'venda' | 'meta';
 
 interface Notification {
   id: string;
@@ -123,30 +123,6 @@ export function useNotifications(products: Product[], fazendas: Farm[]): Notific
     });
   }, [user?.uid, getProductName, getFarmName, addNotification, createNotification]);
 
-  // Production listener
-  useEffect(() => {
-    if (!user?.uid) return;
-
-    const q = query(collection(firestore, 'producoes'), where('uid', '==', user.uid));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === 'added') {
-          const producao = change.doc.data();
-          
-          addNotification(
-            createNotification(
-              'producao',
-              `Nova produção: ${producao.quantidade} unidades de ${getProductName(producao.produto)}`,
-              change.doc.id,
-              producao.produto
-            )
-          );
-        }
-      });
-    });
-
-    return unsubscribe;
-  }, [user?.uid, getProductName, addNotification, createNotification]);
 
   const markAsRead = useCallback((id: string) => {
     setNotifications(prev => 

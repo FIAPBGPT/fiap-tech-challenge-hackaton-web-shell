@@ -16,11 +16,11 @@ export const BellButton = styled.button`
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #4b5563; /* Cor do ícone */
+  color: #97133E; /* Cor do ícone */
   
   &:hover {
     background-color: #f3f4f6;
-    color: #1f2937; /* Cor do ícone no hover */
+    color: #97133E; 
   }
   
   &:focus {
@@ -48,7 +48,7 @@ export const NotificationBadge = styled.span`
 export const NotificationPanel = styled.div`
   position: absolute !important;
   right: 0 !important;
-  top: calc(100% + 0.5rem) !important;
+  top: calc(100%) !important;
   width: 20rem;
   background-color: white;
   border-radius: 0.5rem;

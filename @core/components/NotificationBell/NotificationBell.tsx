@@ -1,66 +1,128 @@
-'use client';
 import { useNotifications } from '@/@core/hooks/useNotifications';
-import { BellButton, EmptyState, NotificationBadge, NotificationContainer, NotificationContent, NotificationItem, NotificationPanel, NotificationTime, PanelHeader, TypeBadge } from '@/@theme/custom/NotificationBellStyle';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { 
+  BellButton, 
+  EmptyState, 
+  NotificationBadge, 
+  NotificationContainer, 
+  NotificationContent, 
+  NotificationItem, 
+  NotificationPanel, 
+  NotificationTime, 
+  PanelHeader, 
+  TypeBadge 
+} from '@/@theme/custom/NotificationBellStyle';
 import { 
   FiShoppingBag, 
-  FiAward, 
-  FiLayers, 
+  FiAward,  
   FiInfo,
   FiBell,
-  FiAlertCircle
+  FiAlertCircle,
+  FiCheckCircle
 } from 'react-icons/fi';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-type Product = { id: string; nome: string };
-type Farm = { id: string; nome: string };
+// 1. Single Responsibility: Separamos as interfaces
+interface Product {
+  id: string;
+  nome: string;
+}
 
-type NotificationBellProps = {
+interface Farm {
+  id: string;
+  nome: string;
+}
+
+interface NotificationBellProps {
   products: Product[];
   fazendas: Farm[];
+}
+
+// 2. Open/Closed Principle: Criamos um componente base que pode ser estendido
+interface NotificationIconProps {
+  type: string;
+  size?: number;
+}
+
+const NotificationIcon = ({ type, size = 20 }: NotificationIconProps) => {
+  const iconMap = {
+    venda: <FiShoppingBag size={size} color="#10B981" />,
+    meta: <FiAward size={size} color="#F59E0B" />,
+    default: <FiInfo size={size} color="#6B7280" />
+  };
+
+  return iconMap[type as keyof typeof iconMap] || iconMap.default;
 };
 
-const NotificationIcons = {
-  venda: <FiShoppingBag size={20} color="#10B981" />,
-  meta: <FiAward size={20} color="#F59E0B" />,
-  producao: <FiLayers size={20} color="#3B82F6" />,
-  default: <FiInfo size={20} color="#6B7280" />
-};
+// 3. Liskov Substitution: Criamos componentes intercambiáveis
+const BaseNotificationBadge = ({ count }: { count: number }) => (
+  <NotificationBadge>
+    {count > 9 ? '9+' : count}
+  </NotificationBadge>
+);
 
-const BellIcon = () => <FiBell size={24} />;
+// 4. Interface Segregation: Dividimos em componentes menores
+const NotificationHeader = ({ 
+  unreadCount, 
+  onMarkAllAsRead 
+}: { 
+  unreadCount: number;
+  onMarkAllAsRead: () => void;
+}) => (
+  <PanelHeader>
+    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+      <span>Notificações</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <span style={{ fontSize: '0.75rem', color: '#2563EB' }}>
+          {unreadCount > 0 ? `${unreadCount} não lidas` : 'Todas lidas'}
+        </span>
+        {unreadCount > 0 && (
+          <button 
+            onClick={onMarkAllAsRead}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+              fontSize: '0.75rem',
+              color: '#2563EB'
+            }}
+            title="Marcar todas como lidas"
+          >
+            <FiCheckCircle size={16} />
+            <span>Marcar todas</span>
+          </button>
+        )}
+      </div>
+    </div>
+  </PanelHeader>
+);
+const EmptyNotifications = () => (
+  <EmptyState>
+    <FiAlertCircle size={48} color="#9CA3AF" />
+    <p style={{ marginTop: '0.5rem' }}>Nenhuma notificação no momento</p>
+  </EmptyState>
+);
 
-const EmptyNotificationIcon = () => <FiAlertCircle size={48} color="#9CA3AF" />;
-
+// 5. Dependency Inversion: O componente principal depende de abstrações
 export function NotificationBell({ products, fazendas }: NotificationBellProps) {
   const [isOpen, setIsOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const { notifications, unreadCount, markAsRead } = useNotifications(products, fazendas);
-
-  const handleClickOutside = useCallback((event: MouseEvent) => {
-    if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
-      setIsOpen(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [isOpen, handleClickOutside]);
 
   const handleNotificationClick = useCallback((id: string) => {
     markAsRead(id);
     setIsOpen(false);
   }, [markAsRead]);
 
-  const formatDate = useCallback((date: Date) => (
-    date.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-      day: '2-digit',
-      month: 'short'
-    })
-  ), []);
+    const handleMarkAllAsRead = useCallback(() => {
+    notifications.forEach(notification => {
+      if (!notification.read) {
+        markAsRead(notification.id);
+      }
+    });
+  }, [notifications, markAsRead]);
 
   return (
     <NotificationContainer>
@@ -69,28 +131,19 @@ export function NotificationBell({ products, fazendas }: NotificationBellProps) 
         aria-label="Notificações"
         aria-expanded={isOpen}
       >
-        <BellIcon />
-        {unreadCount > 0 && (
-          <NotificationBadge>
-            {unreadCount > 9 ? '9+' : unreadCount}
-          </NotificationBadge>
-        )}
+        <FiBell size={24} />
+        {unreadCount > 0 && <BaseNotificationBadge count={unreadCount} />}
       </BellButton>
 
       {isOpen && (
         <NotificationPanel ref={panelRef} style={{ position: 'fixed', right: '1rem', top: '4rem' }}>
-          <PanelHeader>
-            <span>Notificações</span>
-            <span style={{ fontSize: '0.75rem', color: '#2563EB' }}>
-              {unreadCount > 0 ? `${unreadCount} não lidas` : 'Todas lidas'}
-            </span>
-          </PanelHeader>
+             <NotificationHeader 
+            unreadCount={unreadCount} 
+            onMarkAllAsRead={handleMarkAllAsRead} 
+          />
           
           {notifications.length === 0 ? (
-            <EmptyState>
-              <EmptyNotificationIcon />
-              <p style={{ marginTop: '0.5rem' }}>Nenhuma notificação no momento</p>
-            </EmptyState>
+            <EmptyNotifications />
           ) : (
             <div style={{ maxHeight: '24rem', overflowY: 'auto' }}>
               {notifications.map((notification) => (
@@ -100,14 +153,14 @@ export function NotificationBell({ products, fazendas }: NotificationBellProps) 
                   onClick={() => handleNotificationClick(notification.id)}
                 >
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    {NotificationIcons[notification.type as keyof typeof NotificationIcons] || NotificationIcons.default}
+                    <NotificationIcon type={notification.type} />
                   </div>
                   <NotificationContent>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <p style={{ fontWeight: 500, color: '#111827' }}>{notification.message}</p>
                       {!notification.read && (
                         <span style={{
-                          display: 'inline-block',
+                          display: 'flex',
                           height: '0.5rem',
                           width: '0.5rem',
                           borderRadius: '9999px',
@@ -117,7 +170,6 @@ export function NotificationBell({ products, fazendas }: NotificationBellProps) 
                       )}
                     </div>
                     <NotificationTime>
-                      <span>{formatDate(notification.createdAt)}</span>
                       <TypeBadge>{notification.type}</TypeBadge>
                     </NotificationTime>
                   </NotificationContent>
