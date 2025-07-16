@@ -1,9 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { collection, query, where, onSnapshot, getDocs } from 'firebase/firestore';
 import { firestore } from '../services/firebase/firebase';
 import { useAuthStore } from '../store/authStore';
 
-// Tipos melhorados
 type NotificationType = 'venda' | 'meta';
 
 interface Notification {
@@ -29,14 +28,16 @@ interface NotificationHook {
   notifications: Notification[];
   unreadCount: number;
   markAsRead: (id: string) => void;
+  markAllAsRead: () => void;
 }
 
 export function useNotifications(products: Product[], fazendas: Farm[]): NotificationHook {
   const { user } = useAuthStore();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const processedIds = useRef<Set<string>>(new Set());
 
-  // Memoized helper functions
+  // Helper functions
   const getProductName = useCallback((productId: string): string => {
     return products.find(p => p.id === productId)?.nome || productId;
   }, [products]);
@@ -45,7 +46,6 @@ export function useNotifications(products: Product[], fazendas: Farm[]): Notific
     return fazendas.find(f => f.id === farmId)?.nome || farmId;
   }, [fazendas]);
 
-  // Generic notification creator
   const createNotification = useCallback(
     (type: NotificationType, message: string, id: string, productId?: string): Notification => ({
       id: `${type}_${id}`,
@@ -58,10 +58,17 @@ export function useNotifications(products: Product[], fazendas: Farm[]): Notific
     []
   );
 
-  // Handle new notifications
   const addNotification = useCallback((notification: Notification) => {
-    setNotifications(prev => [notification, ...prev]);
-    setUnreadCount(prev => prev + 1);
+    // Verifica se a notificação já foi processada
+    if (!processedIds.current.has(notification.id)) {
+      processedIds.current.add(notification.id);
+      setNotifications(prev => {
+        // Verifica se já existe uma notificação com o mesmo ID
+        const exists = prev.some(n => n.id === notification.id);
+        return exists ? prev : [notification, ...prev];
+      });
+      setUnreadCount(prev => prev + 1);
+    }
   }, []);
 
   // Sales listener
@@ -79,20 +86,27 @@ export function useNotifications(products: Product[], fazendas: Farm[]): Notific
             const totalQuantity = userItems.reduce((acc: number, item: any) => acc + item.quantidade, 0);
             const productName = getProductName(userItems[0].produtoId);
             
-            addNotification(
-              createNotification(
-                'venda',
-                `Nova venda: ${totalQuantity} unidades de ${productName}`,
-                change.doc.id
-              )
-            );
-            checkGoals(newSale);
+            const notificationId = `venda_${change.doc.id}`;
+            if (!processedIds.current.has(notificationId)) {
+              addNotification(
+                createNotification(
+                  'venda',
+                  `Nova venda: ${totalQuantity} unidades de ${productName}`,
+                  change.doc.id,
+                  userItems[0].produtoId
+                )
+              );
+              checkGoals(newSale);
+            }
           }
         }
       });
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+      processedIds.current.clear(); // Limpa o cache ao desmontar
+    };
   }, [user?.uid, getProductName, addNotification, createNotification]);
 
   // Check goals helper
@@ -107,29 +121,38 @@ export function useNotifications(products: Product[], fazendas: Farm[]): Notific
           const meta = doc.data();
           if (meta.produto === item.produtoId && 
               meta.fazenda === item.fazendaId && 
-              meta.safra === item.safraId && 
               item.valor >= meta.valor) {
             
-            addNotification(
-              createNotification(
-                'meta',
-                `Meta atingida! ${getProductName(item.produtoId)} na ${getFarmName(item.fazendaId)}`,
-                `${doc.id}_${venda.id}`
-              )
-            );
+            const notificationId = `meta_${doc.id}_${venda.id}`;
+            if (!processedIds.current.has(notificationId)) {
+              addNotification(
+                createNotification(
+                  'meta',
+                  `Meta atingida! ${getProductName(item.produtoId)} na ${getFarmName(item.fazendaId)}`,
+                  `${doc.id}_${venda.id}`,
+                  item.produtoId
+                )
+              );
+            }
           }
         });
       }
     });
   }, [user?.uid, getProductName, getFarmName, addNotification, createNotification]);
 
-
   const markAsRead = useCallback((id: string) => {
     setNotifications(prev => 
       prev.map(n => n.id === id ? { ...n, read: true } : n)
     );
-    setUnreadCount(prev => prev - 1);
+    setUnreadCount(prev => Math.max(0, prev - 1));
   }, []);
 
-  return { notifications, unreadCount, markAsRead };
+  const markAllAsRead = useCallback(() => {
+    setNotifications(prev => 
+      prev.map(n => ({ ...n, read: true }))
+    );
+    setUnreadCount(0);
+  }, []);
+
+  return { notifications, unreadCount, markAsRead, markAllAsRead };
 }
