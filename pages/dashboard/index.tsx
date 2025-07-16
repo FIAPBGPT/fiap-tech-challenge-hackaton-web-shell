@@ -289,7 +289,7 @@ const getMetaPorProduto = () => {
   const getSafraNome = () => {
 
     const producoesFiltradas = fazendaSelecionada
-      ? producoes.filter(p => p.fazenda === fazendaSelecionada.nome)
+      ? producoes.filter(p => p.fazenda === fazendaSelecionada.id)
       : producoes;
 
     if (producoesFiltradas.length === 0) {
