@@ -115,8 +115,8 @@ export default function Login() {
         </ContactContainer>
 
         <ContactContainer>
-          <ContactText>0800 004 250 08 | suporte@fiapfams.com.br </ContactText>
-          <ContactText>Desenvolvido por Grupo 29 </ContactText>
+          <ContactText>0800 004 250 08 | suporte@fiapfarms.com.br</ContactText>
+          <ContactText>Desenvolvido por <strong>Grupo 29</strong></ContactText>
         </ContactContainer>
       </FooterContainer>
     </PageContainer>
