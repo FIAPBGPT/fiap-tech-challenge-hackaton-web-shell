@@ -5,6 +5,8 @@ import {
   excluirSafra,
   listarSafras,
 } from "@/@core/services/firebase/pages/safraService";
+import { Col, Row } from "react-bootstrap";
+import GenericTable from "../../ui/GenericTable";
 
 export default function SafraList() {
   const { safras, setSafras, loading, setLoading, removeSafra } =
@@ -60,28 +62,34 @@ export default function SafraList() {
   };
 
   return (
-    <div>
-      <h3>Safras</h3>
-
-      <SafraForm
-        editarSafra={safraEditando ?? undefined}
-        onSuccess={handleSucesso}
-        onCancelEdit={handleCancelEdit}
-      />
-
-      <ul>
-        {loading ? (
-          <li>Carregando...</li>
+    <Row className="w-100">
+      <Col md={12} className="mb-3">
+        {safraEditando ? (
+          <SafraForm
+            onSuccess={handleSucesso}
+            editarSafra={safraEditando}
+            onCancelEdit={handleCancelEdit}
+          />
         ) : (
-          safras.map((s) => (
-            <li key={s.id}>
-              {s.nome} - R${s.valor}{" "}
-              <button onClick={() => handleEditar(s)}>Editar</button>
-              <button onClick={() => handleDelete(s.id)}>Excluir</button>
-            </li>
-          ))
+          <SafraForm onSuccess={handleSucesso} />
         )}
-      </ul>
-    </div>
+      </Col>
+      <Col md={12}>
+        <GenericTable
+          data={safras.map((s) => ({
+            id: s.id,
+            nome: s.nome,
+            valor: s.valor,
+          }))}
+          columns={[
+            { label: "Nome", key: "nome" },
+            { label: "Valor", key: "valor" },
+          ]}
+          onEdit={(row) => handleEditar(row)}
+          onDelete={(row) => handleDelete(row.id)}
+          loading={loading}
+        />
+      </Col>
+    </Row>
   );
 }

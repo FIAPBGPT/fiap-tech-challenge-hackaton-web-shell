@@ -4,7 +4,10 @@ import {
   adicionarSafra,
   atualizarSafra,
 } from "@/@core/services/firebase/pages/safraService";
+import { Container } from "@/@theme/custom/Forms.styles";
 import { useEffect, useState } from "react";
+import InputComponent from "../../ui/input";
+import ButtonComponent from "../../ui/Button";
 
 interface SafraFormProps {
   onSuccess: () => void;
@@ -57,35 +60,57 @@ export default function SafraForm({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <fieldset>
-        <legend>{editarSafra ? "Editar Safra" : "Cadastrar Safra"}</legend>
+    <Container>
+      <form onSubmit={handleSubmit}>
+        <fieldset>
+          <div id="containers-legend">
+            <legend className="title-form">
+              {editarSafra ? "Editar Safra" : "Cadastrar Safra"}
+            </legend>
+          </div>
 
-        <label htmlFor="nome">Nome da Safra:</label>
-        <input
-          id="nome"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          placeholder="Ex: SAF23/24"
-          required
-        />
+          <InputComponent
+            id="nome"
+            type="text"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            placeholder="Ex: SAF23/24"
+            required
+            name={"nome"}
+          />
 
-        <label htmlFor="valor">Valor:</label>
-        <input
-          id="valor"
-          value={valor}
-          onChange={(e) => setValor(e.target.value)}
-          placeholder="Ex: SAF2324"
-          required
-        />
+          <InputComponent
+            id="valor"
+            type="text"
+            value={valor}
+            onChange={(e) => setValor(e.target.value)}
+            placeholder="Ex: SAF2324"
+            required
+            name={"valor"}
+          />
 
-        <button type="submit">{editarSafra ? "Salvar" : "Cadastrar"}</button>
-        {editarSafra && (
-          <button type="button" onClick={onCancelEdit}>
-            Cancelar
-          </button>
-        )}
-      </fieldset>
-    </form>
+          <div className="div-buttons">
+            <ButtonComponent
+              type="submit"
+              id="btn-cadastrar"
+              variant="secondary"
+              label={editarSafra ? "Salvar" : "Cadastrar"}
+              onClick={() => {}}
+            />
+
+            {editarSafra && (
+              <ButtonComponent
+                type="button"
+                id="btn-cancelar"
+                variant="buttonGrey"
+                label={"Cancelar"}
+                className="ms-2"
+                onClick={onCancelEdit ?? (() => {})}
+              />
+            )}
+          </div>
+        </fieldset>
+      </form>
+    </Container>
   );
 }

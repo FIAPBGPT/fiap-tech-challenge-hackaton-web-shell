@@ -7,7 +7,6 @@ export default function VendasPage() {
 
   return (
     <>
-      <h1>Gestão de Vendas</h1>
       <VendaList />
     </>
   );

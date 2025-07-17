@@ -66,39 +66,40 @@ export default function FazendaList() {
   };
 
   return (
-    <div>
-      <FazendaForm
-        editarFazenda={fazendaEditando ?? undefined}
-        onSuccess={handleSucesso}
-        onCancelEdit={handleCancelEdit}
-      />
-
-      <Row>
-        <Col>
-          <GenericTable
-            data={fazendas}
-            columns={[
-              { key: "nome", label: "Nome" },
-              { key: "estado", label: "Estado" },
-              {
-                key: "latitude",
-                label: "Latitude",
-                render: (f) => f.latitude?.toFixed(6) ?? "-",
-              },
-              {
-                key: "longitude",
-                label: "Longitude",
-                render: (f) => f.longitude?.toFixed(6) ?? "-",
-              },
-            ]}
-            onEdit={handleEditar}
-            onDelete={(f) => handleDelete(f.id)}
-            loading={loading}
+    <Row className="w-100">
+      <Col md={12} className="mb-3">
+        {fazendaEditando ? (
+          <FazendaForm
+            onSuccess={handleSucesso}
+            editarFazenda={fazendaEditando}
+            onCancelEdit={handleCancelEdit}
           />
-        </Col>
-      </Row>
-
-      {loading && <p>Carregando...</p>}
-    </div>
+        ) : (
+          <FazendaForm onSuccess={handleSucesso} />
+        )}
+      </Col>
+      <Col>
+        <GenericTable
+          data={fazendas}
+          columns={[
+            { key: "nome", label: "Nome" },
+            { key: "estado", label: "Estado" },
+            {
+              key: "latitude",
+              label: "Latitude",
+              render: (f) => f.latitude?.toFixed(6) ?? "-",
+            },
+            {
+              key: "longitude",
+              label: "Longitude",
+              render: (f) => f.longitude?.toFixed(6) ?? "-",
+            },
+          ]}
+          onEdit={handleEditar}
+          onDelete={(f) => handleDelete(f.id)}
+          loading={loading}
+        />
+      </Col>
+    </Row>
   );
 }

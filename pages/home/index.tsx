@@ -1,13 +1,6 @@
 "use client";
-
-import ButtonComponent from "@/@core/components/ui/Button";
-import { MainContainer } from "@/@theme/custom/DashboradPage-styles";
 import Login from "../login";
 
 export default function DashboardPage() {
-  return (
-    <MainContainer>
-      <Login />
-    </MainContainer>
-  );
+  return <Login />;
 }

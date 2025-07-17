@@ -16,6 +16,8 @@ export default function ProtectedLayout({ children }: Props) {
     // Redirecionar para a tela de login se o usuário não estiver autenticado
     if (!loading && !user && router.pathname !== "/complete-cadastro") {
       router.push("/"); // Redireciona para a tela de login se não houver usuário
+    } else {
+      router.push("/home-cadastrar"); // Redireciona para o dashboard se houver usuário
     }
   }, [loading, user, router]);
 

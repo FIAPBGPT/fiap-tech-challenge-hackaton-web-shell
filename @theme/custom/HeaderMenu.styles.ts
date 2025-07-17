@@ -17,8 +17,7 @@ export const Container = styled.div`
   #menu-main-container {
     display: flex;
     flex: 1;
-    overflow: auto;
-    /* position: fixed;
+    overflow: hidden;
     top: 150px;
     left: 0; */
     width: 100%;
@@ -32,7 +31,6 @@ export const Container = styled.div`
       justify-content: center;
       align-items: center;
       width: 100%;
-      height: 100%;
       overflow: auto;
       margin: 0 auto;
       @media (max-width: 720px) {
@@ -97,7 +95,7 @@ export const Container = styled.div`
     min-height: 100vh;
     width: 100%;
     max-width: 1024px;
-    height: 100%;
+    border-left: 1px solid
     margin-bottom: 25px;
     border-left: 2px solid
       ${(props) => props.theme.themeColor.backgroundLightBase};
