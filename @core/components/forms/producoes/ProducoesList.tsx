@@ -1,10 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import ProducaoForm from "./ProducoesForm";
-import {
-  removerProducaoEstoque,
-  registrarProducaoEstoque,
-} from "@/@core/services/firebase/pages/estoqueService";
+import { removerProducaoEstoque } from "@/@core/services/firebase/pages/estoqueService";
 import {
   excluirProducao,
   listarProducoes,

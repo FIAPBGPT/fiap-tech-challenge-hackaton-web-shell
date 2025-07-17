@@ -29,14 +29,6 @@ interface Producao {
   fazenda: string;
   quantidade: number;
 }
-
-interface Venda {
-  id: string;
-  produto: string;
-  valor: number;
-  data: string;
-}
-
 interface Fazenda {
   id: string;
   nome: string;
@@ -44,13 +36,6 @@ interface Fazenda {
   latitude: number;
   longitude: number;
 }
-
-
-const Main = styled.main`
-  // min-height: calc(100vh - 80px);
-  // background: linear-gradient(to bottom, #F2EDDD, #E2C772);
-  // padding: 2rem 0;
-`;
 
 const Container = styled.div`
   max-width: 1200px;
@@ -96,18 +81,24 @@ export default function DashboardPage() {
     async function carregarDados() {
       try {
         setLoading(true);
-        const [metas, producoesRaw, produtosRaw, fazendasData, vendasData, safra] = await Promise.all([
-        listar("metas"),
-        listar("producoes"),
-        listar("produtos"),
-        listar("fazendas"),
-        listar("vendas"),
-        listar("safras"),
+        const [
+          metas,
+          producoesRaw,
+          produtosRaw,
+          fazendasData,
+          vendasData,
+          safra,
+        ] = await Promise.all([
+          listar("metas"),
+          listar("producoes"),
+          listar("produtos"),
+          listar("fazendas"),
+          listar("vendas"),
+          listar("safras"),
         ]);
 
         setVendas(vendasData);
 
-        console.log("Vendas carregadas:", vendasData);
         setMetas(
           metas.map((m: any) => ({
             id: m.id,
@@ -190,42 +181,42 @@ export default function DashboardPage() {
     }));
   };
 
-const getVendasPorProduto = () => {
-  if (!vendas || vendas.length === 0) {
-    return [];
-  }
+  const getVendasPorProduto = () => {
+    if (!vendas || vendas.length === 0) {
+      return [];
+    }
 
-  // Primeiro, achatar todos os itens de todas as vendas em um único array
-  const todosItens = vendas.flatMap(venda => 
-    venda.itens.map((item: any) => ({
-      ...item,
-      dataVenda: venda.data // Podemos incluir a data da venda se necessário
-    }))
-  );
+    // Primeiro, achatar todos os itens de todas as vendas em um único array
+    const todosItens = vendas.flatMap((venda) =>
+      venda.itens.map((item: any) => ({
+        ...item,
+        dataVenda: venda.data, // Podemos incluir a data da venda se necessário
+      }))
+    );
 
-  // Filtrar itens pela fazenda selecionada (se houver)
-   const itensFiltrados = fazendaSelecionada 
-    ? todosItens.filter(item => {
-        // Encontrar a fazenda correspondente ao item.fazendaId
-        const fazendaItem = fazendas.find(f => f.id === item.fazendaId);
-        
-        // Comparar com a fazenda selecionada
-        return fazendaItem?.id === fazendaSelecionada.id;
-      })
-    : todosItens;
+    // Filtrar itens pela fazenda selecionada (se houver)
+    const itensFiltrados = fazendaSelecionada
+      ? todosItens.filter((item) => {
+          // Encontrar a fazenda correspondente ao item.fazendaId
+          const fazendaItem = fazendas.find((f) => f.id === item.fazendaId);
 
-  // Agrupar por produto e somar os valores
-  const vendasAgrupadas = itensFiltrados.reduce((acc, item) => {
-    const nomeProduto = getProdutoNome(item.produtoId);
-    acc[nomeProduto] = (acc[nomeProduto] || 0) + item.valor;
-    return acc;
-  }, {} as Record<string, number>);
+          // Comparar com a fazenda selecionada
+          return fazendaItem?.id === fazendaSelecionada.id;
+        })
+      : todosItens;
 
-  return Object.entries(vendasAgrupadas).map(([produto, valor]) => ({
-    produto,
-    valor: Number(valor)
-  }));
-};
+    // Agrupar por produto e somar os valores
+    const vendasAgrupadas = itensFiltrados.reduce((acc, item) => {
+      const nomeProduto = getProdutoNome(item.produtoId);
+      acc[nomeProduto] = (acc[nomeProduto] || 0) + item.valor;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return Object.entries(vendasAgrupadas).map(([produto, valor]) => ({
+      produto,
+      valor: Number(valor),
+    }));
+  };
 
   const getMetaPorProduto = () => {
     // Filtra metas e produções conforme seleção

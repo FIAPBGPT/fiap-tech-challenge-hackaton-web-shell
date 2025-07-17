@@ -71,15 +71,15 @@ export default function CompleteCadastro() {
       <div className="form-container-complete">
         <div className="form-container">
           {error && (
-            <div style={{ color: 'red', marginBottom: '15px' }}>
+            <div style={{ color: "red", marginBottom: "15px" }}>
               <strong>{error}</strong>
             </div>
           )}
 
           {email && (
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: "20px" }}>
               <p>
-                O e-mail para concluir seu cadastro foi enviado para:{' '}
+                O e-mail para concluir seu cadastro foi enviado para:{" "}
                 <strong>{email}</strong>
               </p>
             </div>
@@ -94,15 +94,15 @@ export default function CompleteCadastro() {
                 onChange={(value) => setPassword(value)}
                 placeholder="Digite sua nova senha"
                 required
-                id={'complete-cadastro'}
-                name={'complete-cadastro'}
+                id={"complete-cadastro"}
+                name={"complete-cadastro"}
               />
 
               <div className="div-buttons">
                 <ButtonComponent
                   onClick={handleCompleteCadastro}
                   disabled={loading}
-                  label={loading ? 'Processando...' : 'Concluir Cadastro'}
+                  label={loading ? "Processando..." : "Concluir Cadastro"}
                   variant="secondary"
                 />
               </div>
@@ -114,22 +114,34 @@ export default function CompleteCadastro() {
         <ContactContainer>
           <ContactText>Contate-nos</ContactText>
           <IconsContainer>
-            <IconLink href="https://instagram.com" target="_blank" aria-label="Instagram">
+            <IconLink
+              href="https://instagram.com"
+              target="_blank"
+              aria-label="Instagram"
+            >
               <FaInstagram />
             </IconLink>
-            <IconLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
+            <IconLink
+              href="https://linkedin.com"
+              target="_blank"
+              aria-label="LinkedIn"
+            >
               <FaLinkedin />
             </IconLink>
-            <IconLink href="https://wa.me/1234567890" target="_blank" aria-label="WhatsApp">
+            <IconLink
+              href="https://wa.me/1234567890"
+              target="_blank"
+              aria-label="WhatsApp"
+            >
               <FaWhatsapp />
             </IconLink>
           </IconsContainer>
         </ContactContainer>
         <ContactContainer>
-          <ContactText>0800 004 250 08   |   suporte@fiapfams.com.br </ContactText>
-          <ContactText>Desenvolvido por Grupo 29 </ContactText>
+          <ContactText>0800 004 250 08 | suporte@fiapfams.com.br</ContactText>
+          <ContactText>Desenvolvido por Grupo 29</ContactText>
         </ContactContainer>
       </FooterContainer>
     </Container>
-  )
+  );
 }

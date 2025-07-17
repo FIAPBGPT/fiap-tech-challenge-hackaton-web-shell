@@ -1,8 +1,12 @@
-// services/firestore/produtos.ts
 import { adicionar, listar, atualizar, excluir } from "../firebaseService";
 
 // Adiciona um novo produto
-export async function adicionarProduto(dados: { nome: string; categoria?: string; preco?: number; ativo?: boolean }) {
+export async function adicionarProduto(dados: {
+  nome: string;
+  categoria?: string;
+  preco?: number;
+  ativo?: boolean;
+}) {
   return adicionar("produtos", {
     ...dados,
     ativo: dados.ativo ?? true,

@@ -1,4 +1,3 @@
-// services/firestore/index.ts
 import { firestore } from "./firebase";
 import {
   collection,
