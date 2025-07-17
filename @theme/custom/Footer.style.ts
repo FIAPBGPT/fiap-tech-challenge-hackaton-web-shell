@@ -19,6 +19,21 @@ export const FooterContainer = styled.footer`
   }
 `;
 
+export const FooterInsideContainer = styled.footer`
+  width: 100%;
+  background-color: ${themed.themeColor.primary};
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+`;
+
 export const ContactContainer = styled.div`
   display: flex;
   flex-direction: column;

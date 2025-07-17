@@ -176,7 +176,6 @@ export const Container = styled.div`
     top: 0;
     left: 0;
     width: 280px;
-    height: 100vh;
     z-index: 999;
     transform: translateX(-100%);
     transition: transform 0.3s ease;

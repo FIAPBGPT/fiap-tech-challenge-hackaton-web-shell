@@ -10,14 +10,16 @@ type AuthStore = {
   setLoading: (loading: boolean) => void;
 };
 
+import { StateCreator } from "zustand";
+
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set) => ({
+    ((set): AuthStore => ({
       user: null,
       loading: true,
       setUser: (user) => set({ user }),
       setLoading: (loading) => set({ loading }),
-    }),
+    })) as StateCreator<AuthStore, [], [["zustand/persist", unknown]]>,
     {
       name: "auth-storage",
       storage: createJSONStorage(() => localStorage),

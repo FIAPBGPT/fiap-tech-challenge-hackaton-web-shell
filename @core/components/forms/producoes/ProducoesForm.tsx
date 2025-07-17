@@ -53,15 +53,13 @@ export default function ProducoesForm({
     safra: string,
     fazenda: string
   ) => {
-    // console.log('Buscando saldo com:', { produto, safra, fazenda })
     if (produto && safra && fazenda) {
-      const saldo = await consultarSaldoEstoque(produto, safra, fazenda)
-      setSaldoEstoque(saldo)
+      const saldo = await consultarSaldoEstoque(produto, safra, fazenda);
+      setSaldoEstoque(saldo);
     } else {
-      setSaldoEstoque(null)
+      setSaldoEstoque(null);
     }
-    console.log('Buscando saldo com:', { produto, safra, fazenda })
-  }
+  };
 
   useEffect(() => {
     if (editarProducao) {

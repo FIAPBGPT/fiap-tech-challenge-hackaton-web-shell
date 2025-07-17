@@ -3,6 +3,7 @@ import { useAuthStore } from "@/@core/store/authStore";
 import FazendaSelect from "../fazendas/FazendaSelect";
 import ProdutoSelect from "../produtos/ProdutoSelect";
 import SafraSelect from "../safras/SafraSelect";
+import { Container } from "@/@theme/custom/Forms.styles";
 import {
   consultarSaldoEstoque,
   registrarVendaEstoque,
@@ -13,6 +14,10 @@ import {
   atualizarVenda,
   excluirVenda,
 } from "@/@core/services/firebase/pages/vendasService";
+import InputComponent from "../../ui/input";
+import ButtonComponent from "../../ui/Button";
+import { useFazendaStore } from "@/@core/store/fazendaStore";
+import { useProdutoStore } from "@/@core/store/produtoStore";
 
 interface VendaFormProps {
   onSuccess: () => void;
@@ -38,21 +43,92 @@ export default function VendaForm({
 
   useEffect(() => {
     if (editarVenda) {
-      console.log("Editando venda:", editarVenda);
       const data = editarVenda.data?.seconds
         ? new Date(editarVenda.data.seconds * 1000)
         : new Date(editarVenda.data);
 
-      const itemVenda = editarVenda.itens?.[0] || {};
+      if (editarVenda.itens) {
+        const itemVenda = editarVenda.itens?.[0] || {};
+        let fazendaId = itemVenda.fazendaId;
+        // If only fazenda name is provided, find its id (assuming you have a way to get fazendas list)
+        if (!fazendaId && itemVenda.fazenda) {
+          // Example: fetch fazendas from localStorage or context/store
+          const fazendas = useFazendaStore.getState().fazendas || [];
+          const foundFazenda = fazendas.find(
+            (f: any) => f.nome === itemVenda.fazenda
+          );
+          fazendaId = foundFazenda?.id || "";
+        }
+        // Handle date in "12/07/2025" format or timestamp
+        let formattedDate = "";
+        if (
+          typeof itemVenda.data === "string" &&
+          itemVenda.data.includes("/")
+        ) {
+          // Convert "DD/MM/YYYY" to "YYYY-MM-DD"
+          const [day, month, year] = itemVenda.data.split("/");
+          formattedDate = `${year}-${month.padStart(2, "0")}-${day.padStart(
+            2,
+            "0"
+          )}`;
+        } else if (data instanceof Date && !isNaN(data.getTime())) {
+          formattedDate = data.toISOString().split("T")[0];
+        }
 
-      setForm({
-        produto: itemVenda.produtoId,
-        quantidade: String(itemVenda.quantidade),
-        valor: String(itemVenda.valor),
-        data: data.toISOString().split("T")[0],
-        fazenda: itemVenda.fazendaId,
-        safra: itemVenda.safraId || "",
-      });
+        setForm({
+          produto: itemVenda.produtoId,
+          quantidade: String(itemVenda.quantidade),
+          valor: String(itemVenda.valor),
+          data: formattedDate,
+          fazenda: fazendaId,
+          safra: itemVenda.safraId || itemVenda.safra || "",
+        });
+      } else {
+        let fazendaId = editarVenda.fazendaId;
+        // If only fazenda name is provided, find its id
+        if (!fazendaId && editarVenda.fazenda) {
+          // Example: fetch fazendas from context/store
+          const fazendas = useFazendaStore.getState().fazendas || [];
+          const foundFazenda = fazendas.find(
+            (f: any) => f.nome === editarVenda.fazenda
+          );
+          fazendaId = foundFazenda?.id || "";
+        }
+        let produtoId = editarVenda.produtoId;
+        // If only produto name is provided, find its id
+        if (!produtoId && editarVenda.produto) {
+          // Example: fetch produtos from context/store
+          const produtos = useProdutoStore.getState().produtos || [];
+          const foundProduto = produtos.find(
+            (f: any) => f.nome === editarVenda.produto
+          );
+          produtoId = foundProduto?.id || "";
+        }
+        // Handle date in "12/07/2025" format or timestamp
+        let formattedDate = "";
+        if (
+          typeof editarVenda.data === "string" &&
+          editarVenda.data.includes("/")
+        ) {
+          // Convert "DD/MM/YYYY" to "YYYY-MM-DD"
+          const [day, month, year] = editarVenda.data.split("/");
+          formattedDate = `${year}-${month.padStart(2, "0")}-${day.padStart(
+            2,
+            "0"
+          )}`;
+        } else if (data instanceof Date && !isNaN(data.getTime())) {
+          formattedDate = data.toISOString().split("T")[0];
+        }
+
+        setForm({
+          produto: produtoId,
+          quantidade: String(editarVenda.quantidade),
+          valor: String(editarVenda.valor),
+          data: formattedDate,
+          fazenda: fazendaId,
+          safra: editarVenda.safraId || editarVenda.safra || "",
+        });
+      }
     } else {
       setForm({
         produto: "",
@@ -75,10 +151,7 @@ export default function VendaForm({
     }
   }, [form.produto, form.safra, form.fazenda]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
+  const handleChange = (name: string, value: any) => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -172,84 +245,95 @@ export default function VendaForm({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4 p-4 border rounded-md bg-white"
-    >
-      <ProdutoSelect
-        value={form.produto}
-        onChange={handleChange}
-        name="produto"
-        required
-      />
-      <SafraSelect
-        value={form.safra}
-        onChange={handleChange}
-        name="safra"
-        required
-      />
-      <FazendaSelect
-        value={form.fazenda}
-        onChange={handleChange}
-        name="fazenda"
-      />
+    <Container>
+      <form onSubmit={handleSubmit}>
+        <fieldset>
+          <div id="containers-legend">
+            <legend className="title-form">
+              {editarVenda ? "Editar Venda" : "Cadastrar Venda"}
+            </legend>
+          </div>
 
-      {saldoEstoque !== null && (
-        <p
-          className="text-sm"
-          style={{ color: saldoEstoque <= 0 ? "red" : "green" }}
-        >
-          Saldo atual: {saldoEstoque}
-        </p>
-      )}
+          <ProdutoSelect
+            value={form.produto}
+            onChange={(value) => handleChange("produto", value)}
+            name="produto"
+            required
+          />
+          <SafraSelect
+            value={form.safra}
+            onChange={(value) => handleChange("safra", value)}
+            name="safra"
+            required
+          />
+          <FazendaSelect
+            id="filtro-fazenda"
+            value={form.fazenda}
+            onChange={(value) => handleChange("fazenda", value)}
+            name="fazenda"
+            required={false}
+          />
 
-      <input
-        type="number"
-        name="quantidade"
-        value={form.quantidade}
-        onChange={handleChange}
-        placeholder="Quantidade"
-        required
-      />
-      <input
-        type="number"
-        name="valor"
-        value={form.valor}
-        onChange={handleChange}
-        placeholder="Valor"
-        required
-      />
-      <input
-        type="date"
-        name="data"
-        value={form.data}
-        onChange={handleChange}
-        required
-      />
-
-      <div className="flex gap-2">
-        <button type="submit" className="btn btn-primary">
-          {editarVenda ? "Salvar" : "Cadastrar"}
-        </button>
-        {editarVenda && (
-          <>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={onCancelEdit}
+          {saldoEstoque !== null && (
+            <p
+              className="text-sm"
+              style={{ color: saldoEstoque <= 0 ? "red" : "green" }}
             >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              onClick={handleExcluirVenda}
-              className="btn btn-danger"
-            >
-              Excluir
-            </button>
-          </>
-        )}
-      </div>
-    </form>
+              Saldo atual: {saldoEstoque}
+            </p>
+          )}
+
+          <InputComponent
+            id="quantidade"
+            type="number"
+            value={form.quantidade}
+            onChange={(e) => handleChange("quantidade", e.target.value)}
+            placeholder="Quantidade"
+            required
+            name={"quantidade"}
+          />
+
+          <InputComponent
+            id="valor"
+            type="number"
+            value={form.valor}
+            onChange={(e) => handleChange("valor", e.target.value)}
+            placeholder="Valor"
+            required
+            name={"valor"}
+          />
+
+          <InputComponent
+            id="data"
+            type="date"
+            value={form.data}
+            onChange={(e) => handleChange("data", e.target.value)}
+            placeholder={"Selecione a data"}
+            required={true}
+          />
+
+          <div className="div-buttons">
+            <ButtonComponent
+              type="submit"
+              id="btn-cadastrar"
+              variant="secondary"
+              label={editarVenda ? "Salvar" : "Cadastrar"}
+              onClick={() => {}}
+            />
+
+            {editarVenda && (
+              <ButtonComponent
+                type="button"
+                id="btn-cancelar"
+                variant="buttonGrey"
+                label={"Cancelar"}
+                className="ms-2"
+                onClick={onCancelEdit ?? (() => {})}
+              />
+            )}
+          </div>
+        </fieldset>
+      </form>
+    </Container>
   );
 }

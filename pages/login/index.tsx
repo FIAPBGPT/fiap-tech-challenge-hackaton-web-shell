@@ -11,8 +11,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { Spinner } from "react-bootstrap";
 import { FaInstagram, FaLinkedin, FaWhatsapp } from "react-icons/fa";
-import logo from "@/public/image/logo.png";
-import InputComponent from '@/@core/components/ui/Input';
+import InputComponent from '@/@core/components/ui/input';
 import Logotipo from "@/public/image/Logotipo.png";
 
 // @ts-ignore
@@ -27,6 +26,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const setUser = useAuthStore((s) => s.setUser);
+  const setLoadingState = useAuthStore((s) => s.setLoading);
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -42,7 +42,9 @@ export default function Login() {
       const res = await signInWithEmailAndPassword(auth, email, senha);
       const { uid, email: userEmail } = res.user;
       setUser({ uid, email: userEmail || "" });
-      router.push("/home-cadastrar");
+      setLoading(false);
+      setLoadingState(false); // Define o estado de loading como false após o login
+      router.push("/home-cadastrar"); // Redireciona para o dashboard após login bem-sucedido
     } catch (error: any) {
       setError("Erro ao fazer login. Verifique suas credenciais.");
       console.error(error);
@@ -53,20 +55,16 @@ export default function Login() {
 
   return (
     <PageContainer>
-      <LoginContainer>        
+      <LoginContainer>
         <Header>
-        <Image src={Logotipo} alt="Logo" width={120} height={40} />
+          <Image src={Logotipo} alt="Logo" width={120} height={40} />
         </Header>
         <LoginContainerContent>
           <Content>
-            <LeftText>
-              Sua solução em planejamento
-            </LeftText>
+            <LeftText>Sua solução em planejamento</LeftText>
 
             <FormContainer>
-              <TitleForm>
-                Faça seu Login
-              </TitleForm>
+              <TitleForm>Faça seu Login</TitleForm>
               <InputComponent
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -78,35 +76,48 @@ export default function Login() {
                 type="password"
                 placeholder="Senha"
               />
-              <StyledButton variant="secondary" onClick={handleLogin}>{loading ? <Spinner animation="border" size="sm" /> : "Entrar"}</StyledButton>
+              <StyledButton variant="secondary" onClick={handleLogin}>
+                {loading ? <Spinner animation="border" size="sm" /> : "Entrar"}
+              </StyledButton>
               <ErrorText>{error}</ErrorText>
             </FormContainer>
           </Content>
         </LoginContainerContent>
       </LoginContainer>
-      
 
       <FooterContainer>
         <ContactContainer>
           <ContactText>Contate-nos</ContactText>
           <IconsContainer>
-            <IconLink href="https://instagram.com" target="_blank" aria-label="Instagram">
+            <IconLink
+              href="https://instagram.com"
+              target="_blank"
+              aria-label="Instagram"
+            >
               <FaInstagram />
             </IconLink>
-            <IconLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
+            <IconLink
+              href="https://linkedin.com"
+              target="_blank"
+              aria-label="LinkedIn"
+            >
               <FaLinkedin />
             </IconLink>
-            <IconLink href="https://wa.me/1234567890" target="_blank" aria-label="WhatsApp">
+            <IconLink
+              href="https://wa.me/1234567890"
+              target="_blank"
+              aria-label="WhatsApp"
+            >
               <FaWhatsapp />
             </IconLink>
           </IconsContainer>
         </ContactContainer>
 
         <ContactContainer>
-          <ContactText>0800 004 250 08   |   suporte@fiapfams.com.br </ContactText>
-          <ContactText>Desenvolvido por Grupo 29 </ContactText>
+          <ContactText>0800 004 250 08 | suporte@fiapfams.com.br</ContactText>
+          <ContactText>Desenvolvido por Grupo 29</ContactText>
         </ContactContainer>
       </FooterContainer>
-    </PageContainer>    
+    </PageContainer>
   );
 }

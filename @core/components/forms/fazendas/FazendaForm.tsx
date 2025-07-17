@@ -4,8 +4,7 @@ import {
   atualizarFazenda,
 } from '@/@core/services/firebase/pages/fazendasService'
 import { useEffect, useState } from 'react'
-import { Container } from '@/@theme/custom/Forms.styles'
-import FazendaSelect from './FazendaSelect'
+import { Container } from "@/@theme/custom/Forms.styles";
 import SelectComponent from '../../ui/select/Select.component'
 import InputComponent from '../../ui/input/Input.component'
 import ButtonComponent from '../../ui/Button'

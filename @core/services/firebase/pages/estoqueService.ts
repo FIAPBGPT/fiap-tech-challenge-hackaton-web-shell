@@ -154,7 +154,10 @@ export async function consultarSaldoEstoque(
     snapshot.forEach((doc) => {
       const data = doc.data();
       const quantidade = Number(data.quantidade) || 0;
-      saldo += data.tipo === "Entrada" ? quantidade : -quantidade;
+      saldo +=
+        data.tipo === "Entrada" || data.tipo === "entrada"
+          ? quantidade
+          : -quantidade;
     });
 
     return saldo;

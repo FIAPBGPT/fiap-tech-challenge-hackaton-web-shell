@@ -1,4 +1,3 @@
-// services/firestore/metas.ts
 import { adicionar, listar, atualizar, excluir } from "../firebaseService";
 
 // Adiciona uma nova meta
