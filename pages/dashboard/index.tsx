@@ -3,15 +3,9 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { listar } from "@/@core/services/firebase/firebaseService";
 import styled from "styled-components";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardsGrid,
-  Select,
-  Subtitle,
-  Title,
-} from "@/@theme/custom/DashboardStyle";
+import { Card, CardContent, CardHeader, CardsGrid, Select, Subtitle, Title } from "@/@theme/custom/DashboardStyle";
+import { NotificationBell } from "@/@core/components/NotificationBell/NotificationBell";
+import { LeftText } from "@/@theme/custom/LoginPage-style";
 
 // Tipos
 interface Meta {
@@ -70,14 +64,11 @@ type DashboardRemoteProps =
       data: { safra: string; produto: string; producao: number }[];
     };
 
-const DashboardRemote = dynamic<DashboardRemoteProps>(
-  // @ts-ignore
-  () => import("mfe/ChartView"),
-  {
-    ssr: false,
-    loading: () => <p>Carregando gráfico...</p>,
-  }
-);
+// @ts-ignore 
+const DashboardRemote = dynamic<DashboardRemoteProps>(() => import("mfe/ChartView"), {
+  ssr: false,
+  loading: () => <p>Carregando gráfico...</p>,
+});
 
 export default function DashboardPage() {
   const [metas, setMetas] = useState<Meta[]>([]);
@@ -97,12 +88,12 @@ export default function DashboardPage() {
       try {
         setLoading(true);
         const [metas, producoesRaw, produtosRaw, fazendasData, vendasData, safra] = await Promise.all([
-        listar("metas"),
-        listar("producoes"),
-        listar("produtos"),
-        listar("fazendas"),
-        listar("vendas"),
-        listar("safras"),
+          listar("metas"),
+          listar("producoes"),
+          listar("produtos"),
+          listar("fazendas"),
+          listar("vendas"),
+          listar("safras"),
         ]);
 
         setVendas(vendasData);
@@ -141,10 +132,18 @@ export default function DashboardPage() {
       } finally {
         setLoading(false);
       }
+
     }
 
     carregarDados();
   }, []);
+
+  console.log("Metas", metas)
+  console.log("Produções", producoes)
+  console.log("Produtos", produtos);
+  console.log("Fazendas", fazendas);
+  console.log("Safras", safras);
+  console.log("Vendas", vendas);
 
   useEffect(() => {
     if (!fazendaSelecionada) return;
@@ -179,53 +178,74 @@ export default function DashboardPage() {
       );
       if (!fazenda?.estado) return;
 
-      const estado = fazenda.estado;
-      const valorAtual = estadoMap.get(estado) || 0;
-      estadoMap.set(estado, valorAtual + meta.valor);
-    });
+    const estado = fazenda.estado;
+    const valorAtual = estadoMap.get(estado) || 0;
+    estadoMap.set(estado, valorAtual + meta.valor);
+  });
 
-    return Array.from(estadoMap.entries()).map(([estado, soma]) => ({
-      estado: `BR-${estado}`,
-      meta: soma,
-    }));
-  };
-
-const getVendasPorProduto = () => {
-  if (!vendas || vendas.length === 0) {
-    return [];
+  // 2. Se houver fazenda selecionada mas sem metas, garantimos que apareça
+  if (fazendaSelecionada && estadoMap.size === 0) {
+    return [{
+      estado: `BR-${fazendaSelecionada.estado}`,
+      meta: 0 // Valor zero para aparecer no mapa
+    }];
   }
 
-  // Primeiro, achatar todos os itens de todas as vendas em um único array
-  const todosItens = vendas.flatMap(venda => 
-    venda.itens.map((item: any) => ({
-      ...item,
-      dataVenda: venda.data // Podemos incluir a data da venda se necessário
-    }))
-  );
+  // 3. Para o caso sem filtro, incluímos todos os estados com fazendas
+  if (!fazendaSelecionada) {
+    const estadosComFazendas = new Set(
+      fazendas.map(f => `BR-${f.estado}`)
+    );
+    
+    estadosComFazendas.forEach(estado => {
+      if (!estadoMap.has(estado.replace('BR-', ''))) {
+        estadoMap.set(estado.replace('BR-', ''), 0);
+      }
+    });
+  }
 
-  // Filtrar itens pela fazenda selecionada (se houver)
-   const itensFiltrados = fazendaSelecionada 
-    ? todosItens.filter(item => {
+  // 4. Formatamos o resultado final
+  return Array.from(estadoMap.entries()).map(([estado, soma]) => ({
+    estado: `BR-${estado}`,
+    meta: soma,
+  }));
+};
+  const getVendasPorProduto = () => {
+    if (!vendas || vendas.length === 0) {
+      return [];
+    }
+
+    // Primeiro, achatar todos os itens de todas as vendas em um único array
+    const todosItens = vendas.flatMap(venda =>
+      venda.itens.map((item: any) => ({
+        ...item,
+        dataVenda: venda.data // Podemos incluir a data da venda se necessário
+      }))
+    );
+
+    // Filtrar itens pela fazenda selecionada (se houver)
+    const itensFiltrados = fazendaSelecionada
+      ? todosItens.filter(item => {
         // Encontrar a fazenda correspondente ao item.fazendaId
         const fazendaItem = fazendas.find(f => f.id === item.fazendaId);
-        
+
         // Comparar com a fazenda selecionada
         return fazendaItem?.id === fazendaSelecionada.id;
       })
-    : todosItens;
+      : todosItens;
 
-  // Agrupar por produto e somar os valores
-  const vendasAgrupadas = itensFiltrados.reduce((acc, item) => {
-    const nomeProduto = getProdutoNome(item.produtoId);
-    acc[nomeProduto] = (acc[nomeProduto] || 0) + item.valor;
-    return acc;
-  }, {} as Record<string, number>);
+    // Agrupar por produto e somar os valores
+    const vendasAgrupadas = itensFiltrados.reduce((acc, item) => {
+      const nomeProduto = getProdutoNome(item.produtoId);
+      acc[nomeProduto] = (acc[nomeProduto] || 0) + item.valor;
+      return acc;
+    }, {} as Record<string, number>);
 
-  return Object.entries(vendasAgrupadas).map(([produto, valor]) => ({
-    produto,
-    valor: Number(valor)
-  }));
-};
+    return Object.entries(vendasAgrupadas).map(([produto, valor]) => ({
+      produto,
+      valor: Number(valor)
+    }));
+  };
 
   const getMetaPorProduto = () => {
     // Filtra metas e produções conforme seleção
@@ -308,8 +328,11 @@ const getVendasPorProduto = () => {
     );
   }
 
+
   return (
     <Container>
+      
+         <NotificationBell products={produtos} fazendas={fazendas} />
       <Title>Suas Dashboards</Title>
       <Subtitle>Escolha qual quer visualizar</Subtitle>
       <Select
