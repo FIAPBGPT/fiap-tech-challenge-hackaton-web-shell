@@ -333,16 +333,9 @@ const getMetaPorProduto = () => {
 
   return (
     <>
-      {/* <Header>
-        <Container>
-          <h1>Home</h1>
-          <p>Bem-vindo!</p>
-        </Container>
-      </Header> */}
-
-      {/* <Container >
+      <Container>
         <NotificationBell products={produtos} fazendas={fazendas} />
-      </Container> */}
+      </Container>
 
       <Main>
         <Container>
