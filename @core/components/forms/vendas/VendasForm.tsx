@@ -15,7 +15,6 @@ import {
   excluirVenda,
 } from "@/@core/services/firebase/pages/vendasService";
 import InputComponent from "../../ui/input";
-import SelectComponent from "../../ui/select/Select.component";
 import ButtonComponent from "../../ui/Button";
 import { useFazendaStore } from "@/@core/store/fazendaStore";
 import { useProdutoStore } from "@/@core/store/produtoStore";
@@ -44,7 +43,6 @@ export default function VendaForm({
 
   useEffect(() => {
     if (editarVenda) {
-      console.log("Editando venda:", editarVenda);
       const data = editarVenda.data?.seconds
         ? new Date(editarVenda.data.seconds * 1000)
         : new Date(editarVenda.data);
@@ -154,7 +152,6 @@ export default function VendaForm({
   }, [form.produto, form.safra, form.fazenda]);
 
   const handleChange = (name: string, value: any) => {
-    console.log("Mudando campo:", name, "para valor:", value);
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -164,7 +161,6 @@ export default function VendaForm({
 
     const quantidade = Number(form.quantidade);
     const valor = Number(form.valor);
-    console.log("Form data:", form, "Quantidade:", quantidade, "Valor:", valor);
     if (
       !form.produto ||
       !form.safra ||

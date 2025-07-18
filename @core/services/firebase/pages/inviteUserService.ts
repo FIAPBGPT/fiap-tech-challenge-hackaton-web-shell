@@ -16,7 +16,6 @@ export const sendInviteEmail = async (email: string) => {
   try {
     // Envia o link de login para o email fornecido
     await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-    console.log("Convite enviado com sucesso!");
   } catch (error) {
     console.error("Erro ao enviar o convite:", error);
     throw new Error("Erro ao enviar o convite");

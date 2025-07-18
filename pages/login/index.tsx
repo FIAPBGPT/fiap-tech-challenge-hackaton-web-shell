@@ -27,7 +27,6 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const setUser = useAuthStore((s) => s.setUser);
   const setLoadingState = useAuthStore((s) => s.setLoading);
-  // setLoadingState(true); // Define o estado de loading como true ao iniciar o login
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -58,7 +57,7 @@ export default function Login() {
     <PageContainer>
       <LoginContainer>
         <Header>
-        <Image src={Logotipo} alt="Logo" width={120} height={40} />
+          <Image src={Logotipo} alt="Logo" width={120} height={40} />
         </Header>
         <LoginContainerContent>
           <Content>
@@ -115,8 +114,8 @@ export default function Login() {
         </ContactContainer>
 
         <ContactContainer>
-          <ContactText>0800 004 250 08 | suporte@fiapfams.com.br </ContactText>
-          <ContactText>Desenvolvido por Grupo 29 </ContactText>
+          <ContactText>0800 004 250 08 | suporte@fiapfams.com.br</ContactText>
+          <ContactText>Desenvolvido por Grupo 29</ContactText>
         </ContactContainer>
       </FooterContainer>
     </PageContainer>

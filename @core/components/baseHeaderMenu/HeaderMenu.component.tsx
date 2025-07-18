@@ -100,8 +100,8 @@ export default function HeaderMenuComponent({
         </ContactContainer>
 
         <ContactContainer>
-          <ContactText>0800 004 250 08 | suporte@fiapfams.com.br </ContactText>
-          <ContactText>Desenvolvido por Grupo 29 </ContactText>
+          <ContactText>0800 004 250 08 | suporte@fiapfams.com.br</ContactText>
+          <ContactText>Desenvolvido por Grupo 29</ContactText>
         </ContactContainer>
       </FooterInsideContainer>
     </Container>

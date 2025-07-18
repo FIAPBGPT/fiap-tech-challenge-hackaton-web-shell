@@ -1,4 +1,3 @@
-// services/firestore/vendas.ts
 import { adicionar, listar, atualizar, excluir } from "../firebaseService";
 
 // Adiciona uma nova venda

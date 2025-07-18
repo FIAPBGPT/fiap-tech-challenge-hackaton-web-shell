@@ -1,8 +1,10 @@
-// services/firestore/fazendas.ts
 import { adicionar, listar, atualizar, excluir } from "../firebaseService";
 
 // Adiciona uma nova fazenda
-export async function adicionarFazenda(fazenda: { nome: string; estado: string }) {
+export async function adicionarFazenda(fazenda: {
+  nome: string;
+  estado: string;
+}) {
   return adicionar("fazendas", fazenda);
 }
 
@@ -12,7 +14,10 @@ export async function listarFazendas() {
 }
 
 // Atualiza uma fazenda
-export async function atualizarFazenda(id: string, dados: { nome: string; estado: string }) {
+export async function atualizarFazenda(
+  id: string,
+  dados: { nome: string; estado: string }
+) {
   return atualizar("fazendas", id, dados);
 }
 
