@@ -2,10 +2,8 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { listar } from "@/@core/services/firebase/firebaseService";
-import styled from "styled-components";
 import { Card, CardContent, CardHeader, CardsGrid, Select, Subtitle, Title } from "@/@theme/custom/DashboardStyle";
 import { NotificationBell } from "@/@core/components/NotificationBell/NotificationBell";
-import { Container } from "react-bootstrap";
 
 // Tipos
 interface Meta {
