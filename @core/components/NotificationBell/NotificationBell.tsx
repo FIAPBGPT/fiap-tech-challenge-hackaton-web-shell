@@ -137,7 +137,7 @@ export function NotificationBell({ products, fazendas }: NotificationBellProps) 
       </BellButton>
 
       {isOpen && (
-        <NotificationPanel ref={panelRef} style={{ position: 'fixed', right: '1rem', top: '4rem' }}>
+        <NotificationPanel ref={panelRef} style={{ position: 'fixed', left: '1rem', top: '4rem' }}>
              <NotificationHeader 
             unreadCount={unreadCount} 
             onMarkAllAsRead={handleMarkAllAsRead} 
