@@ -340,12 +340,9 @@ const getMetaPorProduto = () => {
         </Container>
       </Header> */}
 
-
-      <Container >
+      {/* <Container >
         <NotificationBell products={produtos} fazendas={fazendas} />
-      </Container>
-
-
+      </Container> */}
 
       <Main>
         <Container>
@@ -354,12 +351,12 @@ const getMetaPorProduto = () => {
           <Select
             value={fazendaSelecionada?.id || ""}
             onChange={(e) => {
-              const fazenda = fazendas.find(f => f.id === e.target.value);
+              const fazenda = fazendas.find((f) => f.id === e.target.value);
               setFazendaSelecionada(fazenda || null);
             }}
           >
             <option value="">Todas as Fazendas</option>
-            {fazendas.map(fazenda => (
+            {fazendas.map((fazenda) => (
               <option key={fazenda.id} value={fazenda.id}>
                 {fazenda.nome} - {fazenda.estado}
               </option>
@@ -382,10 +379,7 @@ const getMetaPorProduto = () => {
             <Card>
               <CardHeader>Vendas</CardHeader>
               <CardContent>
-                <DashboardRemote
-                  tipo="lucro"
-                  data={getVendasPorProduto()}
-                />
+                <DashboardRemote tipo="lucro" data={getVendasPorProduto()} />
               </CardContent>
             </Card>
 
@@ -393,10 +387,7 @@ const getMetaPorProduto = () => {
             <Card>
               <CardHeader>Metas</CardHeader>
               <CardContent>
-                <DashboardRemote
-                  tipo="metas"
-                  data={getMetaPorProduto()}
-                />
+                <DashboardRemote tipo="metas" data={getMetaPorProduto()} />
               </CardContent>
             </Card>
 
@@ -404,10 +395,7 @@ const getMetaPorProduto = () => {
             <Card>
               <CardHeader>Produção/Safra Ano</CardHeader>
               <CardContent>
-                <DashboardRemote
-                  tipo="producao"
-                  data={getSafraNome()}
-                />
+                <DashboardRemote tipo="producao" data={getSafraNome()} />
               </CardContent>
             </Card>
           </CardsGrid>
