@@ -15,10 +15,10 @@ import InputComponent from '@/@core/components/ui/input';
 import Logotipo from "@/public/image/Logotipo.png";
 
 // @ts-ignore
-const Mfe = dynamic(() => import("mfe/app"), {
+const Mfe = dynamic(() => import('mfe/app'), {
   ssr: false,
   loading: () => <Spinner animation="border" variant="secondary" size="sm" />,
-});
+})
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -31,12 +31,12 @@ export default function Login() {
 
   const handleLogin = async () => {
     if (!email || !senha) {
-      setError("Por favor, preencha todos os campos.");
-      return;
+      setError('Por favor, preencha todos os campos.')
+      return
     }
 
-    setError(null);
-    setLoading(true);
+    setError(null)
+    setLoading(true)
 
     try {
       const res = await signInWithEmailAndPassword(auth, email, senha);
@@ -46,12 +46,12 @@ export default function Login() {
       setLoadingState(false); // Define o estado de loading como false após o login
       router.push("/home-cadastrar"); // Redireciona para o dashboard após login bem-sucedido
     } catch (error: any) {
-      setError("Erro ao fazer login. Verifique suas credenciais.");
-      console.error(error);
+      setError('Erro ao fazer login. Verifique suas credenciais.')
+      console.error(error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <PageContainer>
@@ -69,12 +69,19 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
+                id={''}
+                name={''}
+                type={''}
+                required={false}
               />
               <InputComponent
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 type="password"
                 placeholder="Senha"
+                id={''}
+                name={''}
+                required={false}
               />
               <StyledButton variant="secondary" onClick={handleLogin}>
                 {loading ? <Spinner animation="border" size="sm" /> : "Entrar"}
