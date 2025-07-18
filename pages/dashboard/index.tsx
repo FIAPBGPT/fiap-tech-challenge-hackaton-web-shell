@@ -5,6 +5,7 @@ import { listar } from "@/@core/services/firebase/firebaseService";
 import styled from "styled-components";
 import { Card, CardContent, CardHeader, CardsGrid, Select, Subtitle, Title } from "@/@theme/custom/DashboardStyle";
 import { NotificationBell } from "@/@core/components/NotificationBell/NotificationBell";
+import { Container } from "react-bootstrap";
 
 // Tipos
 interface Meta {
@@ -37,26 +38,6 @@ interface Fazenda {
   latitude: number;
   longitude: number;
 }
-
-// Componentes estilizados
-// const Header = styled.header`
-//   background-color: #97133E;
-//   padding: 1.5rem;
-//   color: white;
-//   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-// `;
-
-const Main = styled.main`
-  // min-height: calc(100vh - 80px);
-  // background: linear-gradient(to bottom, #F2EDDD, #E2C772);
-  // padding: 2rem 0;
-`;
-
-const Container = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-`;
 
 type DashboardRemoteProps =
   | { tipo: "mapa"; data: { estado: string; meta: number }[] }
@@ -136,12 +117,6 @@ export default function DashboardPage() {
     carregarDados();
   }, []);
 
-  console.log("Metas", metas)
-  console.log("Produções", producoes)
-  console.log("Produtos", produtos);
-  console.log("Fazendas", fazendas);
-  console.log("Safras", safras);
-  console.log("Vendas", vendas);
 
   useEffect(() => {
     if (!fazendaSelecionada) return;
@@ -158,55 +133,48 @@ export default function DashboardPage() {
     return produto ? `${produto.nome}${produto.categoria ? ` (${produto.categoria})` : ""}` : id;
   };
 
-  // const formatarSafra = (safra: string) => {
-  //   if (safra?.startsWith("SAF") && safra.length === 8) {
-  //     return `SAF${safra.slice(3, 5)}/${safra.slice(5, 7)}`;
-  //   }
-  //   return safra;
-  // };
+  const calcularSomaMetaPorEstado = () => {
+    const estadoMap = new Map<string, number>();
 
- const calcularSomaMetaPorEstado = () => {
-  const estadoMap = new Map<string, number>();
+    // 1. Primeiro processamos todas as metas (como antes)
+    metas.forEach(meta => {
+      const fazenda = fazendas.find(f => f.id === meta.fazenda);
+      if (!fazenda) return;
 
-  // 1. Primeiro processamos todas as metas (como antes)
-  metas.forEach(meta => {
-    const fazenda = fazendas.find(f => f.id === meta.fazenda);
-    if (!fazenda) return;
+      if (fazendaSelecionada && fazenda.id !== fazendaSelecionada.id) return;
 
-    if (fazendaSelecionada && fazenda.id !== fazendaSelecionada.id) return;
-
-    const estado = fazenda.estado;
-    const valorAtual = estadoMap.get(estado) || 0;
-    estadoMap.set(estado, valorAtual + meta.valor);
-  });
-
-  // 2. Se houver fazenda selecionada mas sem metas, garantimos que apareça
-  if (fazendaSelecionada && estadoMap.size === 0) {
-    return [{
-      estado: `BR-${fazendaSelecionada.estado}`,
-      meta: 0 // Valor zero para aparecer no mapa
-    }];
-  }
-
-  // 3. Para o caso sem filtro, incluímos todos os estados com fazendas
-  if (!fazendaSelecionada) {
-    const estadosComFazendas = new Set(
-      fazendas.map(f => `BR-${f.estado}`)
-    );
-    
-    estadosComFazendas.forEach(estado => {
-      if (!estadoMap.has(estado.replace('BR-', ''))) {
-        estadoMap.set(estado.replace('BR-', ''), 0);
-      }
+      const estado = fazenda.estado;
+      const valorAtual = estadoMap.get(estado) || 0;
+      estadoMap.set(estado, valorAtual + meta.valor);
     });
-  }
 
-  // 4. Formatamos o resultado final
-  return Array.from(estadoMap.entries()).map(([estado, soma]) => ({
-    estado: `BR-${estado}`,
-    meta: soma,
-  }));
-};
+    // 2. Se houver fazenda selecionada mas sem metas, garantimos que apareça
+    if (fazendaSelecionada && estadoMap.size === 0) {
+      return [{
+        estado: `BR-${fazendaSelecionada.estado}`,
+        meta: 0 // Valor zero para aparecer no mapa
+      }];
+    }
+
+    // 3. Para o caso sem filtro, incluímos todos os estados com fazendas
+    if (!fazendaSelecionada) {
+      const estadosComFazendas = new Set(
+        fazendas.map(f => `BR-${f.estado}`)
+      );
+
+      estadosComFazendas.forEach(estado => {
+        if (!estadoMap.has(estado.replace('BR-', ''))) {
+          estadoMap.set(estado.replace('BR-', ''), 0);
+        }
+      });
+    }
+
+    // 4. Formatamos o resultado final
+    return Array.from(estadoMap.entries()).map(([estado, soma]) => ({
+      estado: `BR-${estado}`,
+      meta: soma,
+    }));
+  };
   const getVendasPorProduto = () => {
     if (!vendas || vendas.length === 0) {
       return [];
@@ -244,47 +212,47 @@ export default function DashboardPage() {
     }));
   };
 
-const getMetaPorProduto = () => {
-  // Filtra metas conforme seleção
-  const metasFiltradas = fazendaSelecionada
-    ? metas.filter(m => m.fazenda === fazendaSelecionada.id) // Comparar por ID
-    : metas;
+  const getMetaPorProduto = () => {
+    // Filtra metas conforme seleção
+    const metasFiltradas = fazendaSelecionada
+      ? metas.filter(m => m.fazenda === fazendaSelecionada.id) // Comparar por ID
+      : metas;
 
-  // Agrupa metas e produções por produto e safra
-  const resultado = metasFiltradas.reduce((acc, meta) => {
-    const produto = getProdutoNome(meta.produto);
-    const key = `${produto}-${meta.safra}`; // Chave única por produto e safra
-    
-    if (!acc[key]) {
-      acc[key] = {
-        produto,
-        safra: meta.safra,
-        meta: 0,
-        producao: 0
-      };
-    }
+    // Agrupa metas e produções por produto e safra
+    const resultado = metasFiltradas.reduce((acc, meta) => {
+      const produto = getProdutoNome(meta.produto);
+      const key = `${produto}-${meta.safra}`; // Chave única por produto e safra
 
-    acc[key].meta += meta.valor;
-    
-    // Calcula produção correspondente
-    const producoesCorrespondentes = producoes.filter(p => 
-      p.produto === meta.produto && 
-      p.safra === meta.safra &&
-      (!fazendaSelecionada || p.fazenda === fazendaSelecionada.id)
-    );
-    
-    acc[key].producao += producoesCorrespondentes.reduce((sum, p) => sum + p.quantidade, 0);
+      if (!acc[key]) {
+        acc[key] = {
+          produto,
+          safra: meta.safra,
+          meta: 0,
+          producao: 0
+        };
+      }
 
-    return acc;
-  }, {} as Record<string, { produto: string; safra: string; meta: number; producao: number }>);
+      acc[key].meta += meta.valor;
 
-  // Converte para array e formata para o gráfico
-  return Object.values(resultado).map(item => ({
-    produto: `${item.produto} (${item.safra})`, // Inclui safra no nome
-    meta: item.meta,
-    producao: item.producao
-  }));
-};
+      // Calcula produção correspondente
+      const producoesCorrespondentes = producoes.filter(p =>
+        p.produto === meta.produto &&
+        p.safra === meta.safra &&
+        (!fazendaSelecionada || p.fazenda === fazendaSelecionada.id)
+      );
+
+      acc[key].producao += producoesCorrespondentes.reduce((sum, p) => sum + p.quantidade, 0);
+
+      return acc;
+    }, {} as Record<string, { produto: string; safra: string; meta: number; producao: number }>);
+
+    // Converte para array e formata para o gráfico
+    return Object.values(resultado).map(item => ({
+      produto: `${item.produto} (${item.safra})`, // Inclui safra no nome
+      meta: item.meta,
+      producao: item.producao
+    }));
+  };
 
   const getSafraNome = () => {
 
@@ -333,86 +301,71 @@ const getMetaPorProduto = () => {
 
   return (
     <>
-      {/* <Header>
-        <Container>
-          <h1>Home</h1>
-          <p>Bem-vindo!</p>
-        </Container>
-      </Header> */}
 
+      <NotificationBell products={produtos} fazendas={fazendas} />
 
-      <Container >
-        <NotificationBell products={produtos} fazendas={fazendas} />
-      </Container>
+      <Title>Suas Dashboards</Title>
+      <Subtitle>Escolha qual quer visualizar</Subtitle>
+      <Select
+        value={fazendaSelecionada?.id || ""}
+        onChange={(e) => {
+          const fazenda = fazendas.find(f => f.id === e.target.value);
+          setFazendaSelecionada(fazenda || null);
+        }}
+      >
+        <option value="">Todas as Fazendas</option>
+        {fazendas.map(fazenda => (
+          <option key={fazenda.id} value={fazenda.id}>
+            {fazenda.nome} - {fazenda.estado}
+          </option>
+        ))}
+      </Select>
+      <CardsGrid>
+        {/* Card Localidade */}
+        <Card>
+          <CardHeader>Localidade</CardHeader>
+          <CardContent>
+            <DashboardRemote
+              tipo="mapa"
+              data={calcularSomaMetaPorEstado()}
+            />
+          </CardContent>
+        </Card>
 
+        {/* Card Vendas */}
+        <Card>
+          <CardHeader>Vendas</CardHeader>
+          <CardContent>
+            <DashboardRemote
+              tipo="lucro"
+              data={getVendasPorProduto()}
+            />
+          </CardContent>
+        </Card>
 
+        {/* Card Metas */}
+        <Card>
+          <CardHeader>Metas</CardHeader>
+          <CardContent>
+            <DashboardRemote
+              tipo="metas"
+              data={getMetaPorProduto()}
+            />
+          </CardContent>
+        </Card>
 
-      <Main>
-        <Container>
-          <Title>Suas Dashboards</Title>
-          <Subtitle>Escolha qual quer visualizar</Subtitle>
-          <Select
-            value={fazendaSelecionada?.id || ""}
-            onChange={(e) => {
-              const fazenda = fazendas.find(f => f.id === e.target.value);
-              setFazendaSelecionada(fazenda || null);
-            }}
-          >
-            <option value="">Todas as Fazendas</option>
-            {fazendas.map(fazenda => (
-              <option key={fazenda.id} value={fazenda.id}>
-                {fazenda.nome} - {fazenda.estado}
-              </option>
-            ))}
-          </Select>
+        {/* Card Produção */}
+        <Card>
+          <CardHeader>Produção/Safra Ano</CardHeader>
+          <CardContent>
+            <DashboardRemote
+              tipo="producao"
+              data={getSafraNome()}
+            />
+          </CardContent>
+        </Card>
+      </CardsGrid>
 
-          <CardsGrid>
-            {/* Card Localidade */}
-            <Card>
-              <CardHeader>Localidade</CardHeader>
-              <CardContent>
-                <DashboardRemote
-                  tipo="mapa"
-                  data={calcularSomaMetaPorEstado()}
-                />
-              </CardContent>
-            </Card>
-
-            {/* Card Vendas */}
-            <Card>
-              <CardHeader>Vendas</CardHeader>
-              <CardContent>
-                <DashboardRemote
-                  tipo="lucro"
-                  data={getVendasPorProduto()}
-                />
-              </CardContent>
-            </Card>
-
-            {/* Card Metas */}
-            <Card>
-              <CardHeader>Metas</CardHeader>
-              <CardContent>
-                <DashboardRemote
-                  tipo="metas"
-                  data={getMetaPorProduto()}
-                />
-              </CardContent>
-            </Card>
-
-            {/* Card Produção */}
-            <Card>
-              <CardHeader>Produção/Safra Ano</CardHeader>
-              <CardContent>
-                <DashboardRemote
-                  tipo="producao"
-                  data={getSafraNome()}
-                />
-              </CardContent>
-            </Card>
-          </CardsGrid>
-        </Container>
-      </Main>
     </>
   );
 }

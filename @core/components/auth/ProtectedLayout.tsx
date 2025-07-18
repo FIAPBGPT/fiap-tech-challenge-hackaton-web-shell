@@ -13,11 +13,12 @@ export default function ProtectedLayout({ children }: Props) {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirecionar para a tela de login se o usuário não estiver autenticado
-    if (!loading && !user && router.pathname !== "/complete-cadastro") {
-      router.push("/"); // Redireciona para a tela de login se não houver usuário
-    } else {
-      router.push("/home-cadastrar"); // Redireciona para o dashboard se houver usuário
+    if (loading) return;
+
+    if (!user && router.pathname !== "/complete-cadastro") {
+      router.push("/"); 
+    } else if (user && router.pathname === "/") {
+      router.push("/home-cadastrar");
     }
   }, [loading, user, router]);
 
