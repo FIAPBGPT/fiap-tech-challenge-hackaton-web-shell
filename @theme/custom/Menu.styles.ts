@@ -2,9 +2,8 @@ import styled from "styled-components";
 import Link, { LinkProps } from "next/link";
 
 export const Container = styled.div`
-  width: 200px;
+  width: 230px;
   flex: 0 0 200px;
-  width: 100%;
   min-height: 100vh;
   background-color: ${({ theme }) => theme.themeColor.backgroundLightBase};
   display: flex;
@@ -42,8 +41,13 @@ export const Container = styled.div`
   }
 
   #menu-data-user p {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 400;
+    white-space: normal;
+    word-break: break-word;
+  }
+    #menu-data-user h1 {
+    font-size: 13px;
   }
 
   #menu-user-icon {
