@@ -9,6 +9,8 @@ import ButtonComponent from '../../ui/Button'
 import { Container } from '@/@theme/custom/Forms.styles'
 import SafraSelect from '../safras/SafraSelect'
 import ProdutoSelect from '../produtos/ProdutoSelect'
+import { Col, Row } from 'react-bootstrap'
+import GenericTable from '../../ui/GenericTable'
 
 interface EstoqueItem {
   id: string
@@ -16,7 +18,7 @@ interface EstoqueItem {
   safraId?: string | null
   fazendaId?: string | null
   quantidade: number
-  tipo: 'Entrada' | 'Saída'
+  tipo: 'Entrada' | 'Saída' | 'entrada' | 'saída'
   observacao?: string
 }
 
@@ -36,6 +38,7 @@ export default function EstoqueList() {
   const [produtos, setProdutos] = useState<ItemLista[]>([])
   const [safras, setSafras] = useState<ItemLista[]>([])
   const [showSaldo, setShowSaldo] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   // Estados dos filtros
   const [filtroProduto, setFiltroProduto] = useState('')
@@ -73,9 +76,11 @@ export default function EstoqueList() {
           nome: item.nome ?? '',
         }))
       )
+      setLoading(false)
     } catch (error) {
       console.error('Erro ao carregar os dados:', error)
       alert('Erro ao carregar os dados.')
+      setLoading(false)
     }
   }
 
@@ -97,7 +102,10 @@ export default function EstoqueList() {
     filtroProduto || filtroSafra || filtroFazenda
       ? estoquesFiltrados.reduce((saldo, item) => {
           const qtd = Number(item.quantidade) || 0
-          return saldo + (item.tipo === 'Entrada' ? qtd : -qtd)
+          return (
+            saldo +
+            (item.tipo === 'Entrada' || item.tipo === 'entrada' ? qtd : -qtd)
+          )
         }, 0)
       : 0
 
@@ -116,61 +124,67 @@ export default function EstoqueList() {
     <Container>
       {/* Filtros */}
       <div className="form-container">
-        <h3 className="subtitle-form">Controle de Estoque</h3>
-        <ProdutoSelect value={filtroProduto} onChange={setFiltroProduto} />
-        <SafraSelect
-          value={filtroSafra}
-          valueKey="id"
-          labelKey="nome"
-          onChange={setFiltroSafra}
-          required={false}
-        />
+        <Row className="w-100 justify-content-center">
+          <Col className="mb-3 form-container">
+            <h3 className="subtitle-form">Controle de Estoque</h3>
+            <ProdutoSelect value={filtroProduto} onChange={setFiltroProduto} />
+            <SafraSelect
+              value={filtroSafra}
+              valueKey="id"
+              labelKey="nome"
+              onChange={setFiltroSafra}
+              required={false}
+            />
 
-        <FazendaSelect
-          id="filtro-fazenda"
-          value={filtroFazenda}
-          onChange={setFiltroFazenda}
-          required={false}
-        />
+            <FazendaSelect
+              id="filtro-fazenda"
+              value={filtroFazenda}
+              onChange={setFiltroFazenda}
+              required={false}
+            />
 
-        <div id="div-button">
-          <ButtonComponent
-            label={'Limpar'}
-            onClick={limparFiltros}
-            aria-label="Limpar filtros"
-            variant="buttonGrey"
-            textColor="secondary"
-          />
-        </div>
-
-        {showSaldo && (
-          <p id="text-destaque" aria-live="polite">
-            Saldo Atual (filtrado): {saldoFiltrado}
-          </p>
-        )}
-
-        {/* 
-      <ul className="space-y-2 mt-4">
-        {estoquesFiltrados.map((e) => (
-          <li
-            key={e.id}
-            className="border p-2 rounded-md bg-white flex justify-between items-center"
-          >
-            <div>
-              <strong>{getNomePorId(e.produtoId, produtos)}</strong>
-              {e.safraId && <> - Safra: {getNomePorId(e.safraId, safras)}</>}
-              <br />
-              Tipo: {e.tipo} | Quantidade: {e.quantidade}
-              {e.observacao && (
-                <>
-                  <br />
-                  Obs: {e.observacao}
-                </>
-              )}
+            <div id="div-button">
+              <ButtonComponent
+                label={'Limpar'}
+                onClick={limparFiltros}
+                aria-label="Limpar filtros"
+                variant="buttonGrey"
+                textColor="secondary"
+              />
             </div>
-          </li>
-        ))}
-      </ul> */}
+
+            {showSaldo && (
+              <p id="text-destaque" aria-live="polite">
+                Saldo Atual (filtrado): {saldoFiltrado}
+              </p>
+            )}
+          </Col>
+          {/* Lista de Estoques Filtrados */}
+          <Col md={12}>
+            <GenericTable
+              data={estoquesFiltrados.map((e) => ({
+                id: e.id,
+                produto: getNomePorId(e.produtoId, produtos),
+                safra: e.safraId ? getNomePorId(e.safraId, safras) : 'N/A',
+                fazenda: e.fazendaId
+                  ? getNomePorId(e.fazendaId, fazendas)
+                  : 'N/A',
+                tipo: e.tipo,
+                quantidade: e.quantidade,
+                observacao: e.observacao || '',
+              }))}
+              columns={[
+                { key: 'produto', label: 'Produto' },
+                { key: 'safra', label: 'Safra' },
+                { key: 'fazenda', label: 'Fazenda' },
+                { key: 'tipo', label: 'Tipo' },
+                { key: 'quantidade', label: 'Quantidade' },
+                { key: 'observacao', label: 'Observação' },
+              ]}
+              loading={loading}
+            />
+          </Col>
+        </Row>
       </div>
     </Container>
   )
