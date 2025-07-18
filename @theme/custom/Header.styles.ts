@@ -28,7 +28,7 @@ export const Container = styled.div`
     justify-content: center;
     align-items: center;
     background-color: ${({ theme }) => theme.themeColor.primary};
-    padding: 40px 25px 0 225px;
+    padding: 40px 25px 0 256px;
   }
 
   #main-container-header {
@@ -115,7 +115,7 @@ export const Container = styled.div`
 
   @media (max-width: 720px) {
     #container-header {
-      padding: 40px 20px 0 20px;
+      padding: 40px 25px 0 25px;
     }
   }
 `;
