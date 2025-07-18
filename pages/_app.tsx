@@ -41,7 +41,6 @@ export default function App({ Component, pageProps }: AppProps) {
   if (user) {
     return (
       <Container fluid style={{ overflow: "hidden" }}>
-        <ProtectedLayout>
           <StyledComponentsRegistry>
             <StyledRoot>
               <Suspense fallback={<Loading />}>
@@ -49,7 +48,6 @@ export default function App({ Component, pageProps }: AppProps) {
               </Suspense>
             </StyledRoot>
           </StyledComponentsRegistry>
-        </ProtectedLayout>
       </Container>
     );
   }

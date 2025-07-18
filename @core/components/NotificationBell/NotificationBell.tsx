@@ -127,7 +127,7 @@ export function NotificationBell({ products, fazendas }: NotificationBellProps) 
 
   return (
     <NotificationContainer>
-      <BellButton 
+      <BellButton
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Notificações"
         aria-expanded={isOpen}
@@ -137,37 +137,46 @@ export function NotificationBell({ products, fazendas }: NotificationBellProps) 
       </BellButton>
 
       {isOpen && (
-        <NotificationPanel ref={panelRef} style={{ position: 'fixed', right: '1rem', top: '4rem' }}>
-             <NotificationHeader 
-            unreadCount={unreadCount} 
-            onMarkAllAsRead={handleMarkAllAsRead} 
+        <NotificationPanel ref={panelRef}>
+          <NotificationHeader
+            unreadCount={unreadCount}
+            onMarkAllAsRead={handleMarkAllAsRead}
           />
 
           {notifications.length === 0 ? (
             <EmptyNotifications />
           ) : (
-            <div style={{ maxHeight: '24rem', overflowY: 'auto' }}>
+            <div style={{ maxHeight: "24rem", overflowY: "auto" }}>
               {notifications.map((notification) => (
                 <NotificationItem
                   key={notification.id}
-                  unread={!notification.read}
+                  $unreadNotify={!notification.read}
                   onClick={() => handleNotificationClick(notification.id)}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
                     <NotificationIcon type={notification.type} />
                   </div>
                   <NotificationContent>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <p style={{ fontWeight: 500, color: '#111827' }}>{notification.message}</p>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <p style={{ fontWeight: 500, color: "#111827" }}>
+                        {notification.message}
+                      </p>
                       {!notification.read && (
-                        <span style={{
-                          display: 'flex',
-                          height: '0.5rem',
-                          width: '0.5rem',
-                          borderRadius: '9999px',
-                          backgroundColor: '#3B82F6',
-                          marginLeft: '0.5rem'
-                        }} />
+                        <span
+                          style={{
+                            display: "flex",
+                            height: "0.5rem",
+                            width: "0.5rem",
+                            borderRadius: "9999px",
+                            backgroundColor: "#3B82F6",
+                            marginLeft: "0.5rem",
+                          }}
+                        />
                       )}
                     </div>
                     <NotificationTime>

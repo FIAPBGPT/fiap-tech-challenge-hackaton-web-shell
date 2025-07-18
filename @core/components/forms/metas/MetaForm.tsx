@@ -104,70 +104,77 @@ export default function MetaForm({
   return (
     <Container>
       <form onSubmit={handleSubmit}>
-        <ProdutoSelect
-          name="produto"
-          value={form.produto}
-          onChange={(value) => handleChange('produto', value)}
-          required
-        />
-
-        <InputComponent
-          type="number"
-          name="valor"
-          value={form.valor}
-          onChange={(value) => handleChange('valor', value)}
-          placeholder="Valor da meta"
-          min={0}
-          required
-          id={'valor'}
-        />
-
-        <SafraSelect
-          name="safra"
-          valueKey="id"
-          labelKey="nome"
-          value={form.safra}
-          onChange={(value) => handleChange('safra', value)}
-          required
-        />
-
-        <FazendaSelect
-          name="fazenda"
-          value={form.fazenda}
-          onChange={(value) => handleChange('fazenda', value)}
-          id={'fazenda'}
-          required
-        />
-
-        <SelectComponent
-          name="tipo"
-          value={form.tipo}
-          onChange={(value) => handleChange('tipo', value)}
-          required
-          options={[
-            { label: 'Meta de Produção', value: 'producao' },
-            { label: 'Meta de Vendas', value: 'vendas' },
-          ]}
-          valueKey="value"
-          labelKey="label"
-        />
-        <div className="div-buttons">
-          <ButtonComponent
-            type="submit"
-            label={editarMeta ? 'Salvar' : 'Cadastrar'}
+        <fieldset>
+          <div id="containers-legend">
+            <legend className="title-form">
+              {editarMeta ? "Editar Meta" : "Cadastrar Meta"}
+            </legend>
+          </div>
+          <ProdutoSelect
+            name="produto"
+            value={form.produto}
+            onChange={(value) => handleChange("produto", value)}
+            required
           />
 
-          {editarMeta && onCancelEdit && (
+          <InputComponent
+            type="number"
+            name="valor"
+            value={form.valor}
+            onChange={(value) => handleChange("valor", value)}
+            placeholder="Valor da meta"
+            min={0}
+            required
+            id={"valor"}
+          />
+
+          <SafraSelect
+            name="safra"
+            valueKey="id"
+            labelKey="nome"
+            value={form.safra}
+            onChange={(value) => handleChange("safra", value)}
+            required
+          />
+
+          <FazendaSelect
+            name="fazenda"
+            value={form.fazenda}
+            onChange={(value) => handleChange("fazenda", value)}
+            id={"fazenda"}
+            required
+          />
+
+          <SelectComponent
+            name="tipo"
+            value={form.tipo}
+            onChange={(value) => handleChange("tipo", value)}
+            required
+            options={[
+              { label: "Meta de Produção", value: "producao" },
+              { label: "Meta de Vendas", value: "vendas" },
+            ]}
+            valueKey="value"
+            labelKey="label"
+          />
+          <div className="div-buttons">
             <ButtonComponent
-              type="button"
-              label="Cancelar"
-              onClick={onCancelEdit}
-              variant="buttonGrey"
-              textColor="secondary"
+              type="submit"
+              label={editarMeta ? "Salvar" : "Cadastrar"}
             />
-          )}
-        </div>
+
+            {editarMeta && onCancelEdit && (
+              <ButtonComponent
+                type="button"
+                label="Cancelar"
+                onClick={onCancelEdit}
+                variant="buttonGrey"
+                textColor="secondary"
+              />
+            )}
+          </div>
+        </fieldset>
       </form>
     </Container>
-  )
+  );
 }

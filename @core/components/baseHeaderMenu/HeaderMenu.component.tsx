@@ -11,7 +11,10 @@ import {
   FooterInsideContainer,
 } from "@/@theme/custom/Footer.style";
 import { FaInstagram, FaLinkedin, FaWhatsapp } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Col, Row } from "react-bootstrap";
+import { NotificationBell } from "../NotificationBell/NotificationBell";
+import { listar } from "@/@core/services/firebase/firebaseService";
 
 export default function HeaderMenuComponent({
   children,
@@ -25,6 +28,10 @@ export default function HeaderMenuComponent({
   const [activeItem, setActiveItem] = useState<ItemProps>(ItemProps.HOME);
   const closeMenu = () => setIsMenuOpen(false);
 
+  const [loading, setLoading] = useState(true);
+  const [produtos, setProdutos] = useState<any[]>([]);
+  const [fazendas, setFazendas] = useState<any[]>([]);
+
   const handleOpenCadastro = (form: React.ReactNode, item: ItemProps) => {
     setActiveContent(form);
     setActiveItem(item);
@@ -33,6 +40,34 @@ export default function HeaderMenuComponent({
   const handleCloseCadastro = () => {
     setActiveContent(null);
   };
+
+  useEffect(() => {
+    async function carregarDados() {
+      try {
+        setLoading(true);
+        const [produtosRaw, fazendasData] = await Promise.all([
+          listar("produtos"),
+          listar("fazendas"),
+        ]);
+
+        setProdutos(produtosRaw);
+        const fazendasMapped = fazendasData.map((f: any) => ({
+          id: f.id,
+          nome: f.nome ?? "",
+          estado: f.estado ?? "",
+          latitude: f.latitude ?? 0,
+          longitude: f.longitude ?? 0,
+        }));
+        setFazendas(fazendasMapped);
+      } catch (error) {
+        console.error("Erro ao carregar dados:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    carregarDados();
+  }, []);
 
   return (
     <Container>
@@ -65,6 +100,11 @@ export default function HeaderMenuComponent({
           ) : (
             <div id="div-main">
               <div id="div-main-container">
+                <Row>
+                  <Col md={12}>
+                    <NotificationBell products={produtos} fazendas={fazendas} />
+                  </Col>
+                </Row>
                 {activeContent ? <>{activeContent}</> : children}
               </div>
             </div>
