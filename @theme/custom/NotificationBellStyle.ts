@@ -56,6 +56,10 @@ export const NotificationPanel = styled.div`
   z-index: 50;
   transform-origin: top right;
   overflow: hidden;
+  padding: 5px;
+  @media (max-width: 768px) {
+    width: 17rem;
+  }
 `;
 
 

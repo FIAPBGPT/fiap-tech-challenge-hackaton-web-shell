@@ -173,8 +173,6 @@ export default function DashboardPage() {
     const fazenda = fazendas.find(f => f.id === meta.fazenda);
     if (!fazenda) return;
 
-    if (fazendaSelecionada && fazenda.id !== fazendaSelecionada.id) return;
-
     const estado = fazenda.estado;
     const valorAtual = estadoMap.get(estado) || 0;
     estadoMap.set(estado, valorAtual + meta.valor);
