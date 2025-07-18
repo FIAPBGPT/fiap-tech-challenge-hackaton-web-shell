@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 
 export const NotificationContainer = styled.div`
-  position: relative;
+  position: absolute;
   display: inline-flex;
   align-items: center;
   margin-top: 1rem;
+  right: 11%;
 `;
 
 export const BellButton = styled.button`
@@ -15,13 +16,13 @@ export const BellButton = styled.button`
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #97133E; /* Cor do ícone */
-  
+  color: #97133e; /* Cor do ícone */
+
   &:hover {
     background-color: #f3f4f6;
-    color: #97133E; 
+    color: #97133e;
   }
-  
+
   &:focus {
     outline: none;
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
@@ -47,11 +48,13 @@ export const NotificationBadge = styled.span`
 export const NotificationPanel = styled.div`
   position: absolute !important;
   right: 0 !important;
+  left: auto !important;
   top: calc(100%) !important;
-  width: 20rem;
+  width: 25rem;
   background-color: white;
   border-radius: 0.5rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
   border: 1px solid #e5e7eb;
   z-index: 50;
   transform-origin: top right;
@@ -61,7 +64,6 @@ export const NotificationPanel = styled.div`
     width: 17rem;
   }
 `;
-
 
 export const PanelHeader = styled.div`
   padding: 0.75rem 1rem;
@@ -80,14 +82,15 @@ export const EmptyState = styled.div`
   color: #6b7280;
 `;
 
-export const NotificationItem = styled.div<{ unread: boolean }>`
+export const NotificationItem = styled.div<{ $unreadNotify: boolean }>`
   padding: 0.75rem 1rem;
   cursor: pointer;
   transition: background-color 0.15s ease;
   display: flex;
   align-items: flex-start;
-  background-color: ${({ unread }) => unread ? '#f0f9ff' : 'white'};
-  
+  background-color: ${({ $unreadNotify }) =>
+    $unreadNotify ? "#f0f9ff" : "white"};
+
   &:hover {
     background-color: #f9fafb;
   }
