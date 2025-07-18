@@ -26,7 +26,7 @@ export const Container = styled.div`
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    background-color: 'transparent';
+    background-color: "transparent";
     gap: 20px;
     /* border: 1px solid red; */
   }
@@ -57,7 +57,7 @@ export const Container = styled.div`
   #div-logotipo {
     height: 100px;
     width: 150px;
-    background-image: url('/image/Logotipo.png');
+    background-image: url("/image/Logotipo.png");
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -129,7 +129,6 @@ export const Container = styled.div`
     color: ${(props) => props.theme.themeColor.ochreFontsButton};
     font-weight: ${(props) => props.theme.themeFonts.subtitleForms.fontWeight};
     text-align: center;
-    border-top: 1px solid white;
     padding-top: 20px;
     margin-top: 30px;
   }
@@ -158,4 +157,4 @@ export const Container = styled.div`
       flex-wrap: nowrap;
     }
   }
-`
+`;
