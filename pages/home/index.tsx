@@ -1,6 +1,7 @@
-"use client";
-import Login from "../login";
+'use client'
+
+import Login from '../login'
 
 export default function DashboardPage() {
-  return <Login />;
+  return <Login />
 }

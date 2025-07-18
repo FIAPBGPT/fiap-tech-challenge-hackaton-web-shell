@@ -1,6 +1,5 @@
-import styled from 'styled-components';
-import { themed } from '@/@theme/themed';
-
+import styled from 'styled-components'
+import { themed } from '@/@theme/themed'
 
 export const PageContainer = styled.div`
   min-height: 100vh;
@@ -9,8 +8,11 @@ export const PageContainer = styled.div`
   justify-content: center;
   align-items: center;
   padding: 24px;
-`;
-
+  background-image: url('/image/Imagem-fundo-group154.png');
+  background-size: cover;
+  background-position: top;
+  background-repeat: no-repeat;
+`
 
 export const LoginContainer = styled.div`
   width: 100%;
@@ -20,18 +22,18 @@ export const LoginContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-`;
+`
 export const LoginContainerContent = styled.div`
   width: 100%;
   background-color: rgba(255, 255, 255, 0.4);
-  border: 2px solid #fff; 
+  border: 2px solid #fff;
   padding: 32px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   gap: 24px;
-`;
+`
 
 export const Header = styled.div`
   display: flex;
@@ -41,11 +43,11 @@ export const Header = styled.div`
   @media (max-width: 768px) {
     justify-content: center;
   }
-`;
+`
 
 export const Logo = styled.img`
   height: 40px;
-`;
+`
 
 export const Content = styled.div`
   display: flex;
@@ -57,8 +59,7 @@ export const Content = styled.div`
     flex-direction: column;
     align-items: stretch;
   }
-`;
-
+`
 
 export const LeftText = styled.div`
   flex: 1;
@@ -69,25 +70,24 @@ export const LeftText = styled.div`
 
   @media (max-width: 768px) {
     text-align: center;
-  }`
-;
+  }
+`
 
 export const TitleForm = styled.div`
   flex: 1;
   font-family: ${themed.themeFonts.text.fontFamily};
   font-size: ${themed.themeFonts.text.fontSize};
-  color: ${themed.themeColor.mustard};  
+  color: ${themed.themeColor.mustard};
   font-weight: ${themed.themeFonts.text.fontWeight};
 
   @media (max-width: 768px) {
     text-align: center;
-  }`
-;
+  }
+`
 
 export const FormContainer = styled.div`
   flex: 1;
-`;
-
+`
 
 export const ErrorText = styled.p`
   margin: 5px 0;
