@@ -12,6 +12,7 @@ import {
   Title,
 } from '@/@theme/custom/DashboardStyle'
 import { NotificationBell } from '@/@core/components/NotificationBell/NotificationBell'
+import SelectComponent from '@/@core/components/ui/select/Select.component'
 
 // Tipos
 interface Meta {
@@ -331,22 +332,26 @@ export default function DashboardPage() {
     <>
       <NotificationBell products={produtos} fazendas={fazendas} />
 
-      <Title>Suas Dashboards</Title>
-      <Subtitle>Escolha qual quer visualizar</Subtitle>
-      <Select
-        value={fazendaSelecionada?.id || ''}
-        onChange={(e) => {
-          const fazenda = fazendas.find((f) => f.id === e.target.value)
-          setFazendaSelecionada(fazenda || null)
-        }}
-      >
-        <option value="">Todas as Fazendas</option>
-        {fazendas.map((fazenda) => (
-          <option key={fazenda.id} value={fazenda.id}>
-            {fazenda.nome} - {fazenda.estado}
-          </option>
-        ))}
-      </Select>
+      <div style={{ padding: '20px 0' }}>
+        <Subtitle>Escolha qual quer visualizar</Subtitle>
+      </div>
+
+      <div style={{ paddingBottom: '20px', maxWidth: '490px' }}>
+        <SelectComponent
+          value={fazendaSelecionada?.id || ''}
+          options={fazendas.map((fazenda) => ({
+            id: fazenda.id,
+            displayName: `${fazenda.nome} - ${fazenda.estado}`,
+          }))}
+          valueKey="id"
+          labelKey="displayName"
+          onChange={(value) => {
+            const fazenda = fazendas.find((f) => f.id === value)
+            setFazendaSelecionada(fazenda || null)
+          }}
+          placeholder="Todas as Fazendas"
+        />
+      </div>
       <CardsGrid>
         {/* Card Localidade */}
         <Card>

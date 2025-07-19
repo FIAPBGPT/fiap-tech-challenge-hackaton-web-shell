@@ -127,7 +127,7 @@ export default function FazendaForm({
     <Container>
       <form onSubmit={handleSubmit}>
         <fieldset>
-          <legend className="title-form">
+          <legend className="title-form" style={{margin: "10px 0"}}>
             {editarFazenda ? 'Editar Fazenda' : 'Cadastrar Fazenda'}
           </legend>
           <InputComponent

@@ -124,7 +124,7 @@ export default function EstoqueList() {
     <Container>
       <Row className="w-100 justify-content-center">
         <Col className="mb-3 form-container">
-          <h3 className="subtitle-form">Controle de Estoque</h3>
+          <h3 className="title-form" style={{margin: "10px 0"}}>Verifique os estoques</h3>
           <ProdutoSelect value={filtroProduto} onChange={setFiltroProduto} />
           <SafraSelect
             value={filtroSafra}

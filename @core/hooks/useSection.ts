@@ -18,9 +18,9 @@ export enum ItemProps {
 
 export enum CurrentSection {
   DASHBORAD = "Sua Dashbord",
-  CAD_PRODUTOS = "Cadastro de Produtos",
-  CAD_FAZENDAS = "Cadastro de Fazendas",
-  CAD_SAFRAS = "Cadastro de Safras",
+  CAD_PRODUTOS = "Gestão de Produtos",
+  CAD_FAZENDAS = "Gestão de Fazendas",
+  CAD_SAFRAS = "Gestão de Safras",
   COMPLETE_CADASTRO = "Complete seu cadastro",
   CAD_ESTOQUE = "Gestão de Estoque",
   CAD_PRODUCAO = "Gestão de Produção",

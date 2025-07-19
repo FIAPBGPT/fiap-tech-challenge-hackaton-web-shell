@@ -180,7 +180,7 @@ export default function ProducoesForm({
       <form onSubmit={handleSubmit}>
         <div className="form-container">
           <h2 className="title-form">Cadastrar ou consultar os saldos</h2>
-          <h3 className="subtitle-form">
+          <h3 className="subtitle-form" style={{margin: "0"}}>
             Selecione produto, safra e fazenda para ver saldo.
           </h3>
           <ProdutoSelect

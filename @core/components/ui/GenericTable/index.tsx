@@ -51,7 +51,7 @@ export default function GenericTable<T extends { id: string }>({
             <div className="row">
                 <div className="col-12">
                     <div className="overflow-auto border rounded-md w-full">
-                        <table className="min-w-full w-full text-sm text-left border-collapse w-100">
+                        <table className="min-w-full w-full text-sm text-left border-separate border-spacing-2 bg-gray-100 w-100">
                             <thead
                                 className="text-center"
                                 style={{ backgroundColor: "#9FCA86" }}
