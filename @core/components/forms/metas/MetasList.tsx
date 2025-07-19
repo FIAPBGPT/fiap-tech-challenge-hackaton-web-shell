@@ -110,7 +110,7 @@ export default function MetaList() {
           columns={[
             { key: "produto", label: "Produto" },
             { key: "safra", label: "Safra" },
-            { key: "fazenda", label: "Fazenda" },
+            { key: "fazenda", label: "Id ou Nome da Fazenda" },
             { key: "valor", label: "Valor" },
             { key: "tipo", label: "Tipo" },
           ]}

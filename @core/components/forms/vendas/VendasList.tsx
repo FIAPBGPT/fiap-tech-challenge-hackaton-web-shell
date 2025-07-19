@@ -98,7 +98,7 @@ export default function VendaList() {
           }))}
           columns={[
             { key: "produto", label: "Produto" },
-            { key: "safra", label: "Safra" },
+            { key: "safra", label: "Id ou Nome da safra" },
             { key: "fazenda", label: "Fazenda" },
             { key: "quantidade", label: "Quantidade" },
             { key: "valor", label: "Valor (R$)" },

@@ -82,8 +82,8 @@ export default function SafraList() {
             valor: s.valor,
           }))}
           columns={[
-            { label: "Nome", key: "nome" },
-            { label: "Valor", key: "valor" },
+            { label: "Safra", key: "nome" },
+            { label: "Nome", key: "valor" },
           ]}
           onEdit={(row) => handleEditar(row)}
           onDelete={(row) => handleDelete(row.id)}

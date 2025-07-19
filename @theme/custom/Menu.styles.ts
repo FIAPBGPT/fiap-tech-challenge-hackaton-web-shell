@@ -228,6 +228,41 @@ export const Container = styled.div`
       }
     }
   }
+
+  .logout-button {
+    z-index: 1001;
+    width: 100px;
+    height: 100px;
+
+
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: ${({ theme }) =>
+          theme.themeColor.backgroundMediumBase};
+        svg {
+          color: ${({ theme }) => theme.themeColor.secondary};
+        }
+      }
+
+      svg {
+        width: 100%;
+        height: 100%;
+        color: ${({ theme }) => theme.themeColor.secondary};
+      }
+    }
+  }
 `;
 
 export const LinkIsActive = styled(Link)`

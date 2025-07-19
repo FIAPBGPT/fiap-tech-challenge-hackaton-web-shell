@@ -174,7 +174,7 @@ export default function EstoqueList() {
             columns={[
               { key: "produto", label: "Produto" },
               { key: "safra", label: "Safra" },
-              { key: "fazenda", label: "Fazenda" },
+              { key: "fazenda", label: "Id ou Nome da Fazenda" },
               { key: "tipo", label: "Tipo" },
               { key: "quantidade", label: "Quantidade" },
               { key: "observacao", label: "Observação" },
