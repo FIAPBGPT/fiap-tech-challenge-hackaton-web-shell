@@ -1,18 +1,36 @@
-"use client";
-import Image from 'next/image';
-import { auth } from "@/@core/services/firebase/firebase";
-import { useAuthStore } from "@/@core/store/authStore";
-import { StyledButton } from "@/@theme/custom/Button.style";
-import { FooterContainer, ContactContainer, ContactText, IconsContainer, IconLink } from "@/@theme/custom/Footer.style";
-import { Content, ErrorText, FormContainer, Header, LeftText, LoginContainer, LoginContainerContent, Logo, PageContainer, TitleForm } from "@/@theme/custom/LoginPage-style";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import { Spinner } from "react-bootstrap";
-import { FaInstagram, FaLinkedin, FaWhatsapp } from "react-icons/fa";
-import InputComponent from '@/@core/components/ui/input';
-import Logotipo from "@/public/image/Logotipo.png";
+'use client'
+import Image from 'next/image'
+import { auth } from '@/@core/services/firebase/firebase'
+import { useAuthStore } from '@/@core/store/authStore'
+import { StyledButton } from '@/@theme/custom/Button.style'
+import {
+  FooterContainer,
+  ContactContainer,
+  ContactText,
+  IconsContainer,
+  IconLink,
+} from '@/@theme/custom/Footer.style'
+import {
+  Content,
+  ErrorText,
+  FormContainer,
+  Header,
+  LeftText,
+  LoginContainer,
+  LoginContainerContent,
+  Logo,
+  PageContainer,
+  TitleForm,
+} from '@/@theme/custom/LoginPage-style'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { Spinner } from 'react-bootstrap'
+import { FaInstagram, FaLinkedin, FaWhatsapp } from 'react-icons/fa'
+import logo from '@/public/image/logo.png'
+import InputComponent from '@/@core/components/ui/input'
+import Logotipo from '@/public/image/Logotipo.png'
 
 // @ts-ignore
 const Mfe = dynamic(() => import('mfe/app'), {
@@ -21,13 +39,12 @@ const Mfe = dynamic(() => import('mfe/app'), {
 })
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const setUser = useAuthStore((s) => s.setUser);
-  const setLoadingState = useAuthStore((s) => s.setLoading);
-  const router = useRouter();
+  const [email, setEmail] = useState('')
+  const [senha, setSenha] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const setUser = useAuthStore((s) => s.setUser)
+  const router = useRouter()
 
   const handleLogin = async () => {
     if (!email || !senha) {
@@ -39,12 +56,12 @@ export default function Login() {
     setLoading(true)
 
     try {
-      const res = await signInWithEmailAndPassword(auth, email, senha);
-      const { uid, email: userEmail } = res.user;
-      setUser({ uid, email: userEmail || "" });
-      setLoading(false);
-      setLoadingState(false); // Define o estado de loading como false após o login
-      router.push("/home-cadastrar"); // Redireciona para o dashboard após login bem-sucedido
+      const res = await signInWithEmailAndPassword(auth, email, senha)
+      const { uid, email: userEmail } = res.user
+      setUser({ uid, email: userEmail || '' })
+      setLoading(false)
+      setLoadingState(false) // Define o estado de loading como false após o login
+      router.push('/home-cadastrar') // Redireciona para o dashboard após login bem-sucedido
     } catch (error: any) {
       setError('Erro ao fazer login. Verifique suas credenciais.')
       console.error(error)
@@ -57,7 +74,7 @@ export default function Login() {
     <PageContainer>
       <LoginContainer>
         <Header>
-          <Image src={Logotipo} alt="Logo" width={120} height={40} />
+          <Image src={logo} alt="Logo" width={120} height={40} />
         </Header>
         <LoginContainerContent>
           <Content>
@@ -68,23 +85,18 @@ export default function Login() {
               <InputComponent
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
-                id={''}
-                name={''}
-                type={''}
-                required={false}
               />
               <InputComponent
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
+                onChange={(e) => setSenha(e.target.value)}
                 type="password"
                 placeholder="Senha"
-                id={''}
-                name={''}
-                required={false}
               />
               <StyledButton variant="secondary" onClick={handleLogin}>
-                {loading ? <Spinner animation="border" size="sm" /> : "Entrar"}
+                {loading ? <Spinner animation="border" size="sm" /> : 'Entrar'}
               </StyledButton>
               <ErrorText>{error}</ErrorText>
             </FormContainer>
@@ -126,5 +138,5 @@ export default function Login() {
         </ContactContainer>
       </FooterContainer>
     </PageContainer>
-  );
+  )
 }
