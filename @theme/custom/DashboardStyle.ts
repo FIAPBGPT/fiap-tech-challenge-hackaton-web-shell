@@ -1,12 +1,12 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const Title = styled.h1`
   font-family: 'Jura', sans-serif;
   font-size: 24px;
   font-weight: 700;
-  color: #97133E;
+  color: #97133e;
   margin-bottom: 1.5rem;
-`;
+`
 
 export const Subtitle = styled.div`
   font-family: Jura;
@@ -14,9 +14,9 @@ export const Subtitle = styled.div`
   font-size: 20px;
   line-height: 100%;
   letter-spacing: 0%;
-  color: #765B04;
+  color: #765b04;
   margin-bottom: 1rem;
-`;
+`
 
 export const Select = styled.select`
   width: 100%;
@@ -26,7 +26,7 @@ export const Select = styled.select`
   border: 1px solid #ddd;
   margin-bottom: 2rem;
   font-size: 1rem;
-`;
+`
 
 export const CardsGrid = styled.div`
   display: grid;
@@ -37,25 +37,25 @@ export const CardsGrid = styled.div`
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
-`;
+`
 
 export const Card = styled.div`
   background: white;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-`;
+`
 
 export const CardHeader = styled.div`
-  background-color: #97133E;
+  background-color: #97133e;
   color: white;
-  padding: 0.75rem 1rem;
+  padding: 0.8rem 1rem;
   font-family: 'Jura', sans-serif;
   text-align: center;
   font-weight: 700;
-`;
+`
 
 export const CardContent = styled.div`
-  padding: 1rem;
+  padding: 2rem;
   min-height: 300px;
-`;
+`

@@ -6,7 +6,7 @@ import RegisterIcon from '@/public/cadastro_check.svg'
 import { useEffect, useState } from 'react'
 import useWindowSize from '../../../hooks/useWindowSize'
 import CardapioIcon from '@/public/icons8cardapio.svg'
-import LogoutIcon from '@/public/logout.svg'
+import Seta from '@/public/play.svg'
 import FazendasPage from '@/pages/fazendas'
 import DashboardPage from '@/pages/dashboard'
 import ProdutosPage from '@/pages/produtos'
@@ -159,7 +159,7 @@ export default function MenuComponent({
             onClick={toggleMenuLinks}
             className={`menu-button ${isMenuLinksOpen ? 'isActive' : ''}`}
           >
-            <RegisterIcon />
+            <Seta />
             Cadastrar
           </button>
         </div>
@@ -213,8 +213,14 @@ export default function MenuComponent({
           {renderActiveButton('metas', ItemProps.METAS, <MetasPage />, 'Metas')}
         </div>
         <div className="logout-button">
-          <button onClick={handleLogout}>
-            <LogoutIcon />
+          
+          <button
+            onClick={handleLogout}
+            className="menu-button"
+            disabled={logoutLoading}
+          >
+            <div><Seta /></div>
+            {logoutLoading ? 'Saindo...' : 'Logout'}
           </button>
         </div>
       </div>

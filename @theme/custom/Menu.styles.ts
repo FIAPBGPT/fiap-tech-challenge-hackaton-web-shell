@@ -230,31 +230,37 @@ export const Container = styled.div`
   }
 
   .logout-button {
-    z-index: 1001;
-    width: 100px;
-    height: 100px;
+   display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+  }
 
+  #menu-navigation a {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+    padding: 5px 10px;
+    color: ${({ theme }) => theme.themeColor.ochreFontsButton};
 
-    button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 50%;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.2s ease;
+    &:hover {
+      background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+      color: ${({ theme }) => theme.themeColor.secondary};
+      font-weight: 700;
+    }
 
-      &:hover {
-        background-color: ${({ theme }) =>
-          theme.themeColor.backgroundMediumBase};
-        svg {
-          color: ${({ theme }) => theme.themeColor.secondary};
-        }
-      }
+    &.isActive {
+      background-color: ${({ theme }) => theme.themeColor.backgroundMediumBase};
+      color: ${({ theme }) => theme.themeColor.secondary};
+      font-weight: 700;
+
 
       svg {
         width: 100%;
