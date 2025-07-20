@@ -95,7 +95,6 @@ export const Container = styled.div`
     min-height: 100vh;
     width: 100%;
     max-width: 1024px;
-    border-left: 1px solid
     margin-bottom: 25px;
     border-left: 2px solid
       ${(props) => props.theme.themeColor.backgroundLightBase};
@@ -104,4 +103,4 @@ export const Container = styled.div`
     border-bottom: 2px solid
       ${(props) => props.theme.themeColor.backgroundLightBase};
   }
-`
+`;

@@ -6,8 +6,8 @@ import {
 } from "@/@core/services/firebase/pages/safraService";
 import { Container } from "@/@theme/custom/Forms.styles";
 import { useEffect, useState } from "react";
-import InputComponent from "../../ui/input";
 import ButtonComponent from "../../ui/Button";
+import InputComponent from "../../ui/input/Input.component";
 
 interface SafraFormProps {
   onSuccess: () => void;
@@ -73,7 +73,7 @@ export default function SafraForm({
             id="nome"
             type="text"
             value={nome}
-            onChange={(e) => setNome(e.target.value)}
+            onChange={(value) => setNome(value)}
             placeholder="Ex: SAF23/24"
             required
             name={"nome"}
@@ -83,7 +83,7 @@ export default function SafraForm({
             id="valor"
             type="text"
             value={valor}
-            onChange={(e) => setValor(e.target.value)}
+            onChange={(value) => setValor(value)}
             placeholder="Ex: SAF2324"
             required
             name={"valor"}
