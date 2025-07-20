@@ -41,7 +41,7 @@ export default function GenericTable<T extends { id: string }>({
   }
 
   if (loading) return <p>Carregando...</p>
-  if (data.length === 0) return <p>Nenhum item encontrado.</p>
+  if (data.length === 0) return <p style={{textAlign: "center"}}>Nenhum item encontrado.</p>
 
   // Number of columns (including actions)
   const colCount = columns.length + (onEdit || onDelete ? 1 : 0)
