@@ -29,9 +29,18 @@ export default function App({ Component, pageProps }: AppProps) {
     );
   }
 
-  // If no user, redirect to login page
-  if (!user && router.pathname !== "/") {
+  // If no user, redirect to login page unless on "complete-cadastro" page
+  if (
+    !user &&
+    router.pathname !== "/" &&
+    !router.pathname.includes("complete-cadastro")
+  ) {
     if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const email = urlParams.get("email");
+      if (email) {
+        localStorage.setItem("pending_email", email);
+      }
       router.replace("/");
     }
     return null;
@@ -41,13 +50,13 @@ export default function App({ Component, pageProps }: AppProps) {
   if (user) {
     return (
       <Container fluid style={{ overflow: "hidden" }}>
-          <StyledComponentsRegistry>
-            <StyledRoot>
-              <Suspense fallback={<Loading />}>
-                <Component {...pageProps} />
-              </Suspense>
-            </StyledRoot>
-          </StyledComponentsRegistry>
+        <StyledComponentsRegistry>
+          <StyledRoot>
+            <Suspense fallback={<Loading />}>
+              <Component {...pageProps} />
+            </Suspense>
+          </StyledRoot>
+        </StyledComponentsRegistry>
       </Container>
     );
   }
