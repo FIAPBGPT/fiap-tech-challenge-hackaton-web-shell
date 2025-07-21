@@ -19,6 +19,8 @@ export default function ProtectedLayout({ children }: Props) {
       router.push("/"); 
     } else if (user && router.pathname === "/") {
       router.push("/home-cadastrar");
+    } else {
+      router.push("/complete-cadastro");
     }
   }, [loading, user, router]);
 

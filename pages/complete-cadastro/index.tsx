@@ -18,53 +18,84 @@ export default function CompleteCadastro() {
   const { setUser } = useAuthStore() // Atualizando o estado de autenticação global
 
   useEffect(() => {
-    const auth = getAuth()
-    const { email: queryEmail } = router.query
+    const auth = getAuth();
 
-    // Verifica se o link de cadastro é válido
-    if (isSignInWithEmailLink(auth, window.location.href)) {
-      // Se o e-mail não está na URL, mostra um erro
-      if (!queryEmail) {
-        setError('Link de cadastro inválido.')
-        return
+    setTimeout(() => {
+      // Verifica se o link de cadastro é válido
+      if (isSignInWithEmailLink(auth, window.location.href)) {
+        console.log(window.location.href);
+        localStorage.setItem("complete_cadastro_link", window.location.href);
+        // Tenta obter o e-mail do localStorage com um pequeno delay para garantir que esteja disponível
+        const tryGetPendingEmail = (retries = 5) => {
+          const pendingEmail = localStorage.getItem("pending_email");
+          if (pendingEmail) {
+            try {
+              const decodedEmail = atob(decodeURIComponent(pendingEmail));
+              if (decodedEmail) {
+                setEmail(decodedEmail);
+                return;
+              }
+            } catch {
+              // Se falhar ao decodificar, mostra erro
+            }
+          }
+          if (retries > 0) {
+            setTimeout(() => tryGetPendingEmail(retries - 1), 200);
+          } else {
+            setError("Link de cadastro inválido.");
+          }
+        };
+        tryGetPendingEmail();
+      } else {
+        setError("O link de cadastro não é válido.");
       }
-
-      // Recupera o e-mail da URL e define o estado
-      const decodedEmail = atob(decodeURIComponent(queryEmail as string))
-      setEmail(decodedEmail)
-    } else {
-      setError('O link de cadastro não é válido.')
-    }
-  }, [router.query.email])
+    }, 200); // Pequeno delay para garantir que o localStorage esteja pronto
+  }, []);
 
   const handleCompleteCadastro = async () => {
     if (!email || !password) {
-      setError('E-mail ou senha não fornecidos.')
-      return
+      setError("E-mail ou senha não fornecidos.");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
-      const auth = getAuth()
+      const auth = getAuth();
+      const windowHref: string | null = localStorage.getItem(
+        "complete_cadastro_link"
+      );
 
-      // Conclui o cadastro com a senha
-      await signInWithEmailLink(auth, email, window.location.href)
-      if (auth.currentUser) {
-        await updatePassword(auth.currentUser, password) // Define a senha do usuário
-        setUser({ uid: auth.currentUser.uid || '', email: email }) // Atualiza o estado de autenticação no Zustand
-      } else {
-        throw new Error('Usuário não autenticado.')
+      if (!windowHref || !isSignInWithEmailLink(auth, windowHref)) {
+        throw new Error("Link inválido ou expirado.");
       }
 
-      // Redireciona para a página principal ou dashboard
-      router.push("/home-cadastrar");
-    } catch (error) {
-      setError('Erro ao completar o cadastro. Tente novamente.')
+      console.log("Link de cadastro:", windowHref);
+      console.log("E-mail:", email);
+
+      // Realiza o login com link mágico
+      await signInWithEmailLink(auth, email, windowHref);
+
+      if (auth.currentUser) {
+        await updatePassword(auth.currentUser, password);
+        setUser({ uid: auth.currentUser.uid || "", email: email });
+        router.push("/home-cadastrar");
+      } else {
+        throw new Error("Usuário não autenticado.");
+      }
+    } catch (error: any) {
+      console.error("Erro ao completar cadastro:", error.message);
+      if (error.code === "auth/invalid-action-code") {
+        setError(
+          "Link inválido ou já utilizado. Solicite um novo e-mail de cadastro."
+        );
+      } else {
+        setError("Erro ao completar o cadastro. Tente novamente.");
+      }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Container>
@@ -79,8 +110,7 @@ export default function CompleteCadastro() {
           {email && (
             <div style={{ marginBottom: "20px" }}>
               <p>
-                O e-mail para concluir seu cadastro foi enviado para:{" "}
-                <strong>{email}</strong>
+                Conclua o cadastro para: <strong>{email}</strong>
               </p>
             </div>
           )}
